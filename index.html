@@ -461,6 +461,80 @@
             box-shadow: 0 0 10px rgba(0,0,0,0.5);
         }
 
+        /* Стилі для кастомного вікна привітання з рівнем */
+        .level-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(8px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .level-modal-overlay.show {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .level-modal {
+            background: var(--panel-bg);
+            border: 1px solid var(--accent-gold);
+            width: 85%;
+            max-width: 320px;
+            border-radius: 24px;
+            padding: 24px 20px;
+            text-align: center;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.6);
+            transform: scale(0.8);
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .level-modal-overlay.show .level-modal {
+            transform: scale(1);
+        }
+
+        .level-modal img {
+            width: 110px;
+            height: 110px;
+            object-fit: contain;
+            margin-bottom: 15px;
+            filter: drop-shadow(0 10px 15px rgba(0,0,0,0.5));
+        }
+
+        .level-modal h3 {
+            font-size: 20px;
+            color: var(--text-white);
+            margin-bottom: 8px;
+        }
+
+        .level-modal p {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+            line-height: 1.4;
+        }
+
+        .level-modal button {
+            width: 100%;
+            padding: 12px;
+            border-radius: 14px;
+            border: none;
+            background: var(--accent-gold-gradient);
+            color: #ffffff;
+            font-weight: 700;
+            font-size: 14px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(82, 121, 111, 0.4);
+        }
+
         /* Нижня панель навігації */
         nav {
             display: flex;
@@ -511,6 +585,16 @@
     </style>
 </head>
 <body>
+
+    <!-- Модальне вікно привітання з рівнем -->
+    <div class="level-modal-overlay" id="levelModalOverlay">
+        <div class="level-modal">
+            <img id="modalImg" src="" alt="Рівень">
+            <h3 id="modalTitle">Вітаємо!</h3>
+            <p id="modalText">Ти досяг нового рівня!</p>
+            <button onclick="closeLevelModal()">Круто! 🐊</button>
+        </div>
+    </div>
 
     <header>
         <div class="top-profile-row">
@@ -831,16 +915,65 @@
             localStorage.setItem('tabcoin_lastTime', Date.now());
         }
 
-        function checkLevelProgression() {
-            if (score >= 500000 && level < 5) {
-                level = 5;
-            } else if (score >= 340000 && score < 500000 && level < 4) {
-                level = 4;
-            } else if (score >= 170000 && score < 340000 && level < 3) {
-                level = 3;
-            } else if (score >= 70000 && score < 170000 && level < 2) {
-                level = 2;
+        // Дані для унікальних привітань з рівнями
+        const levelData = {
+            2: {
+                title: "Stage 2: Новий хижак!",
+                text: "Ти набрав 70 000 очок! Твій крокодил підріс, став спритнішим і готовий до нових пригод у болоті!",
+                img: "1790159498394.png"
+            },
+            3: {
+                title: "Stage 3: Гроза водойми!",
+                text: "Вже 170 000 очок! Тепер ти справжній авторитет серед місцевої фауни. Твої зуби стали гострішими!",
+                img: "1790163627383.png"
+            },
+            4: {
+                title: "Stage 4: Болотний барон!",
+                text: "Цілих 340 000 очок! Твій вплив росте разом із тобою. Ніхто в цьому болоті більше не наважиться сперечатися з тобою!",
+                img: "1790165750453.png"
+            },
+            5: {
+                title: "Stage 5: Легенда болота!",
+                text: "Неосяжні 500 000 очок! Ти досяг вершини еволюції! Ти — абсолютна легенда, якій підкорився весь світ!",
+                img: "1790244183576.png"
             }
+        };
+
+        function showLevelModal(lvl) {
+            const data = levelData[lvl];
+            if (!data) return;
+
+            document.getElementById('modalTitle').textContent = data.title;
+            document.getElementById('modalText').textContent = data.text;
+            document.getElementById('modalImg').src = data.img;
+            document.getElementById('levelModalOverlay').classList.add('show');
+        }
+
+        function closeLevelModal() {
+            document.getElementById('levelModalOverlay').classList.remove('show');
+        }
+
+        function checkLevelProgression() {
+            let newLevel = level;
+
+            if (score >= 500000 && level < 5) {
+                newLevel = 5;
+            } else if (score >= 340000 && score < 500000 && level < 4) {
+                newLevel = 4;
+            } else if (score >= 170000 && score < 340000 && level < 3) {
+                newLevel = 3;
+            } else if (score >= 70000 && score < 170000 && level < 2) {
+                newLevel = 2;
+            }
+
+            if (newLevel > level) {
+                level = newLevel;
+                updateVisuals();
+                saveGame();
+                showLevelModal(level);
+                return;
+            }
+
             updateVisuals();
         }
 
@@ -999,7 +1132,7 @@
                 score += incomePerSec;
             }
 
-            updateVisuals();
+            checkLevelProgression();
             saveGame();
         }, 1000);
 
