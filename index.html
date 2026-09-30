@@ -1,1 +1,1507 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>TabCoin</title>
+    <!-- Підключаємо офіційний Telegram WebApp SDK -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        :root {
+            --bg-dark: #121622;
+            --panel-bg: rgba(22, 27, 39, 0.85);
+            --panel-border: rgba(255, 255, 255, 0.08);
+            --accent-gold: #f59e0b;
+            --accent-gold-gradient: linear-gradient(135deg, #fbbf24, #d97706);
+            --accent-gem: #38bdf8;
+            --text-white: #ffffff;
+            --text-secondary: #94a3b8;
+            
+            --swamp-btn-bg: linear-gradient(135deg, #556B2F, #3F501F);
+            --swamp-btn-hover: linear-gradient(135deg, #4A5D27, #344219);
+            --swamp-btn-border: #6B8E23;
+        }
 
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+            -webkit-user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html, body {
+            width: 100%;
+            max-width: 100vw;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        body {
+            background-image: url('1790244794913.png');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            color: var(--text-white);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            overflow-y: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            z-index: 0;
+        }
+
+        header, .tab-content, nav {
+            position: relative;
+            z-index: 1;
+        }
+
+        header {
+            padding: 10px 16px 6px 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .top-profile-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .profile-card {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--panel-bg);
+            border: 1px solid var(--panel-border);
+            padding: 6px 14px 6px 6px;
+            border-radius: 30px;
+            backdrop-filter: blur(12px);
+        }
+
+        .profile-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: #334155;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            border: 1px solid var(--accent-gold);
+        }
+
+        .profile-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .profile-name {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text-white);
+            line-height: 1.2;
+        }
+
+        .profile-stage {
+            font-size: 10px;
+            font-weight: 600;
+            color: var(--accent-gold);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .balances-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .balance-container {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--panel-bg);
+            border: 1px solid var(--panel-border);
+            padding: 6px 12px;
+            border-radius: 20px;
+            backdrop-filter: blur(12px);
+        }
+
+        .coin-icon, .gem-icon {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+        }
+
+        .coin-icon { background: var(--accent-gold); }
+        .gem-icon { background: var(--accent-gem); }
+
+        .balance-score-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .balance-score {
+            font-size: 14px;
+            font-weight: 800;
+            line-height: 1.1;
+        }
+
+        .balance-sub {
+            font-size: 9px;
+            color: var(--accent-gold);
+            font-weight: 600;
+        }
+
+        .tab-content {
+            flex: 1;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            padding: 0 20px;
+            overflow-y: auto;
+        }
+
+        .tab-content.active {
+            display: flex;
+        }
+
+        .character-wrapper {
+            position: relative;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.1s ease;
+            touch-action: none;
+        }
+
+        .character-wrapper:active {
+            transform: scale(0.96);
+        }
+
+        .character-img {
+            width: 330px;
+            height: 330px;
+            object-fit: contain;
+            filter: drop-shadow(0 20px 30px rgba(0,0,0,0.8));
+            pointer-events: none;
+        }
+
+        .energy-section {
+            width: 100%;
+            max-width: 340px;
+            background: var(--panel-bg);
+            border: 1px solid var(--panel-border);
+            padding: 12px 16px;
+            border-radius: 16px;
+            backdrop-filter: blur(12px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+        }
+
+        .energy-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 13px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .energy-title {
+            color: var(--text-white);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .energy-rate {
+            color: var(--accent-gold);
+            font-size: 12px;
+        }
+
+        .energy-bar-container {
+            width: 100%;
+            height: 12px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 6px;
+            overflow: hidden;
+        }
+
+        .energy-bar-fill {
+            height: 100%;
+            background: var(--accent-gold-gradient);
+            border-radius: 6px;
+            width: 100%;
+            transition: width 0.2s ease;
+            box-shadow: 0 0 10px rgba(245, 158, 11, 0.5);
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 5px;
+            color: var(--text-white);
+            align-self: flex-start;
+            max-width: 340px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .items-list {
+            width: 100%;
+            max-width: 340px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-height: 55vh;
+            overflow-y: auto;
+            padding-right: 4px;
+        }
+
+        .item-card {
+            background: var(--panel-bg);
+            border: 1px solid var(--panel-border);
+            border-radius: 14px;
+            padding: 10px 14px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            backdrop-filter: blur(12px);
+            gap: 10px;
+        }
+
+        .biz-icon-wrapper {
+            width: 44px;
+            height: 44px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            overflow: hidden;
+            border: 1px solid var(--panel-border);
+        }
+
+        .biz-icon {
+            width: 36px;
+            height: 36px;
+            object-fit: contain;
+        }
+
+        .item-info { flex: 1; }
+        .item-info h4 { font-size: 13px; margin-bottom: 2px; color: var(--text-white); }
+        .item-info p { font-size: 10px; color: var(--text-secondary); }
+
+        .item-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            align-items: flex-end;
+        }
+
+        .item-btn {
+            background: var(--swamp-btn-bg);
+            color: #ffffff;
+            border: 1px solid var(--swamp-btn-border);
+            padding: 6px 10px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+            box-shadow: 0 4px 12px rgba(85, 107, 47, 0.3);
+        }
+
+        .item-btn:hover { background: var(--swamp-btn-hover); }
+        .item-btn.secondary-btn {
+            background: #334155;
+            border-color: rgba(255, 255, 255, 0.1);
+            color: var(--text-white);
+            box-shadow: none;
+        }
+        .item-btn:active { opacity: 0.8; }
+        .item-btn:disabled {
+            background: #334155;
+            border-color: transparent;
+            color: #94a3b8;
+            box-shadow: none;
+            cursor: not-allowed;
+        }
+
+        .roulette-switcher {
+            display: flex;
+            gap: 8px;
+            width: 100%;
+            max-width: 340px;
+        }
+
+        .roulette-switch-btn {
+            flex: 1;
+            background: var(--panel-bg);
+            border: 1px solid var(--panel-border);
+            color: var(--text-secondary);
+            padding: 8px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .roulette-switch-btn.active {
+            background: #556B2F;
+            color: #ffffff;
+            border-color: #6B8E23;
+        }
+
+        .roulette-container {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            width: 100%;
+            max-width: 340px;
+            background: var(--panel-bg);
+            border: 1px solid var(--panel-border);
+            padding: 12px;
+            border-radius: 16px;
+            backdrop-filter: blur(12px);
+            text-align: center;
+        }
+
+        .roulette-container.active { display: flex; }
+
+        .wheel-wrapper {
+            position: relative;
+            width: 190px;
+            height: 190px;
+        }
+
+        .wheel {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 4px solid #6B8E23;
+            position: relative;
+            transition: transform 4s cubic-bezier(0.15, 0.85, 0.15, 1);
+            overflow: hidden;
+            box-shadow: 0 0 15px rgba(107, 142, 35, 0.4);
+            background: conic-gradient(
+                #1e293b 0deg 60deg,
+                #334155 60deg 120deg,
+                #1e293b 120deg 180deg,
+                #334155 180deg 240deg,
+                #1e293b 240deg 300deg,
+                #334155 300deg 360deg
+            );
+        }
+
+        .wheel-pointer {
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 8px solid transparent;
+            border-right: 8px solid transparent;
+            border-top: 16px solid #6B8E23;
+            z-index: 10;
+        }
+
+        .wheel-center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 34px;
+            height: 34px;
+            background: #556B2F;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            z-index: 5;
+            border: 1px solid #6B8E23;
+        }
+
+        .wheel-labels {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .wheel-label {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            font-size: 10px;
+            font-weight: 900;
+            color: #fff;
+            text-shadow: 0 1px 2px #000;
+            padding-top: 15px;
+        }
+
+        .w-l-1 { transform: rotate(30deg); }
+        .w-l-2 { transform: rotate(90deg); }
+        .w-l-3 { transform: rotate(150deg); }
+        .w-l-4 { transform: rotate(210deg); }
+        .w-l-5 { transform: rotate(270deg); }
+        .w-l-6 { transform: rotate(330deg); }
+
+        /* Стилі для Міні-гри */
+        .minigame-wrapper {
+            width: 100%;
+            max-width: 340px;
+            height: 380px;
+            background: var(--panel-bg);
+            border: 1px solid var(--panel-border);
+            border-radius: 16px;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(12px);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 10px;
+        }
+
+        .minigame-canvas-container {
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+            border-radius: 10px;
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        .mg-croc {
+            position: absolute;
+            bottom: 5px;
+            width: 60px;
+            height: 60px;
+            font-size: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: left 0.05s linear;
+        }
+
+        .mg-item {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .minigame-hud {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 12px;
+            font-weight: 700;
+            padding: 0 5px;
+        }
+
+        .minigame-controls {
+            display: flex;
+            gap: 10px;
+            margin-top: 8px;
+        }
+
+        .mg-btn {
+            flex: 1;
+            background: var(--swamp-btn-bg);
+            color: #fff;
+            border: 1px solid var(--swamp-btn-border);
+            padding: 12px;
+            border-radius: 12px;
+            font-size: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(85, 107, 47, 0.3);
+            text-align: center;
+        }
+
+        .mg-btn:active { opacity: 0.7; }
+
+        .mg-start-screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(18, 22, 34, 0.95);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            z-index: 20;
+            text-align: center;
+            padding: 20px;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-around;
+            background: rgba(18, 22, 34, 0.95);
+            border-top: 1px solid var(--panel-border);
+            padding: 8px 2px 10px 2px;
+            backdrop-filter: blur(15px);
+            overflow-x: auto;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 9px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: color 0.2s;
+            flex: 1;
+            min-width: 45px;
+        }
+
+        .nav-item.active { color: #6B8E23; }
+        .nav-icon { font-size: 16px; }
+
+        .click-pop {
+            position: absolute;
+            font-weight: 800;
+            font-size: 22px;
+            color: #6B8E23;
+            animation: floatUp 0.7s ease-out forwards;
+            pointer-events: none;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.6);
+        }
+
+        @keyframes floatUp {
+            0% { opacity: 1; transform: translateY(0) scale(1); }
+            100% { opacity: 0; transform: translateY(-70px) scale(1.2); }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="top-profile-row">
+            <div class="profile-card">
+                <div class="profile-avatar">🐊</div>
+                <div class="profile-info">
+                    <span class="profile-name" id="profileName">Prokop</span>
+                    <span class="profile-stage" id="levelBadge">Stage 1</span>
+                </div>
+            </div>
+
+            <div class="balances-wrapper">
+                <div class="balance-container">
+                    <div class="coin-icon">🪙</div>
+                    <div class="balance-score-group">
+                        <div class="balance-score" id="score">0</div>
+                        <div class="balance-sub" id="incomeSub">+0/год</div>
+                    </div>
+                </div>
+                <div class="balance-container">
+                    <div class="gem-icon">💎</div>
+                    <div class="balance-score" id="gems">0</div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="tab-content active" id="tab-tap">
+        <div class="character-wrapper" id="clickArea">
+            <img src="1790090929041.png" alt="Крокодил" class="character-img" id="characterImg">
+        </div>
+
+        <div class="energy-section">
+            <div class="energy-info">
+                <span class="energy-title">⚡ <span id="energyText">1000 / 1000</span></span>
+                <span class="energy-rate" id="energyRateText">+3 / сек</span>
+            </div>
+            <div class="energy-bar-container">
+                <div class="energy-bar-fill" id="energyFill"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="tab-content" id="tab-biz">
+        <div class="section-title">Ваші Бізнеси</div>
+        <div class="items-list">
+            <div class="item-card">
+                <div class="biz-icon-wrapper">
+                    <img src="png-transparent-paper-barn-farm-live-architectural-engineering-barn-angle-ribbon-building.png" alt="Ферма" class="biz-icon">
+                </div>
+                <div class="item-info">
+                    <h4 id="biz0Name">Ферма (Рівень 0)</h4>
+                    <p id="biz0Info">Дохід: 0 🪙/год | Каса: 0 🪙</p>
+                </div>
+                <div class="item-actions">
+                    <button class="item-btn" id="biz0UpgradeBtn" onclick="upgradeBusiness(0)">Покращити</button>
+                    <button class="item-btn secondary-btn" id="biz0ClaimBtn" onclick="claimBusiness(0)">Зняти</button>
+                </div>
+            </div>
+            <div class="item-card">
+                <div class="biz-icon-wrapper">
+                    <img src="pngtree-supermarket-clipart-cartoon-grocery-store-with-fruits-and-vegetables-vector-png-image_6825233.png" alt="Супермаркет" class="biz-icon">
+                </div>
+                <div class="item-info">
+                    <h4 id="biz1Name">Супермаркет (Рівень 0)</h4>
+                    <p id="biz1Info">Дохід: 0 🪙/год | Каса: 0 🪙</p>
+                </div>
+                <div class="item-actions">
+                    <button class="item-btn" id="biz1UpgradeBtn" onclick="upgradeBusiness(1)">Покращити</button>
+                    <button class="item-btn secondary-btn" id="biz1ClaimBtn" onclick="claimBusiness(1)">Зняти</button>
+                </div>
+            </div>
+            <div class="item-card">
+                <div class="biz-icon-wrapper">
+                    <img src="depositphotos_9136118-stock-illustration-car-wash.png" alt="Автомийка" class="biz-icon">
+                </div>
+                <div class="item-info">
+                    <h4 id="biz2Name">Автомийка (Рівень 0)</h4>
+                    <p id="biz2Info">Дохід: 0 🪙/год | Каса: 0 🪙</p>
+                </div>
+                <div class="item-actions">
+                    <button class="item-btn" id="biz2UpgradeBtn" onclick="upgradeBusiness(2)">Покращити</button>
+                    <button class="item-btn secondary-btn" id="biz2ClaimBtn" onclick="claimBusiness(2)">Зняти</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Вкладка Міні-гри -->
+    <div class="tab-content" id="tab-minigame">
+        <div class="section-title">Фарм-Гра (1 хв)</div>
+        <div class="minigame-wrapper">
+            <div class="minigame-hud">
+                <span>⏱️ Час: <span id="mgTimer">60</span>с</span>
+                <span>🪙 Зібрано: <span id="mgScore">0</span></span>
+            </div>
+
+            <div class="minigame-canvas-container" id="mgCanvas">
+                <div class="mg-croc" id="mgCroc" style="left: 135px;">🐊</div>
+                
+                <div class="mg-start-screen" id="mgStartScreen">
+                    <h3 style="font-size: 16px; color: var(--accent-gold);">Збирай скарби!</h3>
+                    <p style="font-size: 11px; color: var(--text-secondary);">Керуй крокодилом кнопками нижче. Лови монети та кристали, уникай бомб!</p>
+                    <button class="item-btn" onclick="startMiniGame()" style="padding: 10px 20px; font-size: 12px;">Почати гру</button>
+                </div>
+            </div>
+
+            <div class="minigame-controls">
+                <button class="mg-btn" ontouchstart="moveCroc('left')" onmousedown="moveCroc('left')">⬅️</button>
+                <button class="mg-btn" ontouchstart="moveCroc('right')" onmousedown="moveCroc('right')">➡️</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="tab-content" id="tab-boosts">
+        <div class="section-title">Покращення</div>
+        <div class="items-list">
+            <div class="item-card">
+                <div class="item-info">
+                    <h4>Подвійний клік</h4>
+                    <p>+1 монета за клік</p>
+                </div>
+                <button class="item-btn" id="buyMulticlickBtn" onclick="buyBoost('multiclick')">Купити</button>
+            </div>
+            <div class="item-card">
+                <div class="item-info">
+                    <h4>Потужне болото</h4>
+                    <p>Максимум енергії +500</p>
+                </div>
+                <button class="item-btn" id="buyMaxenergyBtn" onclick="buyBoost('maxenergy')">Купити</button>
+            </div>
+            <div class="item-card">
+                <div class="item-info">
+                    <h4>Швидке болото</h4>
+                    <p id="regenInfo">Відновлення: +3/сек</p>
+                </div>
+                <button class="item-btn" id="buyRegenBtn" onclick="buyBoost('regen')">Купити</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="tab-content" id="tab-shop">
+        <div class="section-title">Магазин Зірок ⭐</div>
+        <div class="items-list">
+            <div class="item-card">
+                <div class="item-info">
+                    <h4>Малий мішок кристалів</h4>
+                    <p>+50 💎 на баланс</p>
+                </div>
+                <button class="item-btn gem-btn" onclick="buyGemsInvoice(50, 25)">25 ⭐</button>
+            </div>
+            <div class="item-card">
+                <div class="item-info">
+                    <h4>Середній мішок кристалів</h4>
+                    <p>+150 💎 на баланс</p>
+                </div>
+                <button class="item-btn gem-btn" onclick="buyGemsInvoice(150, 65)">65 ⭐</button>
+            </div>
+            <div class="item-card">
+                <div class="item-info">
+                    <h4>Величезний скарб</h4>
+                    <p>+500 💎 на баланс</p>
+                </div>
+                <button class="item-btn gem-btn" onclick="buyGemsInvoice(500, 200)">200 ⭐</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="tab-content" id="tab-tasks">
+        <div class="section-title">Щоденні завдання</div>
+        <div class="items-list">
+            <div class="item-card">
+                <div class="item-info">
+                    <h4>Підписатися на Telegram</h4>
+                    <p>Нагорода: +5000 монет, +5 💎</p>
+                </div>
+                <button class="item-btn" id="subBtn" onclick="startTelegramTask()">Виконати</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="tab-content" id="tab-roulette">
+        <div class="section-title">Колесо Фортуни</div>
+        
+        <div class="roulette-switcher">
+            <button class="roulette-switch-btn active" onclick="switchRoulette('coin', this)">🪙 Монетна</button>
+            <button class="roulette-switch-btn" onclick="switchRoulette('gem', this)">💎 Кришталева</button>
+        </div>
+
+        <div class="roulette-container active" id="roulette-coin">
+            <p style="font-size: 11px; color: var(--text-secondary);">Ціна прокрутки: 7 000 🪙</p>
+            <div class="wheel-wrapper">
+                <div class="wheel-pointer"></div>
+                <div class="wheel" id="wheelCoin">
+                    <div class="wheel-labels">
+                        <div class="wheel-label w-l-1">30k 🪙</div>
+                        <div class="wheel-label w-l-2">25k 🪙</div>
+                        <div class="wheel-label w-l-3">20k 🪙</div>
+                        <div class="wheel-label w-l-4">15k 🪙</div>
+                        <div class="wheel-label w-l-5">10k 🪙</div>
+                        <div class="wheel-label w-l-6">7k 🪙</div>
+                    </div>
+                </div>
+                <div class="wheel-center">🪙</div>
+            </div>
+            <button class="item-btn" id="spinCoinBtn" onclick="spinCoinWheel()" style="width: 100%; padding: 8px; font-size: 12px;">Крутити (7 000 🪙)</button>
+        </div>
+
+        <div class="roulette-container" id="roulette-gem">
+            <p style="font-size: 11px; color: var(--text-secondary);">Ціна прокрутки: 15 💎</p>
+            <div class="wheel-wrapper">
+                <div class="wheel-pointer"></div>
+                <div class="wheel" id="wheelGem" style="border-color: #6B8E23;">
+                    <div class="wheel-labels">
+                        <div class="wheel-label w-l-1">30 💎</div>
+                        <div class="wheel-label w-l-2">25 💎</div>
+                        <div class="wheel-label w-l-3">20 💎</div>
+                        <div class="wheel-label w-l-4">15 💎</div>
+                        <div class="wheel-label w-l-5">10 💎</div>
+                        <div class="wheel-label w-l-6">5 💎</div>
+                    </div>
+                </div>
+                <div class="wheel-center">💎</div>
+            </div>
+            <button class="item-btn" id="spinGemBtn" onclick="spinGemWheel()" style="width: 100%; padding: 8px; font-size: 12px;">Крутити (15 💎)</button>
+        </div>
+    </div>
+
+    <nav>
+        <button class="nav-item active" onclick="switchTab('tap', this)">
+            <span class="nav-icon">🏠</span>
+            <span>Дім</span>
+        </button>
+        <button class="nav-item" onclick="switchTab('biz', this)">
+            <span class="nav-icon">🏪</span>
+            <span>Бізнеси</span>
+        </button>
+        <button class="nav-item" onclick="switchTab('minigame', this)">
+            <span class="nav-icon">🎮</span>
+            <span>Гра</span>
+        </button>
+        <button class="nav-item" onclick="switchTab('boosts', this)">
+            <span class="nav-icon">🚀</span>
+            <span>Бусти</span>
+        </button>
+        <button class="nav-item" onclick="switchTab('shop', this)">
+            <span class="nav-icon">⭐</span>
+            <span>Магазин</span>
+        </button>
+        <button class="nav-item" onclick="switchTab('tasks', this)">
+            <span class="nav-icon">📋</span>
+            <span>Завдання</span>
+        </button>
+        <button class="nav-item" onclick="switchTab('roulette', this)">
+            <span class="nav-icon">🎡</span>
+            <span>Рулетка</span>
+        </button>
+    </nav>
+
+    <script>
+        let tg = null;
+        try {
+            if (window.Telegram && window.Telegram.WebApp) {
+                tg = window.Telegram.WebApp;
+                tg.expand();
+                const user = tg.initDataUnsafe && tg.initDataUnsafe.user;
+                if (user && user.first_name) {
+                    document.getElementById('profileName').textContent = user.first_name;
+                }
+            }
+        } catch (e) {
+            console.log("Telegram WebApp не ініціалізовано");
+        }
+
+        let score = Number(localStorage.getItem('tabcoin_score')) || 0;
+        let gems = Number(localStorage.getItem('tabcoin_gems')) || 0;
+        let maxEnergy = Number(localStorage.getItem('tabcoin_maxEnergy')) || 1000;
+        
+        let savedEnergy = localStorage.getItem('tabcoin_energy');
+        let energy = savedEnergy !== null ? Number(savedEnergy) : maxEnergy;
+        
+        let clickPower = Number(localStorage.getItem('tabcoin_clickPower')) || 1;
+        let level = Number(localStorage.getItem('tabcoin_level')) || 1;
+        
+        let multiclickLevel = Number(localStorage.getItem('tabcoin_multiLevel')) || 0;
+        let maxenergyLevel = Number(localStorage.getItem('tabcoin_energyLevel')) || 0;
+        let regenLevel = Number(localStorage.getItem('tabcoin_regenLevel')) || 0;
+
+        const businessConfigs = [
+            { name: "Ферма", incomes: [0, 500, 1200, 2500, 5000, 10000], costs: [0, 20000, 60000, 150000, 400000] },
+            { name: "Супермаркет", incomes: [0, 800, 1800, 3500, 7000, 15000], costs: [0, 35000, 90000, 220000, 600000] },
+            { name: "Автомийка", incomes: [0, 1500, 3500, 7000, 14000, 30000], costs: [0, 70000, 180000, 450000, 1200000] }
+        ];
+
+        let bizLevels = [0, 0, 0];
+        let bizBalances = [0, 0, 0];
+        try {
+            let savedBizLvl = localStorage.getItem('tabcoin_bizLevels');
+            if (savedBizLvl) bizLevels = JSON.parse(savedBizLvl);
+            let savedBizBal = localStorage.getItem('tabcoin_bizBalances');
+            if (savedBizBal) bizBalances = JSON.parse(savedBizBal);
+        } catch(err) {
+            console.log("Помилка зчитування бізнесів");
+        }
+
+        const energyRegenRates = [3, 6, 10, 15, 25];
+        const regenPrices = [1000, 3000, 8000, 15000];
+        const boostPrices = [500, 700, 1000, 2000, 3000, 5000, 7500, 10000];
+
+        let taskStarted = localStorage.getItem('tabcoin_taskStarted') === 'true';
+        let telegramTaskDone = localStorage.getItem('tabcoin_tgDone') === 'true';
+        const energyCostPerClick = 5;
+
+        let lastTime = Number(localStorage.getItem('tabcoin_lastTime')) || Date.now();
+        let elapsedSeconds = Math.floor((Date.now() - lastTime) / 1000);
+        let currentRegenRate = energyRegenRates[Math.min(regenLevel, energyRegenRates.length - 1)];
+
+        if (elapsedSeconds > 3) {
+            let totalEarnedOffline = 0;
+            for (let i = 0; i < businessConfigs.length; i++) {
+                let lvl = bizLevels[i];
+                if (lvl > 0) {
+                    let hourlyInc = businessConfigs[i].incomes[lvl];
+                    let earned = Math.floor((elapsedSeconds / 3600) * hourlyInc);
+                    bizBalances[i] += earned;
+                    totalEarnedOffline += earned;
+                }
+            }
+            if (totalEarnedOffline > 0) {
+                setTimeout(() => {
+                    alert(`Поки ви були офлайн, ваші бізнеси прибили у касу загалом +${totalEarnedOffline.toLocaleString()} 🪙!`);
+                }, 500);
+            }
+        }
+
+        if (elapsedSeconds > 0 && energy < maxEnergy) {
+            energy = Math.min(maxEnergy, energy + (elapsedSeconds * currentRegenRate));
+        }
+
+        const scoreElement = document.getElementById('score');
+        const gemsElement = document.getElementById('gems');
+        const incomeSub = document.getElementById('incomeSub');
+        const energyText = document.getElementById('energyText');
+        const energyRateText = document.getElementById('energyRateText');
+        const energyFill = document.getElementById('energyFill');
+        const clickArea = document.getElementById('clickArea');
+        const levelBadge = document.getElementById('levelBadge');
+        const characterImg = document.getElementById('characterImg');
+        const buyMulticlickBtn = document.getElementById('buyMulticlickBtn');
+        const buyMaxenergyBtn = document.getElementById('buyMaxenergyBtn');
+        const buyRegenBtn = document.getElementById('buyRegenBtn');
+        const regenInfo = document.getElementById('regenInfo');
+
+        function getBoostPrice(boostLevel) {
+            if (boostLevel < boostPrices.length) return boostPrices[boostLevel];
+            return boostPrices[boostPrices.length - 1] + (boostLevel - boostPrices.length + 1) * 5000;
+        }
+
+        function saveGame() {
+            localStorage.setItem('tabcoin_score', score);
+            localStorage.setItem('tabcoin_gems', gems);
+            localStorage.setItem('tabcoin_energy', energy);
+            localStorage.setItem('tabcoin_maxEnergy', maxEnergy);
+            localStorage.setItem('tabcoin_clickPower', clickPower);
+            localStorage.setItem('tabcoin_level', level);
+            localStorage.setItem('tabcoin_multiLevel', multiclickLevel);
+            localStorage.setItem('tabcoin_energyLevel', maxenergyLevel);
+            localStorage.setItem('tabcoin_regenLevel', regenLevel);
+            localStorage.setItem('tabcoin_bizLevels', JSON.stringify(bizLevels));
+            localStorage.setItem('tabcoin_bizBalances', JSON.stringify(bizBalances));
+            localStorage.setItem('tabcoin_taskStarted', taskStarted);
+            localStorage.setItem('tabcoin_tgDone', telegramTaskDone);
+            localStorage.setItem('tabcoin_lastTime', Date.now());
+        }
+
+        function checkLevelProgression() {
+            if (score >= 500000) level = 5;
+            else if (score >= 340000) level = 4;
+            else if (score >= 170000) level = 3;
+            else if (score >= 70000) level = 2;
+            else level = 1;
+            updateVisuals();
+        }
+
+        function updateVisuals() {
+            scoreElement.textContent = Math.floor(score);
+            gemsElement.textContent = gems;
+            
+            let totalHourlyIncome = 0;
+            for(let i = 0; i < businessConfigs.length; i++) {
+                let lvl = bizLevels[i];
+                if(lvl > 0) totalHourlyIncome += businessConfigs[i].incomes[lvl];
+            }
+            incomeSub.textContent = `+${totalHourlyIncome.toLocaleString()}/год`;
+
+            currentRegenRate = energyRegenRates[Math.min(regenLevel, energyRegenRates.length - 1)];
+
+            energyText.textContent = `${Math.floor(energy)} / ${maxEnergy}`;
+            energyRateText.textContent = `+${currentRegenRate}/сек`;
+            energyFill.style.width = `${(energy / maxEnergy) * 100}%`;
+            
+            buyMulticlickBtn.textContent = `Купити (${getBoostPrice(multiclickLevel)} 🪙)`;
+            buyMaxenergyBtn.textContent = `Купити (${getBoostPrice(maxenergyLevel)} 🪙)`;
+
+            if (regenLevel < regenPrices.length) {
+                regenInfo.textContent = `Відновлення: +${currentRegenRate}/сек`;
+                buyRegenBtn.textContent = `Купити (${regenPrices[regenLevel].toLocaleString()} 🪙)`;
+                buyRegenBtn.disabled = false;
+            } else {
+                regenInfo.textContent = `Відновлення: +${currentRegenRate}/сек (Максимум)`;
+                buyRegenBtn.textContent = 'Максимум';
+                buyRegenBtn.disabled = true;
+            }
+
+            for(let i = 0; i < businessConfigs.length; i++) {
+                let lvl = bizLevels[i];
+                let nameEl = document.getElementById(`biz${i}Name`);
+                let infoEl = document.getElementById(`biz${i}Info`);
+                let upBtn = document.getElementById(`biz${i}UpgradeBtn`);
+                let claimBtn = document.getElementById(`biz${i}ClaimBtn`);
+
+                let currentInc = businessConfigs[i].incomes[lvl];
+                let currentBox = Math.floor(bizBalances[i]);
+
+                nameEl.textContent = `${businessConfigs[i].name} (Рівень ${lvl}/5)`;
+                infoEl.textContent = `Дохід: ${currentInc.toLocaleString()} 🪙/год | Каса: ${currentBox.toLocaleString()} 🪙`;
+
+                if(lvl < 5) {
+                    upBtn.textContent = `Купити (${businessConfigs[i].costs[lvl + 1].toLocaleString()} 🪙)`;
+                    upBtn.disabled = false;
+                } else {
+                    upBtn.textContent = `Максимум`;
+                    upBtn.disabled = true;
+                }
+                claimBtn.disabled = (currentBox <= 0);
+            }
+
+            if (level >= 5) { levelBadge.textContent = 'Stage 5'; characterImg.src = '1790166306471.png'; }
+            else if (level === 4) { levelBadge.textContent = 'Stage 4'; characterImg.src = '1790165750453.png'; }
+            else if (level === 3) { levelBadge.textContent = 'Stage 3'; characterImg.src = '1790163627383.png'; }
+            else if (level === 2) { levelBadge.textContent = 'Stage 2'; characterImg.src = '1790159498394.png'; }
+            else { levelBadge.textContent = 'Stage 1'; characterImg.src = '1790090929041.png'; }
+        }
+
+        function upgradeBusiness(index) {
+            let currentLvl = bizLevels[index];
+            if (currentLvl >= 5) return;
+            let cost = businessConfigs[index].costs[currentLvl + 1];
+            if (score >= cost) {
+                score -= cost;
+                bizLevels[index]++;
+                updateVisuals();
+                saveGame();
+                alert(`Ви успішно покращили "${businessConfigs[index].name}" до рівня ${bizLevels[index]}!`);
+            } else {
+                alert(`Недостатньо монет! Потрібно ${cost.toLocaleString()} 🪙`);
+            }
+        }
+
+        function claimBusiness(index) {
+            let amount = Math.floor(bizBalances[index]);
+            if (amount > 0) {
+                score += amount;
+                bizBalances[index] = 0;
+                updateVisuals();
+                saveGame();
+                alert(`З каси бізнесу забрано +${amount.toLocaleString()} 🪙!`);
+            }
+        }
+
+        function buyGemsInvoice(gemAmount, starsPrice) {
+            const botUsername = "tabcoin1_bot"; 
+            const invoiceUrl = `https://t.me/${botUsername}?start=buy_${gemAmount}_gems_${starsPrice}_stars`;
+            if (tg && tg.openTelegramLink) tg.openTelegramLink(invoiceUrl);
+            else window.open(invoiceUrl, '_blank');
+        }
+
+        checkLevelProgression();
+
+        if (telegramTaskDone) {
+            const subBtn = document.getElementById('subBtn');
+            subBtn.textContent = 'Виконано';
+            subBtn.disabled = true;
+        } else if (taskStarted) {
+            const subBtn = document.getElementById('subBtn');
+            subBtn.textContent = 'Перевірити';
+            subBtn.setAttribute('onclick', 'checkTelegramTask()');
+        }
+
+        clickArea.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            for (let i = 0; i < e.changedTouches.length; i++) {
+                if (energy >= energyCostPerClick) {
+                    score += clickPower;
+                    energy -= energyCostPerClick;
+                    showFloatingTextAt(e.changedTouches[i].clientX, e.changedTouches[i].clientY);
+                }
+            }
+            checkLevelProgression();
+            saveGame();
+        }, { passive: false });
+
+        clickArea.addEventListener('click', (e) => {
+            if (energy >= energyCostPerClick) {
+                score += clickPower;
+                energy -= energyCostPerClick;
+                showFloatingTextAt(e.clientX, e.clientY);
+            }
+            checkLevelProgression();
+            saveGame();
+        });
+
+        setInterval(() => {
+            if (energy < maxEnergy) energy = Math.min(maxEnergy, energy + currentRegenRate);
+            for (let i = 0; i < businessConfigs.length; i++) {
+                if (bizLevels[i] > 0) bizBalances[i] += (businessConfigs[i].incomes[bizLevels[i]] / 3600);
+            }
+            updateVisuals();
+            saveGame();
+        }, 1000);
+
+        window.addEventListener('beforeunload', () => saveGame());
+
+        function showFloatingTextAt(clientX, clientY) {
+            const rect = clickArea.getBoundingClientRect();
+            const popup = document.createElement('div');
+            popup.className = 'click-pop';
+            popup.textContent = `+${clickPower}`;
+            popup.style.left = `${clientX - rect.left}px`;
+            popup.style.top = `${clientY - rect.top}px`;
+            clickArea.appendChild(popup);
+            setTimeout(() => popup.remove(), 700);
+        }
+
+        function switchTab(tabId, element) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+            document.getElementById(`tab-${tabId}`).classList.add('active');
+            element.classList.add('active');
+        }
+
+        function switchRoulette(type, element) {
+            document.querySelectorAll('.roulette-container').forEach(cont => cont.classList.remove('active'));
+            document.querySelectorAll('.roulette-switch-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(`roulette-${type}`).classList.add('active');
+            element.classList.add('active');
+        }
+
+        function buyBoost(type) {
+            if (type === 'multiclick') {
+                let cost = getBoostPrice(multiclickLevel);
+                if (score >= cost) {
+                    score -= cost;
+                    multiclickLevel++;
+                    clickPower += 1;
+                    alert('Буст кліка успішно куплено!');
+                    checkLevelProgression();
+                    saveGame();
+                } else alert('Недостатньо монет!');
+            } else if (type === 'maxenergy') {
+                let cost = getBoostPrice(maxenergyLevel);
+                if (score >= cost) {
+                    score -= cost;
+                    maxenergyLevel++;
+                    maxEnergy += 500;
+                    energy = maxEnergy;
+                    alert('Максимум енергії збільшено!');
+                    checkLevelProgression();
+                    saveGame();
+                } else alert('Недостатньо монет!');
+            } else if (type === 'regen') {
+                if (regenLevel < regenPrices.length) {
+                    let cost = regenPrices[regenLevel];
+                    if (score >= cost) {
+                        score -= cost;
+                        regenLevel++;
+                        updateVisuals();
+                        alert('Швидкість відновлення енергії успішно покращено!');
+                        checkLevelProgression();
+                        saveGame();
+                    } else alert(`Недостатньо монет! Потрібно ${cost.toLocaleString()} 🪙`);
+                }
+            }
+        }
+
+        function startTelegramTask() {
+            window.open('https://t.me/tabcoin_bot1', '_blank');
+            const btn = document.getElementById('subBtn');
+            btn.textContent = 'Перевірити';
+            taskStarted = true;
+            btn.setAttribute('onclick', 'checkTelegramTask()');
+            saveGame();
+        }
+
+        function checkTelegramTask() {
+            if (taskStarted) {
+                score += 5000;
+                gems += 5;
+                telegramTaskDone = true;
+                const btn = document.getElementById('subBtn');
+                btn.textContent = 'Виконано';
+                btn.disabled = true;
+                checkLevelProgression();
+                saveGame();
+                alert('Завдання виконано! Отримано +5000 монет та +5 💎.');
+            }
+        }
+
+        // --- ЛОГІКА МІНІ-ГРИ ---
+        let mgActive = false;
+        let mgTimerVal = 60;
+        let mgScoreVal = 0;
+        let mgCrystalsVal = 0;
+        let mgBombsVal = 0;
+        let mgCrocX = 135; 
+        let mgInterval = null;
+        let mgSpawnInterval = null;
+        let mgGameLoopInterval = null;
+        let fallingItems = [];
+
+        function moveCroc(dir) {
+            if (!mgActive) return;
+            const container = document.getElementById('mgCanvas');
+            if (!container) return;
+            const containerWidth = container.clientWidth;
+            const step = 35;
+            if (dir === 'left') {
+                mgCrocX = Math.max(0, mgCrocX - step);
+            } else {
+                mgCrocX = Math.min(containerWidth - 60, mgCrocX + step);
+            }
+            const crocEl = document.getElementById('mgCroc');
+            if (crocEl) crocEl.style.left = `${mgCrocX}px`;
+        }
+
+        function startMiniGame() {
+            const startScreen = document.getElementById('mgStartScreen');
+            if (startScreen) startScreen.style.display = 'none';
+            
+            mgActive = true;
+            mgTimerVal = 60;
+            mgScoreVal = 0;
+            mgCrystalsVal = 0;
+            mgBombsVal = 0;
+            mgCrocX = 135;
+            
+            const crocEl = document.getElementById('mgCroc');
+            if (crocEl) crocEl.style.left = `${mgCrocX}px`;
+            
+            document.getElementById('mgTimer').textContent = mgTimerVal;
+            document.getElementById('mgScore').textContent = mgScoreVal;
+
+            document.querySelectorAll('.mg-item').forEach(el => el.remove());
+            fallingItems = [];
+
+            if (mgInterval) clearInterval(mgInterval);
+            if (mgSpawnInterval) clearInterval(mgSpawnInterval);
+            if (mgGameLoopInterval) clearInterval(mgGameLoopInterval);
+
+            mgInterval = setInterval(() => {
+                mgTimerVal--;
+                const timerEl = document.getElementById('mgTimer');
+                if (timerEl) timerEl.textContent = mgTimerVal;
+
+                if (mgTimerVal <= 0) {
+                    endMiniGame();
+                }
+            }, 1000);
+
+            mgSpawnInterval = setInterval(() => {
+                if (mgActive) spawnItem();
+            }, 600);
+
+            mgGameLoopInterval = setInterval(() => {
+                if (!mgActive) return;
+                const container = document.getElementById('mgCanvas');
+                if (!container) return;
+                const containerHeight = container.clientHeight;
+                
+                for (let i = fallingItems.length - 1; i >= 0; i--) {
+                    let item = fallingItems[i];
+                    item.y += 4;
+                    item.el.style.top = `${item.y}px`;
+
+                    if (item.y >= containerHeight - 65 && item.y <= containerHeight - 15) {
+                        if (item.x + 25 >= mgCrocX && item.x <= mgCrocX + 50) {
+                            if (item.type === 'coin') {
+                                mgScoreVal += item.value;
+                            } else if (item.type === 'gem') {
+                                mgCrystalsVal += item.value;
+                            } else if (item.type === 'bomb') {
+                                mgBombsVal += 1;
+                                mgScoreVal = Math.max(0, mgScoreVal - 500);
+                            }
+                            const scoreEl = document.getElementById('mgScore');
+                            if (scoreEl) scoreEl.textContent = mgScoreVal;
+                            
+                            item.el.remove();
+                            fallingItems.splice(i, 1);
+                            continue;
+                        }
+                    }
+
+                    if (item.y > containerHeight) {
+                        item.el.remove();
+                        fallingItems.splice(i, 1);
+                    }
+                }
+            }, 30);
+        }
+
+        function spawnItem() {
+            const container = document.getElementById('mgCanvas');
+            if (!container) return;
+            const containerWidth = container.clientWidth;
+            const x = Math.random() * (containerWidth - 30);
+            
+            const randType = Math.random();
+            let type, value, icon;
+
+            if (randType < 0.15) {
+                type = 'gem';
+                value = 1;
+                icon = '💎';
+            } else if (randType < 0.35) {
+                type = 'bomb';
+                value = 500;
+                icon = '💣';
+            } else {
+                type = 'coin';
+                const coinVariants = [10, 50, 100, 300];
+                value = coinVariants[Math.floor(Math.random() * coinVariants.length)];
+                icon = '🪙';
+            }
+
+            const el = document.createElement('div');
+            el.className = 'mg-item';
+            el.textContent = icon;
+            el.style.left = `${x}px`;
+            el.style.top = `0px`;
+            container.appendChild(el);
+
+            fallingItems.push({ el, x, y: 0, type, value });
+        }
+
+        function endMiniGame() {
+            mgActive = false;
+            if (mgInterval) clearInterval(mgInterval);
+            if (mgSpawnInterval) clearInterval(mgSpawnInterval);
+            if (mgGameLoopInterval) clearInterval(mgGameLoopInterval);
+
+            score += mgScoreVal;
+            gems += mgCrystalsVal;
+            updateVisuals();
+            checkLevelProgression();
+            saveGame();
+
+            const startScreen = document.getElementById('mgStartScreen');
+            if (startScreen) {
+                startScreen.style.display = 'flex';
+                startScreen.innerHTML = `
+                    <h3 style="font-size: 18px; color: var(--accent-gold); margin-bottom: 5px;">Гра закінчена! 🎉</h3>
+                    <div style="font-size: 13px; text-align: left; background: rgba(0,0,0,0.4); padding: 12px; border-radius: 10px; width: 100%; max-width: 260px; line-height: 1.6;">
+                        <p>🪙 Ви заробили: <b>+${mgScoreVal.toLocaleString()}</b> монет</p>
+                        <p>💎 Кристалів: <b>+${mgCrystalsVal}</b></p>
+                        <p>💣 І зловили бомб: <b>${mgBombsVal}</b></p>
+                    </div>
+                    <button class="item-btn" onclick="startMiniGame()" style="padding: 10px 20px; font-size: 12px; margin-top: 5px;">Зіграти знову</button>
+                `;
+            }
+
+            document.querySelectorAll('.mg-item').forEach(el => el.remove());
+            fallingItems = [];
+        }
+
+        window.addEventListener('keydown', (e) => {
+            if (!mgActive) return;
+            if (e.key === 'ArrowLeft') moveCroc('left');
+            if (e.key === 'ArrowRight') moveCroc('right');
+        });
+
+        // --- КОЛЕСО ФОРТУНИ ---
+        const coinRoulettePrizes = [
+            { text: "30k 🪙", gems: 0, coins: 30000, chance: 0.10 },
+            { text: "25k 🪙", gems: 0, coins: 25000, chance: 0.15 },
+            { text: "20k 🪙", gems: 0, coins: 20000, chance: 0.30 },
+            { text: "15k 🪙", gems: 0, coins: 15000, chance: 0.50 },
+            { text: "10k 🪙", gems: 0, coins: 10000, chance: 0.60 },
+            { text: "7k 🪙",  gems: 0, coins: 7000,  chance: 0.60 }
+        ];
+
+        const gemRoulettePrizes = [
+            { text: "30💎", gems: 30, coins: 0, chance: 0.10 },
+            { text: "25💎", gems: 25, coins: 0, chance: 0.15 },
+            { text: "20💎", gems: 20, coins: 0, chance: 0.30 },
+            { text: "15💎", gems: 15, coins: 0, chance: 0.50 },
+            { text: "10💎", gems: 10, coins: 0, chance: 0.60 },
+            { text: "5💎",  gems: 5,  coins: 0, chance: 0.60 }
+        ];
+
+        function getWeightedRandomIndex(prizes) {
+            const totalWeight = prizes.reduce((sum, item) => sum + item.chance, 0);
+            let randomNum = Math.random() * totalWeight;
+            for (let i = 0; i < prizes.length; i++) {
+                if (randomNum < prizes[i].chance) return i;
+                randomNum -= prizes[i].chance;
+            }
+            return 0;
+        }
+
+        let coinRotation = 0;
+        function spinCoinWheel() {
+            const cost = 7000;
+            if (score < cost) {
+                alert('Недостатньо монет! Потрібно 7 000 🪙');
+                return;
+            }
+
+            score -= cost;
+            checkLevelProgression();
+            saveGame();
+
+            const spinBtn = document.getElementById('spinCoinBtn');
+            if (spinBtn) spinBtn.disabled = true;
+
+            const prizeIndex = getWeightedRandomIndex(coinRoulettePrizes);
+            const totalItems = coinRoulettePrizes.length;
+            const angleStep = 360 / totalItems;
+            
+            const targetSectorCenter = prizeIndex * angleStep + angleStep / 2;
+            const extraSpins = 360 * 7;
+            const currentMod = coinRotation % 360;
+            coinRotation += extraSpins + (360 - currentMod) + (360 - targetSectorCenter);
+            
+            document.getElementById('wheelCoin').style.transform = `rotate(${coinRotation}deg)`;
+
+            setTimeout(() => {
+                const wonCoins = coinRoulettePrizes[prizeIndex].coins;
+                score += wonCoins;
+                alert(`Вітаємо! Ви виграли ${wonCoins.toLocaleString()} 🪙!`);
+                checkLevelProgression();
+                updateVisuals();
+                saveGame();
+                if (spinBtn) spinBtn.disabled = false;
+            }, 4000);
+        }
+
+        let gemRotation = 0;
+        function spinGemWheel() {
+            const cost = 15;
+            if (gems < cost) {
+                alert('Недостатня кількість кристалів! Потрібно 15 💎');
+                return;
+            }
+
+            gems -= cost;
+            updateVisuals();
+            saveGame();
+
+            const spinBtn = document.getElementById('spinGemBtn');
+            if (spinBtn) spinBtn.disabled = true;
+
+            const prizeIndex = getWeightedRandomIndex(gemRoulettePrizes);
+            const totalItems = gemRoulettePrizes.length;
+            const angleStep = 360 / totalItems;
+            
+            const targetSectorCenter = prizeIndex * angleStep + angleStep / 2;
+            const extraSpins = 360 * 7;
+            const currentMod = gemRotation % 360;
+            gemRotation += extraSpins + (360 - currentMod) + (360 - targetSectorCenter);
+            
+            document.getElementById('wheelGem').style.transform = `rotate(${gemRotation}deg)`;
+
+            setTimeout(() => {
+                const wonGems = gemRoulettePrizes[prizeIndex].gems;
+                gems += wonGems;
+                alert(`Вітаємо! Ви виграли ${wonGems} 💎!`);
+                checkLevelProgression();
+                updateVisuals();
+                saveGame();
+                if (spinBtn) spinBtn.disabled = false;
+            }, 4000);
+        }
+    </script>
+</body>
+</html>
