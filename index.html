@@ -650,11 +650,6 @@
 </head>
 <body>
 
-    <!-- Вбудований аудіотрек (не потребує окремих файлів) -->
-    <audio id="bgMusic" loop>
-        <source src="data:audio/mp3;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU2LjQwLjEwMQAAAAAAAAAAAAAAJElkMyUAAAANAAADVGhpc2lzYQAAAP/7kGQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEluZm8AAAAPAAAAWQAAAHgA3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3" type="audio/mp3">
-    </audio>
-
     <div class="level-modal-overlay" id="levelModalOverlay">
         <div class="level-modal">
             <img id="modalImg" src="" alt="Рівень">
@@ -911,35 +906,80 @@
             console.log("Telegram WebApp не ініціалізовано");
         }
 
-        // Керування музикою
+        // --- ІГРОВИЙ СИНТЕЗАТОР МУЗИКИ (Web Audio API) ---
+        let audioCtx = null;
         let isMusicPlaying = false;
-        const bgMusic = document.getElementById('bgMusic');
+        let musicTimer = null;
         const musicToggleBtn = document.getElementById('musicToggleBtn');
-        bgMusic.volume = 0.4;
+
+        // Послідовність нот для приємної аркадної мелодії
+        const melodyNotes = [
+            261.63, 329.63, 392.00, 523.25, // C4, E4, G4, C5
+            392.00, 329.63, 293.66, 349.23, // G4, E4, D4, F4
+            220.00, 261.63, 329.63, 440.00, // A3, C4, E4, A4
+            329.63, 293.66, 246.94, 261.63  // E4, D4, B3, C4
+        ];
+        let currentNoteIndex = 0;
+
+        function startMusicSynth() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+
+            if (musicTimer) clearInterval(musicTimer);
+
+            musicTimer = setInterval(() => {
+                if (!isMusicPlaying || !audioCtx) return;
+
+                const osc = audioCtx.createOscillator();
+                const gainNode = audioCtx.createGain();
+
+                osc.type = 'sine'; // М'який приємний звук
+                osc.frequency.setValueAtTime(melodyNotes[currentNoteIndex], audioCtx.currentTime);
+
+                // Гучність (тиха фонова)
+                gainNode.gain.setValueAtTime(0.03, audioCtx.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.45);
+
+                osc.connect(gainNode);
+                gainNode.connect(audioCtx.destination);
+
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.5);
+
+                currentNoteIndex = (currentNoteIndex + 1) % melodyNotes.length;
+            }, 450); // Швидкість нот
+        }
+
+        function stopMusicSynth() {
+            isMusicPlaying = false;
+            if (musicTimer) {
+                clearInterval(musicTimer);
+                musicTimer = null;
+            }
+            musicToggleBtn.textContent = '🔇';
+        }
 
         function toggleMusic() {
             if (isMusicPlaying) {
-                bgMusic.pause();
-                isMusicPlaying = false;
-                musicToggleBtn.textContent = '🔇';
+                stopMusicSynth();
             } else {
-                bgMusic.play().then(() => {
-                    isMusicPlaying = true;
-                    musicToggleBtn.textContent = '🎵';
-                }).catch(error => {
-                    console.log("Автозапуск заблоковано:", error);
-                });
+                isMusicPlaying = true;
+                musicToggleBtn.textContent = '🎵';
+                startMusicSynth();
             }
         }
 
-        // Автоматично запускати музику при першому кліку на екран (щоб обійти обмеження мобільних браузерів)
+        // Автоматичний старт при першому кліку на екран (щоб обійти блокування браузерів)
         document.body.addEventListener('click', function initAudioOnFirstClick() {
-            if (!isMusicPlaying && bgMusic.paused) {
-                bgMusic.play().then(() => {
-                    isMusicPlaying = true;
-                    musicToggleBtn.textContent = '🎵';
-                    document.body.removeEventListener('click', initAudioOnFirstClick);
-                }).catch(e => {});
+            if (!isMusicPlaying) {
+                isMusicPlaying = true;
+                musicToggleBtn.textContent = '🎵';
+                startMusicSynth();
+                document.body.removeEventListener('click', initAudioOnFirstClick);
             }
         }, { once: false });
 
