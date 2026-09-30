@@ -9,10 +9,10 @@
     <style>
         :root {
             --bg-dark: #121622;
-            --panel-bg: rgba(22, 27, 39, 0.85);
+            --panel-bg: rgba(22, 27, 39, 0.88);
             --panel-border: rgba(255, 255, 255, 0.08);
-            --accent-gold: #f59e0b;
-            --accent-gold-gradient: linear-gradient(135deg, #fbbf24, #d97706);
+            --accent-gold: #52796f; /* Болотно-зелений акцент */
+            --accent-gold-gradient: linear-gradient(135deg, #688f82, #3a5a40); /* Болотно-зелений градієнт */
             --accent-gem: #38bdf8;
             --text-white: #ffffff;
             --text-secondary: #94a3b8;
@@ -257,7 +257,7 @@
             border-radius: 6px;
             width: 100%;
             transition: width 0.2s ease;
-            box-shadow: 0 0 10px rgba(245, 158, 11, 0.5);
+            box-shadow: 0 0 10px rgba(82, 121, 111, 0.5);
         }
 
         .section-title {
@@ -285,20 +285,21 @@
         .item-card {
             background: var(--panel-bg);
             border: 1px solid var(--panel-border);
-            border-radius: 14px;
+            border-radius: 16px;
             padding: 12px 16px;
             display: flex;
             align-items: center;
             justify-content: space-between;
             backdrop-filter: blur(12px);
             gap: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
         }
 
         .business-img {
             width: 42px;
             height: 42px;
             object-fit: contain;
-            border-radius: 8px;
+            border-radius: 10px;
             background: rgba(255, 255, 255, 0.05);
             padding: 3px;
         }
@@ -320,26 +321,31 @@
 
         .item-btn {
             background: var(--accent-gold-gradient);
-            color: #1e1b4b;
+            color: #ffffff;
             border: none;
-            padding: 8px 14px;
-            border-radius: 10px;
+            padding: 9px 16px;
+            border-radius: 14px;
             font-weight: 700;
             font-size: 12px;
             cursor: pointer;
-            transition: opacity 0.2s;
+            transition: all 0.2s ease;
             white-space: nowrap;
-            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+            box-shadow: 0 4px 12px rgba(82, 121, 111, 0.35);
         }
 
         .item-btn.gem-btn {
             background: linear-gradient(135deg, #38bdf8, #0284c7);
             color: #ffffff;
-            box-shadow: 0 4px 12px rgba(56, 189, 248, 0.3);
+            box-shadow: 0 4px 12px rgba(56, 189, 248, 0.35);
+        }
+
+        .item-btn:hover {
+            transform: translateY(-1px);
         }
 
         .item-btn:active {
-            opacity: 0.8;
+            transform: scale(0.95);
+            opacity: 0.9;
         }
 
         .item-btn:disabled {
@@ -347,6 +353,7 @@
             color: #94a3b8;
             box-shadow: none;
             cursor: not-allowed;
+            transform: none;
         }
 
         .roulette-switcher {
@@ -361,8 +368,8 @@
             background: var(--panel-bg);
             border: 1px solid var(--panel-border);
             color: var(--text-secondary);
-            padding: 8px;
-            border-radius: 12px;
+            padding: 10px;
+            border-radius: 14px;
             font-weight: 600;
             font-size: 12px;
             cursor: pointer;
@@ -371,8 +378,9 @@
 
         .roulette-switch-btn.active {
             background: var(--accent-gold);
-            color: #1e1b4b;
+            color: #ffffff;
             border-color: var(--accent-gold);
+            box-shadow: 0 4px 12px rgba(82, 121, 111, 0.3);
         }
 
         .roulette-container {
@@ -384,10 +392,11 @@
             max-width: 340px;
             background: var(--panel-bg);
             border: 1px solid var(--panel-border);
-            padding: 12px;
-            border-radius: 16px;
+            padding: 14px;
+            border-radius: 18px;
             backdrop-filter: blur(12px);
             text-align: center;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
         }
 
         .roulette-container.active {
@@ -396,31 +405,33 @@
 
         .wheel-wrapper {
             position: relative;
-            width: 190px;
-            height: 190px;
+            width: 210px;
+            height: 210px;
         }
 
         .wheel {
             width: 100%;
             height: 100%;
             border-radius: 50%;
-            border: 4px solid var(--accent-gold);
+            border: 5px solid #688f82;
             position: relative;
             transition: transform 4s cubic-bezier(0.15, 0.85, 0.15, 1);
             overflow: hidden;
-            box-shadow: 0 0 15px rgba(245, 158, 11, 0.4);
+            box-shadow: 0 0 20px rgba(82, 121, 111, 0.6);
+            background: #1e293b;
         }
 
         .wheel-pointer {
             position: absolute;
-            top: -12px;
+            top: -14px;
             left: 50%;
             transform: translateX(-50%);
             width: 0;
             height: 0;
-            border-left: 8px solid transparent;
-            border-right: 8px solid transparent;
-            border-top: 16px solid var(--accent-gold);
+            border-left: 9px solid transparent;
+            border-right: 9px solid transparent;
+            border-top: 18px solid #ffffff;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
             z-index: 10;
         }
 
@@ -429,15 +440,17 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 34px;
-            height: 34px;
-            background: var(--accent-gold);
+            width: 38px;
+            height: 38px;
+            background: var(--accent-gold-gradient);
+            border: 2px solid #ffffff;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 14px;
+            font-size: 15px;
             z-index: 5;
+            box-shadow: 0 0 10px rgba(0,0,0,0.5);
         }
 
         /* Нижня панель навігації */
@@ -477,7 +490,7 @@
             position: absolute;
             font-weight: 800;
             font-size: 22px;
-            color: var(--accent-gold);
+            color: #688f82;
             animation: floatUp 0.7s ease-out forwards;
             pointer-events: none;
             text-shadow: 0 2px 4px rgba(0,0,0,0.6);
@@ -628,26 +641,6 @@
                 </div>
                 <button class="item-btn" id="subBtn" onclick="startTelegramTask()">Виконати</button>
             </div>
-            <div class="item-card">
-                <div class="item-info">
-                    <h4>Друг натапав 10к монет</h4>
-                    <p id="refProgress">Прогрес: 0 / 10 000</p>
-                </div>
-                <button class="item-btn" id="refBtn" onclick="checkReferralProgress()">Перевірити</button>
-            </div>
-        </div>
-    </div>
-
-    <div class="tab-content" id="tab-friends">
-        <div class="section-title">Реферальна система</div>
-        <div class="items-list">
-            <div class="item-card">
-                <div class="item-info">
-                    <h4>Запросити друга</h4>
-                    <p>Отримайте по 2500 монет і 2 💎</p>
-                </div>
-                <button class="item-btn" onclick="inviteFriend()">Поділитися</button>
-            </div>
         </div>
     </div>
 
@@ -665,36 +658,16 @@
                 <div class="wheel-pointer"></div>
                 <div class="wheel" id="wheelCoin"></div>
             </div>
-            <button class="item-btn" id="spinCoinBtn" onclick="spinCoinWheel()" style="width: 100%; padding: 8px; font-size: 12px;">Крутити (7 000 🪙)</button>
+            <button class="item-btn" id="spinCoinBtn" onclick="spinCoinWheel()" style="width: 100%; padding: 10px; font-size: 12px;">Крутити (7 000 🪙)</button>
         </div>
 
         <div class="roulette-container" id="roulette-gem">
             <p style="font-size: 11px; color: var(--text-secondary);">Ціна прокрутки: 15 💎</p>
             <div class="wheel-wrapper">
                 <div class="wheel-pointer"></div>
-                <div class="wheel" id="wheelGem" style="border-color: var(--accent-gem);"></div>
+                <div class="wheel" id="wheelGem" style="border-color: #38bdf8;"></div>
             </div>
-            <button class="item-btn" id="spinGemBtn" onclick="spinGemWheel()" style="width: 100%; padding: 8px; font-size: 12px; background: linear-gradient(135deg, #38bdf8, #0284c7); color: #fff;">Крутити (15 💎)</button>
-        </div>
-    </div>
-
-    <div class="tab-content" id="tab-exchange">
-        <div class="section-title">Обмін валют</div>
-        <div class="items-list">
-            <div class="item-card">
-                <div class="item-info">
-                    <h4>Монети на Кристали</h4>
-                    <p>500 000 🪙 ➔ 20 💎</p>
-                </div>
-                <button class="item-btn" onclick="exchangeCoinsToGems()">Обміняти</button>
-            </div>
-            <div class="item-card">
-                <div class="item-info">
-                    <h4>Кристали на Монети</h4>
-                    <p>10 💎 ➔ 50 000 🪙</p>
-                </div>
-                <button class="item-btn gem-btn" onclick="exchangeGemsToCoins()">Обміняти</button>
-            </div>
+            <button class="item-btn" id="spinGemBtn" onclick="spinGemWheel()" style="width: 100%; padding: 10px; font-size: 12px; background: linear-gradient(135deg, #38bdf8, #0284c7); color: #fff;">Крутити (15 💎)</button>
         </div>
     </div>
 
@@ -719,17 +692,9 @@
             <span class="nav-icon">📋</span>
             <span>Завдання</span>
         </button>
-        <button class="nav-item" onclick="switchTab('friends', this)">
-            <span class="nav-icon">👥</span>
-            <span>Друзі</span>
-        </button>
         <button class="nav-item" onclick="switchTab('roulette', this)">
             <span class="nav-icon">🎡</span>
             <span>Рулетка</span>
-        </button>
-        <button class="nav-item" onclick="switchTab('exchange', this)">
-            <span class="nav-icon">🔄</span>
-            <span>Обмін</span>
         </button>
     </nav>
 
@@ -778,7 +743,6 @@
 
         let taskStarted = localStorage.getItem('tabcoin_taskStarted') === 'true';
         let telegramTaskDone = localStorage.getItem('tabcoin_tgDone') === 'true';
-        let refTaskDone = localStorage.getItem('tabcoin_refDone') === 'true';
 
         const energyCostPerClick = 5;
 
@@ -848,7 +812,6 @@
             localStorage.setItem('tabcoin_biz3Level', biz3Level);
             localStorage.setItem('tabcoin_taskStarted', taskStarted);
             localStorage.setItem('tabcoin_tgDone', telegramTaskDone);
-            localStorage.setItem('tabcoin_refDone', refTaskDone);
             localStorage.setItem('tabcoin_lastTime', Date.now());
         }
 
@@ -961,36 +924,6 @@
             }
         }
 
-        function exchangeCoinsToGems() {
-            const cost = 500000;
-            const reward = 20;
-
-            if (score >= cost) {
-                score -= cost;
-                gems += reward;
-                updateVisuals();
-                saveGame();
-                alert(`Успішний обмін! Отримано +${reward} 💎`);
-            } else {
-                alert('Недостатньо монет! Потрібно 500 000 🪙');
-            }
-        }
-
-        function exchangeGemsToCoins() {
-            const cost = 10;
-            const reward = 50000;
-
-            if (gems >= cost) {
-                gems -= cost;
-                score += reward;
-                updateVisuals();
-                saveGame();
-                alert(`Успішний обмін! Отримано +${reward} 🪙`);
-            } else {
-                alert('Недостатньо кристалів! Потрібно 10 💎');
-            }
-        }
-
         function buyGemsInvoice(gemAmount, starsPrice) {
             const botUsername = "tabcoin1_bot"; 
             const payload = `buy_${gemAmount}_gems_${starsPrice}_stars`;
@@ -1013,13 +946,6 @@
             const subBtn = document.getElementById('subBtn');
             subBtn.textContent = 'Перевірити';
             subBtn.setAttribute('onclick', 'checkTelegramTask()');
-        }
-
-        if (refTaskDone) {
-            const refBtn = document.getElementById('refBtn');
-            refBtn.textContent = 'Отримано';
-            refBtn.disabled = true;
-            document.getElementById('refProgress').textContent = 'Виконано: 10 000 / 10 000';
         }
 
         clickArea.addEventListener('touchstart', (e) => {
@@ -1166,28 +1092,6 @@
             }
         }
 
-        function checkReferralProgress() {
-            let friendReachedGoal = true; 
-            if (friendReachedGoal) {
-                score += 10000;
-                gems += 10;
-                refTaskDone = true;
-                const btn = document.getElementById('refBtn');
-                btn.textContent = 'Отримано';
-                btn.disabled = true;
-                document.getElementById('refProgress').textContent = 'Виконано: 10 000 / 10 000';
-                checkLevelProgression();
-                saveGame();
-                alert('Вітаю! Нагороду за друга отримано!');
-            } else {
-                alert('Друг ще не натапав 10 000 монет.');
-            }
-        }
-
-        function inviteFriend() {
-            window.open('https://t.me/share/url?url=https://t.me/tabcoin1_bot&text=Заходь у круту тапалку!', '_blank');
-        }
-
         const coinRoulettePrizes = [
             { text: "30k 🪙", gems: 0, coins: 30000, chance: 0.10 },
             { text: "25k 🪙", gems: 0, coins: 25000, chance: 0.15 },
@@ -1216,7 +1120,10 @@
             prizes.forEach((prize, index) => {
                 const startAngle = index * angleStep;
                 const endAngle = (index + 1) * angleStep;
-                const fillColor = index % 2 === 0 ? 'rgba(30, 41, 59, 0.95)' : 'rgba(51, 65, 85, 0.95)';
+                
+                // Сучасні насичені болотно-темні палітри для гарних ячеєк
+                const colors = ['#2d4a3e', '#3d5a45', '#4a6b5d', '#31493c', '#3c584b', '#253d32'];
+                const fillColor = colors[index % colors.length];
                 
                 const radStart = Math.PI * (startAngle - 90) / 180;
                 const radEnd = Math.PI * (endAngle - 90) / 180;
@@ -1229,11 +1136,11 @@
 
                 const pathData = `M 50 50 L ${x1} ${y1} A 50 50 0 ${largeArcFlag} 1 ${x2} ${y2} Z`;
 
-                svgHTML += `<path d="${pathData}" fill="${fillColor}" stroke="rgba(255, 255, 255, 0.15)" stroke-width="0.8"/>`;
+                svgHTML += `<path d="${pathData}" fill="${fillColor}" stroke="rgba(255, 255, 255, 0.25)" stroke-width="1.2"/>`;
 
                 const midAngle = startAngle + angleStep / 2;
                 const radMid = Math.PI * (midAngle - 90) / 180;
-                const textRadius = 32;
+                const textRadius = 30;
                 const textX = 50 + textRadius * Math.cos(radMid);
                 const textY = 50 + textRadius * Math.sin(radMid);
 
@@ -1242,7 +1149,8 @@
                     textAngle += 180;
                 }
 
-                svgHTML += `<text x="${textX}" y="${textY}" fill="#ffffff" font-size="6" font-weight="900" text-anchor="middle" dominant-baseline="middle" transform="rotate(${textAngle}, ${textX}, ${textY})" stroke="#000" stroke-width="0.3">${prize.text}</text>`;
+                // Чіткий, яскравий сорний/великий шрифт для тексту в ячейках
+                svgHTML += `<text x="${textX}" y="${textY}" fill="#ffffff" font-family="system-ui, -apple-system, sans-serif" font-weight="900" font-size="7" text-anchor="middle" dominant-baseline="middle" transform="rotate(${textAngle}, ${textX}, ${textY})" filter="drop-shadow(0px 1px 2px rgba(0,0,0,0.9))">${prize.text}</text>`;
             });
 
             svgHTML += `</svg>`;
