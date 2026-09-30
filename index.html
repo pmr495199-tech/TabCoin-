@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="uk">
 <head>
@@ -783,7 +782,7 @@
             <!-- Завдання 1 -->
             <div class="item-card">
                 <div class="item-info">
-                    <h4>Натапати 150 000</h4>
+                    <h4>Натапати 150 000 монет</h4>
                     <p>Нагорода: 20 💎</p>
                     <div class="task-progress-text" id="task1Progress">Прогрес: 0 / 150000</div>
                 </div>
@@ -1086,9 +1085,9 @@
         }
 
         function updateTasksUI() {
-            // Завдання 1: Натапати 150000
-            let currentTaps = Math.min(150000, task1Count);
-            document.getElementById('task1Progress').textContent = `Прогрес: ${currentTaps.toLocaleString()} / 150,000`;
+            // Завдання 1: Натапати 150000 монет за кліки
+            let currentTapsCoins = Math.min(150000, task1Count);
+            document.getElementById('task1Progress').textContent = `Прогрес: ${currentTapsCoins.toLocaleString()} / 150,000`;
             const btn1 = document.getElementById('claimTask1Btn');
             if (task1Claimed) {
                 btn1.textContent = 'Виконано';
@@ -1291,7 +1290,7 @@
                     score += clickPower;
                     energy -= energyCostPerClick;
                     if (!task1Claimed && task1Count < 150000) {
-                        task1Count += clickPower;
+                        task1Count += clickPower; // Зараховуємо зароблені за клік монети
                     }
                     let touch = e.changedTouches[i];
                     showFloatingTextAt(touch.clientX, touch.clientY);
@@ -1306,7 +1305,7 @@
                 score += clickPower;
                 energy -= energyCostPerClick;
                 if (!task1Claimed && task1Count < 150000) {
-                    task1Count += clickPower;
+                    task1Count += clickPower; // Зараховуємо зароблені за клік монети
                 }
                 showFloatingTextAt(e.clientX, e.clientY);
             }
