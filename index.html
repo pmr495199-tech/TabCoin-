@@ -411,7 +411,6 @@
             transition: transform 4s cubic-bezier(0.15, 0.85, 0.15, 1);
             overflow: hidden;
             box-shadow: 0 0 15px rgba(107, 142, 35, 0.4);
-            /* Градієнт на 6 рівних секторів (по 60 градусів) */
             background: conic-gradient(
                 #1e293b 0deg 60deg,
                 #334155 60deg 120deg,
@@ -422,7 +421,6 @@
             );
         }
 
-        /* Стиль для колеса ведмедя на 7 секторів (по ~51.43 градуса) */
         .wheel-7 {
             background: conic-gradient(
                 #1e293b 0deg 51.43deg,
@@ -486,7 +484,6 @@
             padding-top: 14px;
         }
 
-        /* Позиціонування 6 міток (для 60-градусних секторів: центр сектора знаходиться посередині) */
         .w-l-1 { transform: rotate(30deg); }
         .w-l-2 { transform: rotate(90deg); }
         .w-l-3 { transform: rotate(150deg); }
@@ -494,7 +491,6 @@
         .w-l-5 { transform: rotate(270deg); }
         .w-l-6 { transform: rotate(330deg); }
 
-        /* Позиціонування 7 міток для колеса ведмедя */
         .w-bear-1 { transform: rotate(25.71deg); }
         .w-bear-2 { transform: rotate(77.14deg); }
         .w-bear-3 { transform: rotate(128.57deg); }
@@ -503,7 +499,6 @@
         .w-bear-6 { transform: rotate(282.86deg); }
         .w-bear-7 { transform: rotate(334.29deg); }
 
-        /* Стилі для Міні-гри */
         .minigame-wrapper {
             width: 100%;
             max-width: 340px;
@@ -732,7 +727,6 @@
         </div>
     </div>
 
-    <!-- Вкладка Міні-гри -->
     <div class="tab-content" id="tab-minigame">
         <div class="section-title">Фарм-Гра (1 хв)</div>
         <div class="minigame-wrapper">
@@ -1041,11 +1035,20 @@
         }
 
         function checkLevelProgression() {
+            let currentMaxLevel = Number(localStorage.getItem('tabcoin_maxLevel')) || 1;
+
             if (score >= 500000) level = 5;
             else if (score >= 340000) level = 4;
             else if (score >= 170000) level = 3;
             else if (score >= 70000) level = 2;
             else level = 1;
+
+            if (level > currentMaxLevel) {
+                currentMaxLevel = level;
+                localStorage.setItem('tabcoin_maxLevel', currentMaxLevel);
+            }
+
+            level = currentMaxLevel;
             updateVisuals();
         }
 
@@ -1447,33 +1450,32 @@
         });
 
         // --- ТОЧНА ЛОГІКА КОЛІС ФОРТУНИ ---
-        // Масиви призів точно відповідають порядку міток на циферблаті за годинниковою стрілкою (від верху)
         const coinRoulettePrizes = [
-            { text: "30k 🪙", coins: 30000, chance: 0.10 }, // Сектор 1 (0° - 60°)
-            { text: "25k 🪙", coins: 25000, chance: 0.15 }, // Сектор 2 (60° - 120°)
-            { text: "20k 🪙", coins: 20000, chance: 0.30 }, // Сектор 3 (120° - 180°)
-            { text: "15k 🪙", coins: 15000, chance: 0.50 }, // Сектор 4 (180° - 240°)
-            { text: "10k 🪙", coins: 10000, chance: 0.60 }, // Сектор 5 (240° - 300°)
-            { text: "7k 🪙",  coins: 7000,  chance: 0.60 }  // Сектор 6 (300° - 360°)
+            { text: "30k 🪙", coins: 30000, chance: 0.10 },
+            { text: "25k 🪙", coins: 25000, chance: 0.15 },
+            { text: "20k 🪙", coins: 20000, chance: 0.30 },
+            { text: "15k 🪙", coins: 15000, chance: 0.50 },
+            { text: "10k 🪙", coins: 10000, chance: 0.60 },
+            { text: "7k 🪙",  coins: 7000,  chance: 0.60 }
         ];
 
         const gemRoulettePrizes = [
-            { text: "30 💎", gems: 30, chance: 0.10 }, // Сектор 1
-            { text: "25 💎", gems: 25, chance: 0.15 }, // Сектор 2
-            { text: "20 💎", gems: 20, chance: 0.30 }, // Сектор 3
-            { text: "15 💎", gems: 15, chance: 0.50 }, // Сектор 4
-            { text: "10 💎", gems: 10, chance: 0.60 }, // Сектор 5
-            { text: "5 💎",  gems: 5,  chance: 0.60 }  // Сектор 6
+            { text: "30 💎", gems: 30, chance: 0.10 },
+            { text: "25 💎", gems: 25, chance: 0.15 },
+            { text: "20 💎", gems: 20, chance: 0.30 },
+            { text: "15 💎", gems: 15, chance: 0.50 },
+            { text: "10 💎", gems: 10, chance: 0.60 },
+            { text: "5 💎",  gems: 5,  chance: 0.60 }
         ];
 
         const bearRoulettePrizes = [
-            { text: "2 💎",  gems: 2,  special: false, chance: 0.40 }, // Сектор 1
-            { text: "5 💎",  gems: 5,  special: false, chance: 0.30 }, // Сектор 2
-            { text: "10 💎", gems: 10, special: false, chance: 0.20 }, // Сектор 3
-            { text: "15 💎", gems: 15, special: false, chance: 0.15 }, // Сектор 4
-            { text: "20 💎", gems: 20, special: false, chance: 0.10 }, // Сектор 5
-            { text: "25 💎", gems: 25, special: false, chance: 0.05 }, // Сектор 6
-            { text: "🐻",    gems: 0,  special: true,  chance: 0.02 }  // Сектор 7
+            { text: "2 💎",  gems: 2,  special: false, chance: 0.40 },
+            { text: "5 💎",  gems: 5,  special: false, chance: 0.30 },
+            { text: "10 💎", gems: 10, special: false, chance: 0.20 },
+            { text: "15 💎", gems: 15, special: false, chance: 0.15 },
+            { text: "20 💎", gems: 20, special: false, chance: 0.10 },
+            { text: "25 💎", gems: 25, special: false, chance: 0.05 },
+            { text: "🐻",    gems: 0,  special: true,  chance: 0.02 }
         ];
 
         function getWeightedRandomIndex(prizes) {
@@ -1502,10 +1504,9 @@
             if (spinBtn) spinBtn.disabled = true;
 
             const prizeIndex = getWeightedRandomIndex(coinRoulettePrizes);
-            const totalItems = coinRoulettePrizes.length; // 6
-            const angleStep = 360 / totalItems; // 60 градусів на сектор
+            const totalItems = coinRoulettePrizes.length;
+            const angleStep = 360 / totalItems;
             
-            // Розрахунок кута, щоб стрілка (зверху на 0°) чітко зупинилася в центрі вибраного сектора
             const targetSectorCenter = prizeIndex * angleStep + angleStep / 2;
             const extraSpins = 360 * 7;
             const currentMod = coinRotation % 360;
@@ -1540,8 +1541,8 @@
             if (spinBtn) spinBtn.disabled = true;
 
             const prizeIndex = getWeightedRandomIndex(gemRoulettePrizes);
-            const totalItems = gemRoulettePrizes.length; // 6
-            const angleStep = 360 / totalItems; // 60 градусів
+            const totalItems = gemRoulettePrizes.length;
+            const angleStep = 360 / totalItems;
             
             const targetSectorCenter = prizeIndex * angleStep + angleStep / 2;
             const extraSpins = 360 * 7;
@@ -1577,8 +1578,8 @@
             if (spinBtn) spinBtn.disabled = true;
 
             const prizeIndex = getWeightedRandomIndex(bearRoulettePrizes);
-            const totalItems = bearRoulettePrizes.length; // 7
-            const angleStep = 360 / totalItems; // ~51.43 градуса
+            const totalItems = bearRoulettePrizes.length;
+            const angleStep = 360 / totalItems;
             
             const targetSectorCenter = prizeIndex * angleStep + angleStep / 2;
             const extraSpins = 360 * 7;
