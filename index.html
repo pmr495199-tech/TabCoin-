@@ -76,7 +76,7 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            gap: 8px;
+            gap: 10px;
         }
 
         .profile-card {
@@ -128,26 +128,6 @@
             color: var(--accent-gold);
             text-transform: uppercase;
             letter-spacing: 0.5px;
-        }
-
-        /* Кнопка музики */
-        .music-toggle-btn {
-            background: var(--panel-bg);
-            border: 1px solid var(--panel-border);
-            border-radius: 50%;
-            width: 36px;
-            height: 36px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            font-size: 15px;
-            transition: transform 0.1s ease;
-            backdrop-filter: blur(12px);
-            flex-shrink: 0;
-        }
-        .music-toggle-btn:active {
-            transform: scale(0.9);
         }
 
         .balances-wrapper {
@@ -527,6 +507,7 @@
             box-shadow: 0 0 10px rgba(0,0,0,0.5);
         }
 
+        /* Стилі для кастомного вікна привітання з рівнем */
         .level-modal-overlay {
             position: fixed;
             top: 0;
@@ -600,6 +581,7 @@
             box-shadow: 0 4px 15px rgba(82, 121, 111, 0.4);
         }
 
+        /* Нижня панель навігації */
         nav {
             display: flex;
             justify-content: space-around;
@@ -650,6 +632,7 @@
 </head>
 <body>
 
+    <!-- Модальне вікно привітання з рівнем -->
     <div class="level-modal-overlay" id="levelModalOverlay">
         <div class="level-modal">
             <img id="modalImg" src="" alt="Рівень">
@@ -670,11 +653,6 @@
                     <span class="profile-stage" id="levelBadge">Stage 1</span>
                 </div>
             </div>
-
-            <!-- Кнопка управління музикою -->
-            <button class="music-toggle-btn" id="musicToggleBtn" onclick="toggleMusic()" title="Музика">
-                🔇
-            </button>
 
             <div class="balances-wrapper">
                 <div class="balance-container">
@@ -743,6 +721,7 @@
         </div>
     </div>
 
+    <!-- ВКЛАДКА "БІЗНЕСИ" -->
     <div class="tab-content" id="tab-business">
         <div class="section-title">Бізнеси 🏢</div>
         <div class="items-list">
@@ -800,12 +779,14 @@
         </div>
     </div>
 
+    <!-- ВКЛАДКА "ЗАВДАННЯ" -->
     <div class="tab-content" id="tab-tasks">
         <div class="section-header-box">
             <div class="section-title">Щоденні завдання</div>
             <div class="tasks-timer" id="tasksTimer">Оновлення о 22:00</div>
         </div>
         <div class="items-list">
+            <!-- Завдання 1 -->
             <div class="item-card">
                 <div class="item-info">
                     <h4>Натапати 150 000 монет</h4>
@@ -814,6 +795,7 @@
                 </div>
                 <button class="item-btn" id="claimTask1Btn" onclick="claimTask(1)" disabled>Забрати</button>
             </div>
+            <!-- Завдання 2 -->
             <div class="item-card">
                 <div class="item-info">
                     <h4>Прокрутити рулетку 5 разів</h4>
@@ -822,6 +804,7 @@
                 </div>
                 <button class="item-btn" id="claimTask2Btn" onclick="claimTask(2)" disabled>Забрати</button>
             </div>
+            <!-- Завдання 3 -->
             <div class="item-card">
                 <div class="item-info">
                     <h4>Прокачати будь-який бізнес 1 раз</h4>
@@ -906,83 +889,6 @@
             console.log("Telegram WebApp не ініціалізовано");
         }
 
-        // --- ІГРОВИЙ СИНТЕЗАТОР МУЗИКИ (Web Audio API) ---
-        let audioCtx = null;
-        let isMusicPlaying = false;
-        let musicTimer = null;
-        const musicToggleBtn = document.getElementById('musicToggleBtn');
-
-        // Послідовність нот для приємної аркадної мелодії
-        const melodyNotes = [
-            261.63, 329.63, 392.00, 523.25, // C4, E4, G4, C5
-            392.00, 329.63, 293.66, 349.23, // G4, E4, D4, F4
-            220.00, 261.63, 329.63, 440.00, // A3, C4, E4, A4
-            329.63, 293.66, 246.94, 261.63  // E4, D4, B3, C4
-        ];
-        let currentNoteIndex = 0;
-
-        function startMusicSynth() {
-            if (!audioCtx) {
-                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            }
-            if (audioCtx.state === 'suspended') {
-                audioCtx.resume();
-            }
-
-            if (musicTimer) clearInterval(musicTimer);
-
-            musicTimer = setInterval(() => {
-                if (!isMusicPlaying || !audioCtx) return;
-
-                const osc = audioCtx.createOscillator();
-                const gainNode = audioCtx.createGain();
-
-                osc.type = 'sine'; // М'який приємний звук
-                osc.frequency.setValueAtTime(melodyNotes[currentNoteIndex], audioCtx.currentTime);
-
-                // Гучність (тиха фонова)
-                gainNode.gain.setValueAtTime(0.03, audioCtx.currentTime);
-                gainNode.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.45);
-
-                osc.connect(gainNode);
-                gainNode.connect(audioCtx.destination);
-
-                osc.start();
-                osc.stop(audioCtx.currentTime + 0.5);
-
-                currentNoteIndex = (currentNoteIndex + 1) % melodyNotes.length;
-            }, 450); // Швидкість нот
-        }
-
-        function stopMusicSynth() {
-            isMusicPlaying = false;
-            if (musicTimer) {
-                clearInterval(musicTimer);
-                musicTimer = null;
-            }
-            musicToggleBtn.textContent = '🔇';
-        }
-
-        function toggleMusic() {
-            if (isMusicPlaying) {
-                stopMusicSynth();
-            } else {
-                isMusicPlaying = true;
-                musicToggleBtn.textContent = '🎵';
-                startMusicSynth();
-            }
-        }
-
-        // Автоматичний старт при першому кліку на екран (щоб обійти блокування браузерів)
-        document.body.addEventListener('click', function initAudioOnFirstClick() {
-            if (!isMusicPlaying) {
-                isMusicPlaying = true;
-                musicToggleBtn.textContent = '🎵';
-                startMusicSynth();
-                document.body.removeEventListener('click', initAudioOnFirstClick);
-            }
-        }, { once: false });
-
         let score = Number(localStorage.getItem('tabcoin_score')) || 0;
         let gems = Number(localStorage.getItem('tabcoin_gems')) || 0;
         let maxEnergy = Number(localStorage.getItem('tabcoin_maxEnergy')) || 1000;
@@ -1003,6 +909,7 @@
         let biz2Level = Number(localStorage.getItem('tabcoin_biz2Level')) || 0;
         let biz3Level = Number(localStorage.getItem('tabcoin_biz3Level')) || 0;
 
+        // Щоденні завдання та їх обнулення о 22:00
         let task1Count = Number(localStorage.getItem('tabcoin_task1Count')) || 0;
         let task1Claimed = localStorage.getItem('tabcoin_task1Claimed') === 'true';
 
