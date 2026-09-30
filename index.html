@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="uk">
 <head>
@@ -291,15 +292,31 @@
             box-shadow: 0 0 10px rgba(82, 121, 111, 0.5);
         }
 
+        .section-header-box {
+            width: 100%;
+            max-width: 340px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 5px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
         .section-title {
             font-size: 18px;
             font-weight: 700;
-            margin-bottom: 5px;
             color: var(--text-white);
-            align-self: flex-start;
-            max-width: 340px;
-            margin-left: auto;
-            margin-right: auto;
+        }
+
+        .tasks-timer {
+            font-size: 11px;
+            color: var(--accent-gold);
+            font-weight: 600;
+            background: var(--panel-bg);
+            border: 1px solid var(--panel-border);
+            padding: 4px 8px;
+            border-radius: 10px;
         }
 
         .items-list {
@@ -340,7 +357,7 @@
         }
 
         .item-info h4 {
-            font-size: 14px;
+            font-size: 13px;
             margin-bottom: 3px;
             color: var(--text-white);
         }
@@ -348,6 +365,13 @@
         .item-info p {
             font-size: 11px;
             color: var(--text-secondary);
+        }
+
+        .task-progress-text {
+            font-size: 10px;
+            color: var(--accent-gold);
+            margin-top: 2px;
+            font-weight: 600;
         }
 
         .item-btn {
@@ -749,15 +773,39 @@
         </div>
     </div>
 
+    <!-- ВКЛАДКА "ЗАВДАННЯ" -->
     <div class="tab-content" id="tab-tasks">
-        <div class="section-title">Щоденні завдання</div>
+        <div class="section-header-box">
+            <div class="section-title">Щоденні завдання</div>
+            <div class="tasks-timer" id="tasksTimer">Оновлення о 22:00</div>
+        </div>
         <div class="items-list">
+            <!-- Завдання 1 -->
             <div class="item-card">
                 <div class="item-info">
-                    <h4>Підписатися на Telegram</h4>
-                    <p>Нагорода: +5000 монет, +5 💎</p>
+                    <h4>Натапати 150 000</h4>
+                    <p>Нагорода: 20 💎</p>
+                    <div class="task-progress-text" id="task1Progress">Прогрес: 0 / 150000</div>
                 </div>
-                <button class="item-btn" id="subBtn" onclick="startTelegramTask()">Виконати</button>
+                <button class="item-btn" id="claimTask1Btn" onclick="claimTask(1)" disabled>Забрати</button>
+            </div>
+            <!-- Завдання 2 -->
+            <div class="item-card">
+                <div class="item-info">
+                    <h4>Прокрутити рулетку 5 разів</h4>
+                    <p>Нагорода: 15 💎</p>
+                    <div class="task-progress-text" id="task2Progress">Прогрес: 0 / 5</div>
+                </div>
+                <button class="item-btn" id="claimTask2Btn" onclick="claimTask(2)" disabled>Забрати</button>
+            </div>
+            <!-- Завдання 3 -->
+            <div class="item-card">
+                <div class="item-info">
+                    <h4>Прокачати будь-який бізнес 1 раз</h4>
+                    <p>Нагорода: 250 000 🪙</p>
+                    <div class="task-progress-text" id="task3Progress">Прогрес: 0 / 1</div>
+                </div>
+                <button class="item-btn" id="claimTask3Btn" onclick="claimTask(3)" disabled>Забрати</button>
             </div>
         </div>
     </div>
@@ -853,6 +901,43 @@
         let biz2Level = Number(localStorage.getItem('tabcoin_biz2Level')) || 0;
         let biz3Level = Number(localStorage.getItem('tabcoin_biz3Level')) || 0;
 
+        // Щоденні завдання та їх обнулення о 22:00
+        let task1Count = Number(localStorage.getItem('tabcoin_task1Count')) || 0;
+        let task1Claimed = localStorage.getItem('tabcoin_task1Claimed') === 'true';
+
+        let task2Count = Number(localStorage.getItem('tabcoin_task2Count')) || 0;
+        let task2Claimed = localStorage.getItem('tabcoin_task2Claimed') === 'true';
+
+        let task3Count = Number(localStorage.getItem('tabcoin_task3Count')) || 0;
+        let task3Claimed = localStorage.getItem('tabcoin_task3Claimed') === 'true';
+
+        let lastResetDate = localStorage.getItem('tabcoin_lastResetDate') || '';
+
+        function checkDailyReset() {
+            const now = new Date();
+            let resetTargetToday = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 22, 0, 0);
+            let activeDayKey = '';
+
+            if (now >= resetTargetToday) {
+                activeDayKey = `${now.getFullYear()}-${now.getMonth()}-${now.getDate()}-22`;
+            } else {
+                let yesterday = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+                activeDayKey = `${yesterday.getFullYear()}-${yesterday.getMonth()}-${yesterday.getDate()}-22`;
+            }
+
+            if (lastResetDate !== activeDayKey) {
+                task1Count = 0;
+                task1Claimed = false;
+                task2Count = 0;
+                task2Claimed = false;
+                task3Count = 0;
+                task3Claimed = false;
+                lastResetDate = activeDayKey;
+                saveGame();
+            }
+        }
+        checkDailyReset();
+
         const passiveIncomeRates = [0, 10000, 30000];
         const passivePrices = [20000, 50000];
         const boostPrices = [500, 700, 1000, 2000, 3000, 5000, 7500, 10000];
@@ -860,9 +945,6 @@
         function getBusinessPrice(basePrice, level) {
             return Math.floor(basePrice * Math.pow(1.5, level));
         }
-
-        let taskStarted = localStorage.getItem('tabcoin_taskStarted') === 'true';
-        let telegramTaskDone = localStorage.getItem('tabcoin_tgDone') === 'true';
 
         const energyCostPerClick = 5;
 
@@ -930,12 +1012,18 @@
             localStorage.setItem('tabcoin_biz1Level', biz1Level);
             localStorage.setItem('tabcoin_biz2Level', biz2Level);
             localStorage.setItem('tabcoin_biz3Level', biz3Level);
-            localStorage.setItem('tabcoin_taskStarted', taskStarted);
-            localStorage.setItem('tabcoin_tgDone', telegramTaskDone);
+            
+            localStorage.setItem('tabcoin_task1Count', task1Count);
+            localStorage.setItem('tabcoin_task1Claimed', task1Claimed);
+            localStorage.setItem('tabcoin_task2Count', task2Count);
+            localStorage.setItem('tabcoin_task2Claimed', task2Claimed);
+            localStorage.setItem('tabcoin_task3Count', task3Count);
+            localStorage.setItem('tabcoin_task3Claimed', task3Claimed);
+            localStorage.setItem('tabcoin_lastResetDate', lastResetDate);
+
             localStorage.setItem('tabcoin_lastTime', Date.now());
         }
 
-        // Дані для унікальних привітань з рівнями
         const levelData = {
             2: {
                 title: "Stage 2: Новий хижак!",
@@ -997,6 +1085,87 @@
             updateVisuals();
         }
 
+        function updateTasksUI() {
+            // Завдання 1: Натапати 150000
+            let currentTaps = Math.min(150000, task1Count);
+            document.getElementById('task1Progress').textContent = `Прогрес: ${currentTaps.toLocaleString()} / 150,000`;
+            const btn1 = document.getElementById('claimTask1Btn');
+            if (task1Claimed) {
+                btn1.textContent = 'Виконано';
+                btn1.disabled = true;
+            } else if (task1Count >= 150000) {
+                btn1.textContent = 'Забрати';
+                btn1.disabled = false;
+            } else {
+                btn1.textContent = 'Забрати';
+                btn1.disabled = true;
+            }
+
+            // Завдання 2: Прокрутити рулетку 5 разів
+            let currentSpins = Math.min(5, task2Count);
+            document.getElementById('task2Progress').textContent = `Прогрес: ${currentSpins} / 5`;
+            const btn2 = document.getElementById('claimTask2Btn');
+            if (task2Claimed) {
+                btn2.textContent = 'Виконано';
+                btn2.disabled = true;
+            } else if (task2Count >= 5) {
+                btn2.textContent = 'Забрати';
+                btn2.disabled = false;
+            } else {
+                btn2.textContent = 'Забрати';
+                btn2.disabled = true;
+            }
+
+            // Завдання 3: Прокачати бізнес 1 раз
+            let currentBizUp = Math.min(1, task3Count);
+            document.getElementById('task3Progress').textContent = `Прогрес: ${currentBizUp} / 1`;
+            const btn3 = document.getElementById('claimTask3Btn');
+            if (task3Claimed) {
+                btn3.textContent = 'Виконано';
+                btn3.disabled = true;
+            } else if (task3Count >= 1) {
+                btn3.textContent = 'Забрати';
+                btn3.disabled = false;
+            } else {
+                btn3.textContent = 'Забрати';
+                btn3.disabled = true;
+            }
+
+            updateTimerDisplay();
+        }
+
+        function updateTimerDisplay() {
+            const now = new Date();
+            let target = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 22, 0, 0);
+            if (now >= target) {
+                target.setDate(target.getDate() + 1);
+            }
+            let diff = target - now;
+            let hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            let minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            let seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+            document.getElementById('tasksTimer').textContent = `Скидання через: ${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+        }
+
+        function claimTask(id) {
+            if (id === 1 && !task1Claimed && task1Count >= 150000) {
+                task1Claimed = true;
+                gems += 20;
+                alert('Вітаємо! Отримано +20 💎 за завдання з тапання!');
+            } else if (id === 2 && !task2Claimed && task2Count >= 5) {
+                task2Claimed = true;
+                gems += 15;
+                alert('Вітаємо! Отримано +15 💎 за прокрутку рулеток!');
+            } else if (id === 3 && !task3Claimed && task3Count >= 1) {
+                task3Claimed = true;
+                score += 250000;
+                alert('Вітаємо! Отримано +250 000 🪙 за прокачку бізнесу!');
+            }
+            updateVisuals();
+            saveGame();
+        }
+
         function updateVisuals() {
             scoreElement.textContent = Math.floor(score);
             gemsElement.textContent = gems;
@@ -1054,43 +1223,51 @@
                 levelBadge.textContent = 'Stage 1';
                 characterImg.src = '1790090929041.png';
             }
+
+            updateTasksUI();
         }
 
         function buyBusiness(id) {
+            let cost = 0;
             if (id === 1) {
-                let cost = getBusinessPrice(10000, biz1Level);
+                cost = getBusinessPrice(10000, biz1Level);
                 if (score >= cost) {
                     score -= cost;
                     biz1Level++;
                     alert('Автомийку успішно покращено!');
-                    checkLevelProgression();
-                    saveGame();
                 } else {
                     alert('Недостатньо монет!');
+                    return;
                 }
             } else if (id === 2) {
-                let cost = getBusinessPrice(40000, biz2Level);
+                cost = getBusinessPrice(40000, biz2Level);
                 if (score >= cost) {
                     score -= cost;
                     biz2Level++;
                     alert('Супермаркет успішно покращено!');
-                    checkLevelProgression();
-                    saveGame();
                 } else {
                     alert('Недостатньо монет!');
+                    return;
                 }
             } else if (id === 3) {
-                let cost = getBusinessPrice(150000, biz3Level);
+                cost = getBusinessPrice(150000, biz3Level);
                 if (score >= cost) {
                     score -= cost;
                     biz3Level++;
                     alert('Велику Ферму успішно покращено!');
-                    checkLevelProgression();
-                    saveGame();
                 } else {
                     alert('Недостатньо монет!');
+                    return;
                 }
             }
+
+            // Оновлюємо завдання прокачки бізнесу
+            if (!task3Claimed) {
+                task3Count++;
+            }
+
+            checkLevelProgression();
+            saveGame();
         }
 
         function buyGemsInvoice(gemAmount, starsPrice) {
@@ -1107,22 +1284,15 @@
 
         updateVisuals();
 
-        if (telegramTaskDone) {
-            const subBtn = document.getElementById('subBtn');
-            subBtn.textContent = 'Виконано';
-            subBtn.disabled = true;
-        } else if (taskStarted) {
-            const subBtn = document.getElementById('subBtn');
-            subBtn.textContent = 'Перевірити';
-            subBtn.setAttribute('onclick', 'checkTelegramTask()');
-        }
-
         clickArea.addEventListener('touchstart', (e) => {
             e.preventDefault();
             for (let i = 0; i < e.changedTouches.length; i++) {
                 if (energy >= energyCostPerClick) {
                     score += clickPower;
                     energy -= energyCostPerClick;
+                    if (!task1Claimed && task1Count < 150000) {
+                        task1Count += clickPower;
+                    }
                     let touch = e.changedTouches[i];
                     showFloatingTextAt(touch.clientX, touch.clientY);
                 }
@@ -1135,6 +1305,9 @@
             if (energy >= energyCostPerClick) {
                 score += clickPower;
                 energy -= energyCostPerClick;
+                if (!task1Claimed && task1Count < 150000) {
+                    task1Count += clickPower;
+                }
                 showFloatingTextAt(e.clientX, e.clientY);
             }
             checkLevelProgression();
@@ -1142,6 +1315,8 @@
         });
 
         setInterval(() => {
+            checkDailyReset();
+
             if (energy < maxEnergy) {
                 energy = Math.min(maxEnergy, energy + 3);
             }
@@ -1176,7 +1351,6 @@
             document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
             document.getElementById(`tab-${tabId}`).classList.add('active');
             
-            // Якщо перехід здійснено з навігаційної панелі, підсвічуємо відповідну кнопку
             if (element && element.classList.contains('nav-item')) {
                 element.classList.add('active');
             }
@@ -1239,29 +1413,6 @@
                         alert('Недостатньо монет! Потрібно 50 000 🪙');
                     }
                 }
-            }
-        }
-
-        function startTelegramTask() {
-            window.open('https://t.me/tabcoin_bot1', '_blank');
-            const btn = document.getElementById('subBtn');
-            btn.textContent = 'Перевірити';
-            taskStarted = true;
-            btn.setAttribute('onclick', 'checkTelegramTask()');
-            saveGame();
-        }
-
-        function checkTelegramTask() {
-            if (taskStarted) {
-                score += 5000;
-                gems += 5;
-                telegramTaskDone = true;
-                const btn = document.getElementById('subBtn');
-                btn.textContent = 'Виконано';
-                btn.disabled = true;
-                checkLevelProgression();
-                saveGame();
-                alert('Завдання виконано! Отримано +5000 монет та +5 💎.');
             }
         }
 
@@ -1345,6 +1496,12 @@
             return 0;
         }
 
+        function registerRouletteSpin() {
+            if (!task2Claimed && task2Count < 5) {
+                task2Count++;
+            }
+        }
+
         let coinRotation = 0;
         function spinCoinWheel() {
             const cost = 7000;
@@ -1377,6 +1534,7 @@
                 const wonGems = coinRoulettePrizes[prizeIndex].gems;
                 score += wonCoins;
                 gems += wonGems;
+                registerRouletteSpin();
                 alert(`Вітаємо! Ви виграли ${wonCoins} 🪙!`);
                 checkLevelProgression();
                 updateVisuals();
@@ -1417,6 +1575,7 @@
                 const wonGems = gemRoulettePrizes[prizeIndex].gems;
                 score += wonCoins;
                 gems += wonGems;
+                registerRouletteSpin();
                 alert(`Вітаємо! Ви виграли ${wonGems} 💎!`);
                 checkLevelProgression();
                 updateVisuals();
