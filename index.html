@@ -147,6 +147,15 @@
             backdrop-filter: blur(12px);
         }
 
+        .gem-container {
+            cursor: pointer;
+            transition: transform 0.1s ease;
+        }
+
+        .gem-container:active {
+            transform: scale(0.95);
+        }
+
         .coin-icon, .gem-icon {
             width: 22px;
             height: 22px;
@@ -163,6 +172,20 @@
 
         .gem-icon {
             background: var(--accent-gem);
+        }
+
+        .gem-plus {
+            font-size: 12px;
+            font-weight: 900;
+            color: var(--accent-gem);
+            margin-left: 2px;
+            background: rgba(56, 189, 248, 0.15);
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .balance-score-group {
@@ -616,9 +639,10 @@
                         <div class="balance-sub" id="incomeSub">+0/год</div>
                     </div>
                 </div>
-                <div class="balance-container">
+                <div class="balance-container gem-container" onclick="switchTab('shop', document.querySelector('[onclick*=\'shop\']'))" title="Магазин кристалів">
                     <div class="gem-icon">💎</div>
                     <div class="balance-score" id="gems">0</div>
+                    <div class="gem-plus">+</div>
                 </div>
             </div>
         </div>
@@ -777,10 +801,6 @@
         <button class="nav-item" onclick="switchTab('business', this)">
             <span class="nav-icon">🏢</span>
             <span>Бізнес</span>
-        </button>
-        <button class="nav-item" onclick="switchTab('shop', this)">
-            <span class="nav-icon">⭐</span>
-            <span>Магазин</span>
         </button>
         <button class="nav-item" onclick="switchTab('tasks', this)">
             <span class="nav-icon">📋</span>
@@ -1155,7 +1175,11 @@
             document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
             document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
             document.getElementById(`tab-${tabId}`).classList.add('active');
-            element.classList.add('active');
+            
+            // Якщо перехід здійснено з навігаційної панелі, підсвічуємо відповідну кнопку
+            if (element && element.classList.contains('nav-item')) {
+                element.classList.add('active');
+            }
         }
 
         function switchRoulette(type, element) {
