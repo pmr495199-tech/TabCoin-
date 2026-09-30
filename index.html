@@ -291,6 +291,20 @@
             align-items: center;
             justify-content: space-between;
             backdrop-filter: blur(12px);
+            gap: 10px;
+        }
+
+        .business-img {
+            width: 42px;
+            height: 42px;
+            object-fit: contain;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 3px;
+        }
+
+        .item-info {
+            flex: 1;
         }
 
         .item-info h4 {
@@ -432,7 +446,7 @@
             justify-content: space-around;
             background: rgba(18, 22, 34, 0.95);
             border-top: 1px solid var(--panel-border);
-            padding: 8px 4px 10px 4px;
+            padding: 8px 2px 10px 2px;
             backdrop-filter: blur(15px);
         }
 
@@ -440,11 +454,11 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 3px;
+            gap: 2px;
             background: none;
             border: none;
             color: var(--text-secondary);
-            font-size: 10px;
+            font-size: 9px;
             font-weight: 500;
             cursor: pointer;
             transition: color 0.2s;
@@ -456,7 +470,7 @@
         }
 
         .nav-icon {
-            font-size: 18px;
+            font-size: 16px;
         }
 
         .click-pop {
@@ -542,6 +556,37 @@
                     <p id="passiveInfo">Дохід: 0/год</p>
                 </div>
                 <button class="item-btn" id="buyPassiveBtn" onclick="buyBoost('passive')">Купити</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- НОВА ВКЛАДКА "БІЗНЕСИ" -->
+    <div class="tab-content" id="tab-business">
+        <div class="section-title">Бізнеси 🏢</div>
+        <div class="items-list">
+            <div class="item-card">
+                <img src="depositphotos_9136118-stock-illustration-car-wash.png" alt="Автомийка" class="business-img">
+                <div class="item-info">
+                    <h4>Автомийка</h4>
+                    <p id="biz1Info">Рівень: 0 | Дохід: +5 000/год</p>
+                </div>
+                <button class="item-btn" id="buyBiz1Btn" onclick="buyBusiness(1)">Купити</button>
+            </div>
+            <div class="item-card">
+                <img src="pngtree-supermarket-clipart-cartoon-grocery-store-with-fruits-and-vegetables-vector-png-image_6825233.png" alt="Супермаркет" class="business-img">
+                <div class="item-info">
+                    <h4>Супермаркет</h4>
+                    <p id="biz2Info">Рівень: 0 | Дохід: +15 000/год</p>
+                </div>
+                <button class="item-btn" id="buyBiz2Btn" onclick="buyBusiness(2)">Купити</button>
+            </div>
+            <div class="item-card">
+                <img src="png-transparent-paper-barn-farm-live-architectural-engineering-barn-angle-ribbon-building.png" alt="Ферма" class="business-img">
+                <div class="item-info">
+                    <h4>Велика Ферма</h4>
+                    <p id="biz3Info">Рівень: 0 | Дохід: +50 000/год</p>
+                </div>
+                <button class="item-btn" id="buyBiz3Btn" onclick="buyBusiness(3)">Купити</button>
             </div>
         </div>
     </div>
@@ -662,6 +707,10 @@
             <span class="nav-icon">🚀</span>
             <span>Бусти</span>
         </button>
+        <button class="nav-item" onclick="switchTab('business', this)">
+            <span class="nav-icon">🏢</span>
+            <span>Бізнес</span>
+        </button>
         <button class="nav-item" onclick="switchTab('shop', this)">
             <span class="nav-icon">⭐</span>
             <span>Магазин</span>
@@ -701,8 +750,8 @@
             console.log("Telegram WebApp не ініціалізовано");
         }
 
-        // --- ВЕРСІЯ ГРИ ТА СКИНУТНЯ ПРОГРЕСУ ДЛЯ ВСІХ ГРАВЦІВ ---
-        const CURRENT_GAME_VERSION = "2.0"; 
+        // --- ВЕРСІЯ ГРИ ТА СКИНУТНЯ ПРОГРЕСУ ---
+        const CURRENT_GAME_VERSION = "2.1"; 
         const savedVersion = localStorage.getItem('tabcoin_version');
 
         if (savedVersion !== CURRENT_GAME_VERSION) {
@@ -714,7 +763,6 @@
         let gems = Number(localStorage.getItem('tabcoin_gems')) || 0;
         let maxEnergy = Number(localStorage.getItem('tabcoin_maxEnergy')) || 1000;
         
-        // Виправлення енергії для нових гравців (щоб не була 0)
         let savedEnergy = localStorage.getItem('tabcoin_energy');
         let energy = savedEnergy !== null ? Number(savedEnergy) : maxEnergy;
         
@@ -725,9 +773,19 @@
         let maxenergyLevel = Number(localStorage.getItem('tabcoin_energyLevel')) || 0;
         let passiveLevel = Number(localStorage.getItem('tabcoin_passiveLevel')) || 0;
 
+        // Зберігання рівнів бізнесів
+        let biz1Level = Number(localStorage.getItem('tabcoin_biz1Level')) || 0;
+        let biz2Level = Number(localStorage.getItem('tabcoin_biz2Level')) || 0;
+        let biz3Level = Number(localStorage.getItem('tabcoin_biz3Level')) || 0;
+
         const passiveIncomeRates = [0, 10000, 30000];
         const passivePrices = [20000, 50000];
         const boostPrices = [500, 700, 1000, 2000, 3000, 5000, 7500, 10000];
+
+        // Ціни та прибутки бізнесів
+        function getBusinessPrice(basePrice, level) {
+            return Math.floor(basePrice * Math.pow(1.5, level));
+        }
 
         let taskStarted = localStorage.getItem('tabcoin_taskStarted') === 'true';
         let telegramTaskDone = localStorage.getItem('tabcoin_tgDone') === 'true';
@@ -739,14 +797,22 @@
         let currentTime = Date.now();
         let elapsedSeconds = Math.floor((currentTime - lastTime) / 1000);
 
+        function getTotalHourlyIncome() {
+            let basePassive = passiveIncomeRates[Math.min(passiveLevel, passiveIncomeRates.length - 1)];
+            let biz1Income = biz1Level * 5000;
+            let biz2Income = biz2Level * 15000;
+            let biz3Income = biz3Level * 50000;
+            return basePassive + biz1Income + biz2Income + biz3Income;
+        }
+
         if (elapsedSeconds > 3) {
-            let currentHourlyIncome = passiveIncomeRates[Math.min(passiveLevel, passiveIncomeRates.length - 1)];
-            if (currentHourlyIncome > 0) {
-                let earnedOffline = Math.floor((elapsedSeconds / 3600) * currentHourlyIncome);
+            let totalHourly = getTotalHourlyIncome();
+            if (totalHourly > 0) {
+                let earnedOffline = Math.floor((elapsedSeconds / 3600) * totalHourly);
                 if (earnedOffline > 0) {
                     score += earnedOffline;
                     setTimeout(() => {
-                        alert(`Поки ви були офлайн, ваш пасивний дохід приніс вам +${earnedOffline.toLocaleString()} 🪙!`);
+                        alert(`Поки ви були офлайн, ваш дохід приніс вам +${earnedOffline.toLocaleString()} 🪙!`);
                     }, 500);
                 }
             }
@@ -788,6 +854,9 @@
             localStorage.setItem('tabcoin_multiLevel', multiclickLevel);
             localStorage.setItem('tabcoin_energyLevel', maxenergyLevel);
             localStorage.setItem('tabcoin_passiveLevel', passiveLevel);
+            localStorage.setItem('tabcoin_biz1Level', biz1Level);
+            localStorage.setItem('tabcoin_biz2Level', biz2Level);
+            localStorage.setItem('tabcoin_biz3Level', biz3Level);
             localStorage.setItem('tabcoin_taskStarted', taskStarted);
             localStorage.setItem('tabcoin_tgDone', telegramTaskDone);
             localStorage.setItem('tabcoin_refDone', refTaskDone);
@@ -808,11 +877,11 @@
         }
 
         function updateVisuals() {
-            scoreElement.textContent = score;
+            scoreElement.textContent = Math.floor(score);
             gemsElement.textContent = gems;
             
-            let currentHourlyIncome = passiveIncomeRates[Math.min(passiveLevel, passiveIncomeRates.length - 1)];
-            incomeSub.textContent = `+${currentHourlyIncome.toLocaleString()}/год`;
+            let totalHourly = getTotalHourlyIncome();
+            incomeSub.textContent = `+${totalHourly.toLocaleString()}/год`;
 
             energyText.textContent = `${Math.floor(energy)} / ${maxEnergy}`;
             energyRateText.textContent = `+3/сек`;
@@ -835,6 +904,20 @@
                 buyPassiveBtn.disabled = true;
             }
 
+            // Оновлення інформації про бізнеси
+            let priceBiz1 = getBusinessPrice(10000, biz1Level);
+            let priceBiz2 = getBusinessPrice(40000, biz2Level);
+            let priceBiz3 = getBusinessPrice(150000, biz3Level);
+
+            document.getElementById('biz1Info').textContent = `Рівень: ${biz1Level} | Дохід: +${(biz1Level * 5000).toLocaleString()}/год`;
+            document.getElementById('buyBiz1Btn').textContent = `Купити (${priceBiz1.toLocaleString()} 🪙)`;
+
+            document.getElementById('biz2Info').textContent = `Рівень: ${biz2Level} | Дохід: +${(biz2Level * 15000).toLocaleString()}/год`;
+            document.getElementById('buyBiz2Btn').textContent = `Купити (${priceBiz2.toLocaleString()} 🪙)`;
+
+            document.getElementById('biz3Info').textContent = `Рівень: ${biz3Level} | Дохід: +${(biz3Level * 50000).toLocaleString()}/год`;
+            document.getElementById('buyBiz3Btn').textContent = `Купити (${priceBiz3.toLocaleString()} 🪙)`;
+
             if (level >= 5) {
                 levelBadge.textContent = 'Stage 5';
                 characterImg.src = '1790244183576.png';
@@ -850,6 +933,43 @@
             } else {
                 levelBadge.textContent = 'Stage 1';
                 characterImg.src = '1790090929041.png';
+            }
+        }
+
+        function buyBusiness(id) {
+            if (id === 1) {
+                let cost = getBusinessPrice(10000, biz1Level);
+                if (score >= cost) {
+                    score -= cost;
+                    biz1Level++;
+                    alert('Автомийку успішно покращено!');
+                    checkLevelProgression();
+                    saveGame();
+                } else {
+                    alert('Недостатньо монет!');
+                }
+            } else if (id === 2) {
+                let cost = getBusinessPrice(40000, biz2Level);
+                if (score >= cost) {
+                    score -= cost;
+                    biz2Level++;
+                    alert('Супермаркет успішно покращено!');
+                    checkLevelProgression();
+                    saveGame();
+                } else {
+                    alert('Недостатньо монет!');
+                }
+            } else if (id === 3) {
+                let cost = getBusinessPrice(150000, biz3Level);
+                if (score >= cost) {
+                    score -= cost;
+                    biz3Level++;
+                    alert('Велику Ферму успішно покращено!');
+                    checkLevelProgression();
+                    saveGame();
+                } else {
+                    alert('Недостатньо монет!');
+                }
             }
         }
 
@@ -943,9 +1063,9 @@
                 energy = Math.min(maxEnergy, energy + 3);
             }
             
-            let currentHourlyIncome = passiveIncomeRates[Math.min(passiveLevel, passiveIncomeRates.length - 1)];
-            if (currentHourlyIncome > 0) {
-                let incomePerSec = currentHourlyIncome / 3600;
+            let totalHourly = getTotalHourlyIncome();
+            if (totalHourly > 0) {
+                let incomePerSec = totalHourly / 3600;
                 score += incomePerSec;
             }
 
