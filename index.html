@@ -354,7 +354,7 @@
 
         .roulette-switcher {
             display: flex;
-            gap: 8px;
+            gap: 6px;
             width: 100%;
             max-width: 340px;
         }
@@ -364,12 +364,13 @@
             background: var(--panel-bg);
             border: 1px solid var(--panel-border);
             color: var(--text-secondary);
-            padding: 8px;
+            padding: 8px 4px;
             border-radius: 12px;
             font-weight: 600;
-            font-size: 12px;
+            font-size: 11px;
             cursor: pointer;
             transition: all 0.2s;
+            text-align: center;
         }
 
         .roulette-switch-btn.active {
@@ -382,7 +383,7 @@
             display: none;
             flex-direction: column;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
             width: 100%;
             max-width: 340px;
             background: var(--panel-bg);
@@ -397,8 +398,8 @@
 
         .wheel-wrapper {
             position: relative;
-            width: 190px;
-            height: 190px;
+            width: 180px;
+            height: 180px;
         }
 
         .wheel {
@@ -411,12 +412,13 @@
             overflow: hidden;
             box-shadow: 0 0 15px rgba(107, 142, 35, 0.4);
             background: conic-gradient(
-                #1e293b 0deg 60deg,
-                #334155 60deg 120deg,
-                #1e293b 120deg 180deg,
-                #334155 180deg 240deg,
-                #1e293b 240deg 300deg,
-                #334155 300deg 360deg
+                #1e293b 0deg 51.42deg,
+                #334155 51.42deg 102.85deg,
+                #1e293b 102.85deg 154.28deg,
+                #334155 154.28deg 205.71deg,
+                #1e293b 205.71deg 257.14deg,
+                #334155 257.14deg 308.57deg,
+                #1e293b 308.57deg 360deg
             );
         }
 
@@ -438,14 +440,14 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 34px;
-            height: 34px;
+            width: 30px;
+            height: 30px;
             background: #556B2F;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 14px;
+            font-size: 12px;
             z-index: 5;
             border: 1px solid #6B8E23;
         }
@@ -464,19 +466,20 @@
             width: 100%;
             height: 100%;
             text-align: center;
-            font-size: 10px;
+            font-size: 9px;
             font-weight: 900;
             color: #fff;
             text-shadow: 0 1px 2px #000;
-            padding-top: 15px;
+            padding-top: 14px;
         }
 
-        .w-l-1 { transform: rotate(30deg); }
-        .w-l-2 { transform: rotate(90deg); }
-        .w-l-3 { transform: rotate(150deg); }
-        .w-l-4 { transform: rotate(210deg); }
-        .w-l-5 { transform: rotate(270deg); }
-        .w-l-6 { transform: rotate(330deg); }
+        .w-l-1 { transform: rotate(25.71deg); }
+        .w-l-2 { transform: rotate(77.14deg); }
+        .w-l-3 { transform: rotate(128.57deg); }
+        .w-l-4 { transform: rotate(180deg); }
+        .w-l-5 { transform: rotate(231.42deg); }
+        .w-l-6 { transform: rotate(282.85deg); }
+        .w-l-7 { transform: rotate(334.28deg); }
 
         /* Стилі для Міні-гри */
         .minigame-wrapper {
@@ -712,7 +715,7 @@
         <div class="section-title">Фарм-Гра (1 хв)</div>
         <div class="minigame-wrapper">
             <div class="minigame-hud">
-                <span>⏱️ Час: <span id="mgTimer">60</span>с</span>
+                <span>⏱️️ Час: <span id="mgTimer">60</span>с</span>
                 <span>🪙 Зібрано: <span id="mgScore">0</span></span>
             </div>
 
@@ -805,7 +808,8 @@
         
         <div class="roulette-switcher">
             <button class="roulette-switch-btn active" onclick="switchRoulette('coin', this)">🪙 Монетна</button>
-            <button class="roulette-switch-btn" onclick="switchRoulette('gem', this)">💎 Кришталева</button>
+            <button class="roulette-switch-btn" onclick="switchRoulette('gem', this)">💎 Велика</button>
+            <button class="roulette-switch-btn" onclick="switchRoulette('bear', this)">🐻 Ведмідь</button>
         </div>
 
         <div class="roulette-container active" id="roulette-coin">
@@ -844,6 +848,26 @@
                 <div class="wheel-center">💎</div>
             </div>
             <button class="item-btn" id="spinGemBtn" onclick="spinGemWheel()" style="width: 100%; padding: 8px; font-size: 12px;">Крутити (15 💎)</button>
+        </div>
+
+        <div class="roulette-container" id="roulette-bear">
+            <p style="font-size: 11px; color: var(--text-secondary);">Ціна прокрутки: 10 💎</p>
+            <div class="wheel-wrapper">
+                <div class="wheel-pointer"></div>
+                <div class="wheel" id="wheelBear" style="background: conic-gradient(#1e293b 0deg 51.42deg, #334155 51.42deg 102.85deg, #1e293b 102.85deg 154.28deg, #334155 154.28deg 205.71deg, #1e293b 205.71deg 257.14deg, #334155 257.14deg 308.57deg, #1e293b 308.57deg 360deg);">
+                    <div class="wheel-labels">
+                        <div class="wheel-label w-l-1">2 💎</div>
+                        <div class="wheel-label w-l-2">5 💎</div>
+                        <div class="wheel-label w-l-3">10 💎</div>
+                        <div class="wheel-label w-l-4">15 💎</div>
+                        <div class="wheel-label w-l-5">20 💎</div>
+                        <div class="wheel-label w-l-6">25 💎</div>
+                        <div class="wheel-label w-l-7">🐻</div>
+                    </div>
+                </div>
+                <div class="wheel-center">🐻</div>
+            </div>
+            <button class="item-btn" id="spinBearBtn" onclick="spinBearWheel()" style="width: 100%; padding: 8px; font-size: 12px;">Крутити (10 💎)</button>
         </div>
     </div>
 
@@ -1419,6 +1443,16 @@
             { text: "5💎",  gems: 5,  coins: 0, chance: 0.60 }
         ];
 
+        const bearRoulettePrizes = [
+            { text: "2 💎",  gems: 2,  special: false, chance: 0.40 },
+            { text: "5 💎",  gems: 5,  special: false, chance: 0.30 },
+            { text: "10 💎", gems: 10, special: false, chance: 0.20 },
+            { text: "15 💎", gems: 15, special: false, chance: 0.15 },
+            { text: "20 💎", gems: 20, special: false, chance: 0.10 },
+            { text: "25 💎", gems: 25, special: false, chance: 0.05 },
+            { text: "🐻",    gems: 0,  special: true,  chance: 0.02 }
+        ];
+
         function getWeightedRandomIndex(prizes) {
             const totalWeight = prizes.reduce((sum, item) => sum + item.chance, 0);
             let randomNum = Math.random() * totalWeight;
@@ -1496,6 +1530,47 @@
                 const wonGems = gemRoulettePrizes[prizeIndex].gems;
                 gems += wonGems;
                 alert(`Вітаємо! Ви виграли ${wonGems} 💎!`);
+                checkLevelProgression();
+                updateVisuals();
+                saveGame();
+                if (spinBtn) spinBtn.disabled = false;
+            }, 4000);
+        }
+
+        let bearRotation = 0;
+        function spinBearWheel() {
+            const cost = 10;
+            if (gems < cost) {
+                alert('Недостатня кількість кристалів! Потрібно 10 💎');
+                return;
+            }
+
+            gems -= cost;
+            updateVisuals();
+            saveGame();
+
+            const spinBtn = document.getElementById('spinBearBtn');
+            if (spinBtn) spinBtn.disabled = true;
+
+            const prizeIndex = getWeightedRandomIndex(bearRoulettePrizes);
+            const totalItems = bearRoulettePrizes.length;
+            const angleStep = 360 / totalItems;
+            
+            const targetSectorCenter = prizeIndex * angleStep + angleStep / 2;
+            const extraSpins = 360 * 7;
+            const currentMod = bearRotation % 360;
+            bearRotation += extraSpins + (360 - currentMod) + (360 - targetSectorCenter);
+            
+            document.getElementById('wheelBear').style.transform = `rotate(${bearRotation}deg)`;
+
+            setTimeout(() => {
+                const prize = bearRoulettePrizes[prizeIndex];
+                if (prize.special) {
+                    alert(`Неймовірно! Ви виграли супер-приз: емодзі ведмідь 🐻!`);
+                } else {
+                    gems += prize.gems;
+                    alert(`Вітаємо! Ви виграли ${prize.text}!`);
+                }
                 checkLevelProgression();
                 updateVisuals();
                 saveGame();
