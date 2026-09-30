@@ -411,11 +411,24 @@
             transition: transform 4s cubic-bezier(0.15, 0.85, 0.15, 1);
             overflow: hidden;
             box-shadow: 0 0 15px rgba(107, 142, 35, 0.4);
+            /* Градієнт на 6 рівних секторів (по 60 градусів) */
             background: conic-gradient(
-                #1e293b 0deg 51.42deg,
-                #334155 51.42deg 102.85deg,
-                #1e293b 102.85deg 154.28deg,
-                #334155 154.28deg 205.71deg,
+                #1e293b 0deg 60deg,
+                #334155 60deg 120deg,
+                #1e293b 120deg 180deg,
+                #334155 180deg 240deg,
+                #1e293b 240deg 300deg,
+                #334155 300deg 360deg
+            );
+        }
+
+        /* Стиль для колеса ведмедя на 7 секторів (по ~51.43 градуса) */
+        .wheel-7 {
+            background: conic-gradient(
+                #1e293b 0deg 51.43deg,
+                #334155 51.43deg 102.86deg,
+                #1e293b 102.86deg 154.29deg,
+                #334155 154.29deg 205.71deg,
                 #1e293b 205.71deg 257.14deg,
                 #334155 257.14deg 308.57deg,
                 #1e293b 308.57deg 360deg
@@ -466,20 +479,29 @@
             width: 100%;
             height: 100%;
             text-align: center;
-            font-size: 9px;
+            font-size: 10px;
             font-weight: 900;
             color: #fff;
             text-shadow: 0 1px 2px #000;
             padding-top: 14px;
         }
 
-        .w-l-1 { transform: rotate(25.71deg); }
-        .w-l-2 { transform: rotate(77.14deg); }
-        .w-l-3 { transform: rotate(128.57deg); }
-        .w-l-4 { transform: rotate(180deg); }
-        .w-l-5 { transform: rotate(231.42deg); }
-        .w-l-6 { transform: rotate(282.85deg); }
-        .w-l-7 { transform: rotate(334.28deg); }
+        /* Позиціонування 6 міток (для 60-градусних секторів: центр сектора знаходиться посередині) */
+        .w-l-1 { transform: rotate(30deg); }
+        .w-l-2 { transform: rotate(90deg); }
+        .w-l-3 { transform: rotate(150deg); }
+        .w-l-4 { transform: rotate(210deg); }
+        .w-l-5 { transform: rotate(270deg); }
+        .w-l-6 { transform: rotate(330deg); }
+
+        /* Позиціонування 7 міток для колеса ведмедя */
+        .w-bear-1 { transform: rotate(25.71deg); }
+        .w-bear-2 { transform: rotate(77.14deg); }
+        .w-bear-3 { transform: rotate(128.57deg); }
+        .w-bear-4 { transform: rotate(180deg); }
+        .w-bear-5 { transform: rotate(231.43deg); }
+        .w-bear-6 { transform: rotate(282.86deg); }
+        .w-bear-7 { transform: rotate(334.29deg); }
 
         /* Стилі для Міні-гри */
         .minigame-wrapper {
@@ -715,7 +737,7 @@
         <div class="section-title">Фарм-Гра (1 хв)</div>
         <div class="minigame-wrapper">
             <div class="minigame-hud">
-                <span>⏱️️ Час: <span id="mgTimer">60</span>с</span>
+                <span>⏱ Час: <span id="mgTimer">60</span>с</span>
                 <span>🪙 Зібрано: <span id="mgScore">0</span></span>
             </div>
 
@@ -835,7 +857,7 @@
             <p style="font-size: 11px; color: var(--text-secondary);">Ціна прокрутки: 15 💎</p>
             <div class="wheel-wrapper">
                 <div class="wheel-pointer"></div>
-                <div class="wheel" id="wheelGem" style="border-color: #6B8E23;">
+                <div class="wheel" id="wheelGem">
                     <div class="wheel-labels">
                         <div class="wheel-label w-l-1">30 💎</div>
                         <div class="wheel-label w-l-2">25 💎</div>
@@ -854,15 +876,15 @@
             <p style="font-size: 11px; color: var(--text-secondary);">Ціна прокрутки: 10 💎</p>
             <div class="wheel-wrapper">
                 <div class="wheel-pointer"></div>
-                <div class="wheel" id="wheelBear" style="background: conic-gradient(#1e293b 0deg 51.42deg, #334155 51.42deg 102.85deg, #1e293b 102.85deg 154.28deg, #334155 154.28deg 205.71deg, #1e293b 205.71deg 257.14deg, #334155 257.14deg 308.57deg, #1e293b 308.57deg 360deg);">
+                <div class="wheel wheel-7" id="wheelBear">
                     <div class="wheel-labels">
-                        <div class="wheel-label w-l-1">2 💎</div>
-                        <div class="wheel-label w-l-2">5 💎</div>
-                        <div class="wheel-label w-l-3">10 💎</div>
-                        <div class="wheel-label w-l-4">15 💎</div>
-                        <div class="wheel-label w-l-5">20 💎</div>
-                        <div class="wheel-label w-l-6">25 💎</div>
-                        <div class="wheel-label w-l-7">🐻</div>
+                        <div class="wheel-label w-bear-1">2 💎</div>
+                        <div class="wheel-label w-bear-2">5 💎</div>
+                        <div class="wheel-label w-bear-3">10 💎</div>
+                        <div class="wheel-label w-bear-4">15 💎</div>
+                        <div class="wheel-label w-bear-5">20 💎</div>
+                        <div class="wheel-label w-bear-6">25 💎</div>
+                        <div class="wheel-label w-bear-7">🐻</div>
                     </div>
                 </div>
                 <div class="wheel-center">🐻</div>
@@ -1424,33 +1446,34 @@
             if (e.key === 'ArrowRight') moveCroc('right');
         });
 
-        // --- КОЛЕСО ФОРТУНИ ---
+        // --- ТОЧНА ЛОГІКА КОЛІС ФОРТУНИ ---
+        // Масиви призів точно відповідають порядку міток на циферблаті за годинниковою стрілкою (від верху)
         const coinRoulettePrizes = [
-            { text: "30k 🪙", gems: 0, coins: 30000, chance: 0.10 },
-            { text: "25k 🪙", gems: 0, coins: 25000, chance: 0.15 },
-            { text: "20k 🪙", gems: 0, coins: 20000, chance: 0.30 },
-            { text: "15k 🪙", gems: 0, coins: 15000, chance: 0.50 },
-            { text: "10k 🪙", gems: 0, coins: 10000, chance: 0.60 },
-            { text: "7k 🪙",  gems: 0, coins: 7000,  chance: 0.60 }
+            { text: "30k 🪙", coins: 30000, chance: 0.10 }, // Сектор 1 (0° - 60°)
+            { text: "25k 🪙", coins: 25000, chance: 0.15 }, // Сектор 2 (60° - 120°)
+            { text: "20k 🪙", coins: 20000, chance: 0.30 }, // Сектор 3 (120° - 180°)
+            { text: "15k 🪙", coins: 15000, chance: 0.50 }, // Сектор 4 (180° - 240°)
+            { text: "10k 🪙", coins: 10000, chance: 0.60 }, // Сектор 5 (240° - 300°)
+            { text: "7k 🪙",  coins: 7000,  chance: 0.60 }  // Сектор 6 (300° - 360°)
         ];
 
         const gemRoulettePrizes = [
-            { text: "30💎", gems: 30, coins: 0, chance: 0.10 },
-            { text: "25💎", gems: 25, coins: 0, chance: 0.15 },
-            { text: "20💎", gems: 20, coins: 0, chance: 0.30 },
-            { text: "15💎", gems: 15, coins: 0, chance: 0.50 },
-            { text: "10💎", gems: 10, coins: 0, chance: 0.60 },
-            { text: "5💎",  gems: 5,  coins: 0, chance: 0.60 }
+            { text: "30 💎", gems: 30, chance: 0.10 }, // Сектор 1
+            { text: "25 💎", gems: 25, chance: 0.15 }, // Сектор 2
+            { text: "20 💎", gems: 20, chance: 0.30 }, // Сектор 3
+            { text: "15 💎", gems: 15, chance: 0.50 }, // Сектор 4
+            { text: "10 💎", gems: 10, chance: 0.60 }, // Сектор 5
+            { text: "5 💎",  gems: 5,  chance: 0.60 }  // Сектор 6
         ];
 
         const bearRoulettePrizes = [
-            { text: "2 💎",  gems: 2,  special: false, chance: 0.40 },
-            { text: "5 💎",  gems: 5,  special: false, chance: 0.30 },
-            { text: "10 💎", gems: 10, special: false, chance: 0.20 },
-            { text: "15 💎", gems: 15, special: false, chance: 0.15 },
-            { text: "20 💎", gems: 20, special: false, chance: 0.10 },
-            { text: "25 💎", gems: 25, special: false, chance: 0.05 },
-            { text: "🐻",    gems: 0,  special: true,  chance: 0.02 }
+            { text: "2 💎",  gems: 2,  special: false, chance: 0.40 }, // Сектор 1
+            { text: "5 💎",  gems: 5,  special: false, chance: 0.30 }, // Сектор 2
+            { text: "10 💎", gems: 10, special: false, chance: 0.20 }, // Сектор 3
+            { text: "15 💎", gems: 15, special: false, chance: 0.15 }, // Сектор 4
+            { text: "20 💎", gems: 20, special: false, chance: 0.10 }, // Сектор 5
+            { text: "25 💎", gems: 25, special: false, chance: 0.05 }, // Сектор 6
+            { text: "🐻",    gems: 0,  special: true,  chance: 0.02 }  // Сектор 7
         ];
 
         function getWeightedRandomIndex(prizes) {
@@ -1479,9 +1502,10 @@
             if (spinBtn) spinBtn.disabled = true;
 
             const prizeIndex = getWeightedRandomIndex(coinRoulettePrizes);
-            const totalItems = coinRoulettePrizes.length;
-            const angleStep = 360 / totalItems;
+            const totalItems = coinRoulettePrizes.length; // 6
+            const angleStep = 360 / totalItems; // 60 градусів на сектор
             
+            // Розрахунок кута, щоб стрілка (зверху на 0°) чітко зупинилася в центрі вибраного сектора
             const targetSectorCenter = prizeIndex * angleStep + angleStep / 2;
             const extraSpins = 360 * 7;
             const currentMod = coinRotation % 360;
@@ -1516,8 +1540,8 @@
             if (spinBtn) spinBtn.disabled = true;
 
             const prizeIndex = getWeightedRandomIndex(gemRoulettePrizes);
-            const totalItems = gemRoulettePrizes.length;
-            const angleStep = 360 / totalItems;
+            const totalItems = gemRoulettePrizes.length; // 6
+            const angleStep = 360 / totalItems; // 60 градусів
             
             const targetSectorCenter = prizeIndex * angleStep + angleStep / 2;
             const extraSpins = 360 * 7;
@@ -1553,8 +1577,8 @@
             if (spinBtn) spinBtn.disabled = true;
 
             const prizeIndex = getWeightedRandomIndex(bearRoulettePrizes);
-            const totalItems = bearRoulettePrizes.length;
-            const angleStep = 360 / totalItems;
+            const totalItems = bearRoulettePrizes.length; // 7
+            const angleStep = 360 / totalItems; // ~51.43 градуса
             
             const targetSectorCenter = prizeIndex * angleStep + angleStep / 2;
             const extraSpins = 360 * 7;
