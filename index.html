@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>CrocoCoin</title>
+    <title>TabCoin</title>
     <!-- Підключаємо офіційний Telegram WebApp SDK -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
@@ -12,7 +12,7 @@
             --panel-bg: rgba(22, 27, 39, 0.88);
             --panel-border: rgba(255, 255, 255, 0.08);
             --accent-gold: #52796f; /* Болотно-зелений акцент */
-            --accent-gold-gradient: linear-gradient(135deg, #688f82, #3a5a40);
+            --accent-gold-gradient: linear-gradient(135deg, #688f82, #3a5a40); /* Болотно-зелений градієнт */
             --accent-gem: #38bdf8;
             --text-white: #ffffff;
             --text-secondary: #94a3b8;
@@ -71,6 +71,7 @@
             gap: 8px;
         }
 
+        /* Верхня панель профілю */
         .top-profile-row {
             display: flex;
             align-items: center;
@@ -129,6 +130,7 @@
             letter-spacing: 0.5px;
         }
 
+        /* Кнопка музики */
         .music-toggle-btn {
             background: var(--panel-bg);
             border: 1px solid var(--panel-border);
@@ -525,97 +527,6 @@
             box-shadow: 0 0 10px rgba(0,0,0,0.5);
         }
 
-        /* --- СТИЛІ ДЛЯ МІНІ-ГРИ (Gold Keeper / Catch) --- */
-        .minigame-box {
-            position: relative;
-            width: 100%;
-            max-width: 350px;
-            height: 380px;
-            background: rgba(18, 22, 34, 0.9);
-            border: 2px solid var(--accent-gold);
-            border-radius: 20px;
-            overflow: hidden;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
-            backdrop-filter: blur(10px);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .minigame-canvas-container {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            cursor: pointer;
-        }
-
-        .mg-hud {
-            position: absolute;
-            top: 10px;
-            left: 12px;
-            right: 12px;
-            display: flex;
-            justify-content: space-between;
-            font-size: 13px;
-            font-weight: 800;
-            z-index: 10;
-            pointer-events: none;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.8);
-        }
-
-        .mg-basket {
-            position: absolute;
-            bottom: 10px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 60px;
-            height: 60px;
-            object-fit: contain;
-            filter: drop-shadow(0 5px 5px rgba(0,0,0,0.6));
-            z-index: 5;
-            transition: left 0.05s linear;
-        }
-
-        .mg-item {
-            position: absolute;
-            width: 32px;
-            height: 32px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
-            z-index: 4;
-            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
-        }
-
-        .mg-start-screen {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(18, 22, 34, 0.85);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            z-index: 20;
-            text-align: center;
-            padding: 20px;
-        }
-
-        .mg-start-screen h3 {
-            font-size: 20px;
-            color: var(--text-white);
-        }
-
-        .mg-start-screen p {
-            font-size: 12px;
-            color: var(--text-secondary);
-            margin-bottom: 10px;
-        }
-
         .level-modal-overlay {
             position: fixed;
             top: 0;
@@ -760,6 +671,7 @@
                 </div>
             </div>
 
+            <!-- Кнопка управління музикою -->
             <button class="music-toggle-btn" id="musicToggleBtn" onclick="toggleMusic()" title="Музика">
                 🔇
             </button>
@@ -793,25 +705,6 @@
             </div>
             <div class="energy-bar-container">
                 <div class="energy-bar-fill" id="energyFill"></div>
-            </div>
-        </div>
-    </div>
-
-    <!-- ВКЛАДКА МІНІ-ГРИ (Gold Keeper / Ловимо скарби) -->
-    <div class="tab-content" id="tab-minigame">
-        <div class="section-title">Gold Keeper 🐊</div>
-        <div class="minigame-box" id="mgBox">
-            <div class="mg-start-screen" id="mgStartScreen">
-                <h3>Gold Keeper</h3>
-                <p>Лови монети та кристали, остерігайся бомб! Керуй пальцем чи мишею.</p>
-                <button class="item-btn" onclick="startMiniGame()" style="width: 100%;">Грати</button>
-            </div>
-            <div class="minigame-canvas-container" id="mgContainer">
-                <div class="mg-hud">
-                    <span>🪙 <span id="mgScore">0</span></span>
-                    <span>⏳ <span id="mgTimer">30</span>с</span>
-                </div>
-                <img src="1790090929041.png" alt="Крокодил" class="mg-basket" id="mgBasket">
             </div>
         </div>
     </div>
@@ -972,10 +865,6 @@
             <span class="nav-icon">🏠</span>
             <span>Дім</span>
         </button>
-        <button class="nav-item" onclick="switchTab('minigame', this)">
-            <span class="nav-icon">🎮</span>
-            <span>Гра</span>
-        </button>
         <button class="nav-item" onclick="switchTab('boosts', this)">
             <span class="nav-icon">🚀</span>
             <span>Бусти</span>
@@ -1017,16 +906,18 @@
             console.log("Telegram WebApp не ініціалізовано");
         }
 
+        // --- ІГРОВИЙ СИНТЕЗАТОР МУЗИКИ (Web Audio API) ---
         let audioCtx = null;
         let isMusicPlaying = false;
         let musicTimer = null;
         const musicToggleBtn = document.getElementById('musicToggleBtn');
 
+        // Послідовність нот для приємної аркадної мелодії
         const melodyNotes = [
-            261.63, 329.63, 392.00, 523.25,
-            392.00, 329.63, 293.66, 349.23,
-            220.00, 261.63, 329.63, 440.00,
-            329.63, 293.66, 246.94, 261.63
+            261.63, 329.63, 392.00, 523.25, // C4, E4, G4, C5
+            392.00, 329.63, 293.66, 349.23, // G4, E4, D4, F4
+            220.00, 261.63, 329.63, 440.00, // A3, C4, E4, A4
+            329.63, 293.66, 246.94, 261.63  // E4, D4, B3, C4
         ];
         let currentNoteIndex = 0;
 
@@ -1046,9 +937,10 @@
                 const osc = audioCtx.createOscillator();
                 const gainNode = audioCtx.createGain();
 
-                osc.type = 'sine';
+                osc.type = 'sine'; // М'який приємний звук
                 osc.frequency.setValueAtTime(melodyNotes[currentNoteIndex], audioCtx.currentTime);
 
+                // Гучність (тиха фонова)
                 gainNode.gain.setValueAtTime(0.03, audioCtx.currentTime);
                 gainNode.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.45);
 
@@ -1059,7 +951,7 @@
                 osc.stop(audioCtx.currentTime + 0.5);
 
                 currentNoteIndex = (currentNoteIndex + 1) % melodyNotes.length;
-            }, 450);
+            }, 450); // Швидкість нот
         }
 
         function stopMusicSynth() {
@@ -1081,6 +973,7 @@
             }
         }
 
+        // Автоматичний старт при першому кліку на екран (щоб обійти блокування браузерів)
         document.body.addEventListener('click', function initAudioOnFirstClick() {
             if (!isMusicPlaying) {
                 isMusicPlaying = true;
@@ -1090,36 +983,36 @@
             }
         }, { once: false });
 
-        let score = Number(localStorage.getItem('crococoin_score')) || 0;
-        let gems = Number(localStorage.getItem('crococoin_gems')) || 0;
-        let maxEnergy = Number(localStorage.getItem('crococoin_maxEnergy')) || 1000;
-        let energyRegenRate = Number(localStorage.getItem('crococoin_energyRegenRate')) || 3;
+        let score = Number(localStorage.getItem('tabcoin_score')) || 0;
+        let gems = Number(localStorage.getItem('tabcoin_gems')) || 0;
+        let maxEnergy = Number(localStorage.getItem('tabcoin_maxEnergy')) || 1000;
+        let energyRegenRate = Number(localStorage.getItem('tabcoin_energyRegenRate')) || 3;
         
-        let savedEnergy = localStorage.getItem('crococoin_energy');
+        let savedEnergy = localStorage.getItem('tabcoin_energy');
         let energy = savedEnergy !== null ? Number(savedEnergy) : maxEnergy;
         
-        let clickPower = Number(localStorage.getItem('crococoin_clickPower')) || 1;
-        let level = Number(localStorage.getItem('crococoin_level')) || 1;
+        let clickPower = Number(localStorage.getItem('tabcoin_clickPower')) || 1;
+        let level = Number(localStorage.getItem('tabcoin_level')) || 1;
         
-        let multiclickLevel = Number(localStorage.getItem('crococoin_multiLevel')) || 0;
-        let maxenergyLevel = Number(localStorage.getItem('crococoin_energyLevel')) || 0;
-        let energyregenLevel = Number(localStorage.getItem('crococoin_energyregenLevel')) || 0;
-        let passiveLevel = Number(localStorage.getItem('crococoin_passiveLevel')) || 0;
+        let multiclickLevel = Number(localStorage.getItem('tabcoin_multiLevel')) || 0;
+        let maxenergyLevel = Number(localStorage.getItem('tabcoin_energyLevel')) || 0;
+        let energyregenLevel = Number(localStorage.getItem('tabcoin_energyregenLevel')) || 0;
+        let passiveLevel = Number(localStorage.getItem('tabcoin_passiveLevel')) || 0;
 
-        let biz1Level = Number(localStorage.getItem('crococoin_biz1Level')) || 0;
-        let biz2Level = Number(localStorage.getItem('crococoin_biz2Level')) || 0;
-        let biz3Level = Number(localStorage.getItem('crococoin_biz3Level')) || 0;
+        let biz1Level = Number(localStorage.getItem('tabcoin_biz1Level')) || 0;
+        let biz2Level = Number(localStorage.getItem('tabcoin_biz2Level')) || 0;
+        let biz3Level = Number(localStorage.getItem('tabcoin_biz3Level')) || 0;
 
-        let task1Count = Number(localStorage.getItem('crococoin_task1Count')) || 0;
-        let task1Claimed = localStorage.getItem('crococoin_task1Claimed') === 'true';
+        let task1Count = Number(localStorage.getItem('tabcoin_task1Count')) || 0;
+        let task1Claimed = localStorage.getItem('tabcoin_task1Claimed') === 'true';
 
-        let task2Count = Number(localStorage.getItem('crococoin_task2Count')) || 0;
-        let task2Claimed = localStorage.getItem('crococoin_task2Claimed') === 'true';
+        let task2Count = Number(localStorage.getItem('tabcoin_task2Count')) || 0;
+        let task2Claimed = localStorage.getItem('tabcoin_task2Claimed') === 'true';
 
-        let task3Count = Number(localStorage.getItem('crococoin_task3Count')) || 0;
-        let task3Claimed = localStorage.getItem('crococoin_task3Claimed') === 'true';
+        let task3Count = Number(localStorage.getItem('tabcoin_task3Count')) || 0;
+        let task3Claimed = localStorage.getItem('tabcoin_task3Claimed') === 'true';
 
-        let lastResetDate = localStorage.getItem('crococoin_lastResetDate') || '';
+        let lastResetDate = localStorage.getItem('tabcoin_lastResetDate') || '';
 
         function checkDailyReset() {
             const now = new Date();
@@ -1156,7 +1049,7 @@
 
         const energyCostPerClick = 5;
 
-        let lastTime = Number(localStorage.getItem('crococoin_lastTime')) || Date.now();
+        let lastTime = Number(localStorage.getItem('tabcoin_lastTime')) || Date.now();
         let currentTime = Date.now();
         let elapsedSeconds = Math.floor((currentTime - lastTime) / 1000);
 
@@ -1209,30 +1102,30 @@
         }
 
         function saveGame() {
-            localStorage.setItem('crococoin_score', score);
-            localStorage.setItem('crococoin_gems', gems);
-            localStorage.setItem('crococoin_energy', energy);
-            localStorage.setItem('crococoin_maxEnergy', maxEnergy);
-            localStorage.setItem('crococoin_energyRegenRate', energyRegenRate);
-            localStorage.setItem('crococoin_clickPower', clickPower);
-            localStorage.setItem('crococoin_level', level);
-            localStorage.setItem('crococoin_multiLevel', multiclickLevel);
-            localStorage.setItem('crococoin_energyLevel', maxenergyLevel);
-            localStorage.setItem('crococoin_energyregenLevel', energyregenLevel);
-            localStorage.setItem('crococoin_passiveLevel', passiveLevel);
-            localStorage.setItem('crococoin_biz1Level', biz1Level);
-            localStorage.setItem('crococoin_biz2Level', biz2Level);
-            localStorage.setItem('crococoin_biz3Level', biz3Level);
+            localStorage.setItem('tabcoin_score', score);
+            localStorage.setItem('tabcoin_gems', gems);
+            localStorage.setItem('tabcoin_energy', energy);
+            localStorage.setItem('tabcoin_maxEnergy', maxEnergy);
+            localStorage.setItem('tabcoin_energyRegenRate', energyRegenRate);
+            localStorage.setItem('tabcoin_clickPower', clickPower);
+            localStorage.setItem('tabcoin_level', level);
+            localStorage.setItem('tabcoin_multiLevel', multiclickLevel);
+            localStorage.setItem('tabcoin_energyLevel', maxenergyLevel);
+            localStorage.setItem('tabcoin_energyregenLevel', energyregenLevel);
+            localStorage.setItem('tabcoin_passiveLevel', passiveLevel);
+            localStorage.setItem('tabcoin_biz1Level', biz1Level);
+            localStorage.setItem('tabcoin_biz2Level', biz2Level);
+            localStorage.setItem('tabcoin_biz3Level', biz3Level);
             
-            localStorage.setItem('crococoin_task1Count', task1Count);
-            localStorage.setItem('crococoin_task1Claimed', task1Claimed);
-            localStorage.setItem('crococoin_task2Count', task2Count);
-            localStorage.setItem('crococoin_task2Claimed', task2Claimed);
-            localStorage.setItem('crococoin_task3Count', task3Count);
-            localStorage.setItem('crococoin_task3Claimed', task3Claimed);
-            localStorage.setItem('crococoin_lastResetDate', lastResetDate);
+            localStorage.setItem('tabcoin_task1Count', task1Count);
+            localStorage.setItem('tabcoin_task1Claimed', task1Claimed);
+            localStorage.setItem('tabcoin_task2Count', task2Count);
+            localStorage.setItem('tabcoin_task2Claimed', task2Claimed);
+            localStorage.setItem('tabcoin_task3Count', task3Count);
+            localStorage.setItem('tabcoin_task3Claimed', task3Claimed);
+            localStorage.setItem('tabcoin_lastResetDate', lastResetDate);
 
-            localStorage.setItem('crococoin_lastTime', Date.now());
+            localStorage.setItem('tabcoin_lastTime', Date.now());
         }
 
         const levelData = {
@@ -1416,25 +1309,22 @@
             document.getElementById('biz3Info').textContent = `Рівень: ${biz3Level} | Дохід: +${(biz3Level * 50000).toLocaleString()}/год`;
             document.getElementById('buyBiz3Btn').textContent = `Купити (${priceBiz3.toLocaleString()} 🪙)`;
 
-            let activeImageSrc = '1790090929041.png';
             if (level >= 5) {
                 levelBadge.textContent = 'Stage 5';
-                activeImageSrc = '1790244183576.png';
+                characterImg.src = '1790244183576.png';
             } else if (level === 4) {
                 levelBadge.textContent = 'Stage 4';
-                activeImageSrc = '1790165750453.png';
+                characterImg.src = '1790165750453.png';
             } else if (level === 3) {
                 levelBadge.textContent = 'Stage 3';
-                activeImageSrc = '1790163627383.png';
+                characterImg.src = '1790163627383.png';
             } else if (level === 2) {
                 levelBadge.textContent = 'Stage 2';
-                activeImageSrc = '1790159498394.png';
+                characterImg.src = '1790159498394.png';
             } else {
                 levelBadge.textContent = 'Stage 1';
-                activeImageSrc = '1790090929041.png';
+                characterImg.src = '1790090929041.png';
             }
-            characterImg.src = activeImageSrc;
-            document.getElementById('mgBasket').src = activeImageSrc;
 
             updateTasksUI();
         }
@@ -1639,155 +1529,6 @@
             }
         }
 
-        // --- ЛОГІКА МІНІ-ГРИ (Gold Keeper) ---
-        let mgActive = false;
-        let mgScore = 0;
-        let mgTimer = 30;
-        let mgInterval = null;
-        let mgGameLoop = null;
-        let mgItems = [];
-        const mgContainer = document.getElementById('mgContainer');
-        const mgBasket = document.getElementById('mgBasket');
-
-        function startMiniGame() {
-            document.getElementById('mgStartScreen').style.display = 'none';
-            mgActive = true;
-            mgScore = 0;
-            mgTimer = 30;
-            document.getElementById('mgScore').textContent = mgScore;
-            document.getElementById('mgTimer').textContent = mgTimer;
-            
-            // Очистити попередні предмети
-            document.querySelectorAll('.mg-item').forEach(el => el.remove());
-            mgItems = [];
-
-            mgInterval = setInterval(() => {
-                mgTimer--;
-                document.getElementById('mgTimer').textContent = mgTimer;
-                if (mgTimer <= 0) {
-                    endMiniGame();
-                }
-            }, 1000);
-
-            mgGameLoop = setInterval(updateMiniGame, 30);
-        }
-
-        // Керування рухом крокодила дотиками/мишею
-        mgContainer.addEventListener('mousemove', (e) => {
-            if (!mgActive) return;
-            const rect = mgContainer.getBoundingClientRect();
-            let x = e.clientX - rect.left;
-            moveBasket(x, rect.width);
-        });
-
-        mgContainer.addEventListener('touchmove', (e) => {
-            if (!mgActive) return;
-            const rect = mgContainer.getBoundingClientRect();
-            let x = e.touches[0].clientX - rect.left;
-            moveBasket(x, rect.width);
-            e.preventDefault();
-        }, { passive: false });
-
-        function moveBasket(x, containerWidth) {
-            let boundedX = Math.max(30, Math.min(containerWidth - 30, x));
-            mgBasket.style.left = `${boundedX}px`;
-        }
-
-        function updateMiniGame() {
-            if (!mgActive) return;
-
-            // Спавн нових предметів випадковим чином
-            if (Math.random() < 0.08) {
-                spawnMgItem();
-            }
-
-            const containerRect = mgContainer.getBoundingClientRect();
-            const basketRect = mgBasket.getBoundingClientRect();
-
-            for (let i = mgItems.length - 1; i >= 0; i--) {
-                let item = mgItems[i];
-                item.y += item.speed;
-                item.element.style.top = `${item.y}px`;
-
-                // Перевірка збору крокодилом
-                const itemRect = item.element.getBoundingClientRect();
-                if (
-                    itemRect.bottom >= basketRect.top &&
-                    itemRect.top <= basketRect.bottom &&
-                    itemRect.right >= basketRect.left &&
-                    itemRect.left <= basketRect.right
-                ) {
-                    // Зловили!
-                    if (item.type === 'coin') {
-                        mgScore += 1000;
-                    } else if (item.type === 'gem') {
-                        mgScore += 5000;
-                    } else if (item.type === 'bomb') {
-                        mgScore = Math.max(0, mgScore - 3000);
-                    }
-                    document.getElementById('mgScore').textContent = mgScore;
-                    item.element.remove();
-                    mgItems.splice(i, 1);
-                    continue;
-                }
-
-                // Виліт за межі екрана
-                if (item.y > containerRect.height) {
-                    item.element.remove();
-                    mgItems.splice(i, 1);
-                }
-            }
-        }
-
-        function spawnMgItem() {
-            const containerWidth = mgContainer.clientWidth;
-            const x = Math.random() * (containerWidth - 40);
-            
-            const rand = Math.random();
-            let type = 'coin';
-            let symbol = '🪙';
-            let speed = 3 + Math.random() * 2;
-
-            if (rand > 0.85) {
-                type = 'gem';
-                symbol = '💎';
-                speed = 4 + Math.random() * 2;
-            } else if (rand < 0.3) {
-                type = 'bomb';
-                symbol = '💣';
-                speed = 3.5 + Math.random() * 2.5;
-            }
-
-            const el = document.createElement('div');
-            el.className = 'mg-item';
-            el.textContent = symbol;
-            el.style.left = `${x}px`;
-            el.style.top = `0px`;
-            mgContainer.appendChild(el);
-
-            mgItems.push({ element: el, y: 0, speed: speed, type: type });
-        }
-
-        function endMiniGame() {
-            mgActive = false;
-            clearInterval(mgInterval);
-            clearInterval(mgGameLoop);
-            document.querySelectorAll('.mg-item').forEach(el => el.remove());
-
-            // Нараховуємо виграш у загальний баланс гри
-            let rewardCoins = Math.floor(mgScore / 2);
-            score += rewardCoins;
-            checkLevelProgression();
-            saveGame();
-
-            const startScreen = document.getElementById('mgStartScreen');
-            startScreen.style.display = 'flex';
-            startScreen.querySelector('h3').textContent = 'Гра закінчена!';
-            startScreen.querySelector('p').textContent = `Ви заробили у міні-грі: ${mgScore.toLocaleString()} очок (+${rewardCoins.toLocaleString()} 🪙 додано до балансу)!`;
-            startScreen.querySelector('button').textContent = 'Грати знову';
-        }
-
-        // --- КОЛЕСО ФОРТУНИ ---
         const coinRoulettePrizes = [
             { text: "30k 🪙", gems: 0, coins: 30000, chance: 0.10 },
             { text: "25k 🪙", gems: 0, coins: 25000, chance: 0.15 },
