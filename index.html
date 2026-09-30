@@ -560,7 +560,7 @@
         </div>
     </div>
 
-    <!-- НОВА ВКЛАДКА "БІЗНЕСИ" -->
+    <!-- ВКЛАДКА "БІЗНЕСИ" -->
     <div class="tab-content" id="tab-business">
         <div class="section-title">Бізнеси 🏢</div>
         <div class="items-list">
@@ -750,15 +750,6 @@
             console.log("Telegram WebApp не ініціалізовано");
         }
 
-        // --- ВЕРСІЯ ГРИ ТА СКИНУТНЯ ПРОГРЕСУ ---
-        const CURRENT_GAME_VERSION = "2.1"; 
-        const savedVersion = localStorage.getItem('tabcoin_version');
-
-        if (savedVersion !== CURRENT_GAME_VERSION) {
-            localStorage.clear();
-            localStorage.setItem('tabcoin_version', CURRENT_GAME_VERSION);
-        }
-
         let score = Number(localStorage.getItem('tabcoin_score')) || 0;
         let gems = Number(localStorage.getItem('tabcoin_gems')) || 0;
         let maxEnergy = Number(localStorage.getItem('tabcoin_maxEnergy')) || 1000;
@@ -773,7 +764,6 @@
         let maxenergyLevel = Number(localStorage.getItem('tabcoin_energyLevel')) || 0;
         let passiveLevel = Number(localStorage.getItem('tabcoin_passiveLevel')) || 0;
 
-        // Зберігання рівнів бізнесів
         let biz1Level = Number(localStorage.getItem('tabcoin_biz1Level')) || 0;
         let biz2Level = Number(localStorage.getItem('tabcoin_biz2Level')) || 0;
         let biz3Level = Number(localStorage.getItem('tabcoin_biz3Level')) || 0;
@@ -782,7 +772,6 @@
         const passivePrices = [20000, 50000];
         const boostPrices = [500, 700, 1000, 2000, 3000, 5000, 7500, 10000];
 
-        // Ціни та прибутки бізнесів
         function getBusinessPrice(basePrice, level) {
             return Math.floor(basePrice * Math.pow(1.5, level));
         }
@@ -904,7 +893,6 @@
                 buyPassiveBtn.disabled = true;
             }
 
-            // Оновлення інформації про бізнеси
             let priceBiz1 = getBusinessPrice(10000, biz1Level);
             let priceBiz2 = getBusinessPrice(40000, biz2Level);
             let priceBiz3 = getBusinessPrice(150000, biz3Level);
