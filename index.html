@@ -706,6 +706,13 @@
             </div>
             <div class="item-card">
                 <div class="item-info">
+                    <h4>Швидке болото</h4>
+                    <p>Відновлення енергії +1/сек</p>
+                </div>
+                <button class="item-btn" id="buyEnergyRegenBtn" onclick="buyBoost('energyregen')">Купити</button>
+            </div>
+            <div class="item-card">
+                <div class="item-info">
                     <h4>Пасивний дохід</h4>
                     <p id="passiveInfo">Дохід: 0/год</p>
                 </div>
@@ -885,6 +892,7 @@
         let score = Number(localStorage.getItem('tabcoin_score')) || 0;
         let gems = Number(localStorage.getItem('tabcoin_gems')) || 0;
         let maxEnergy = Number(localStorage.getItem('tabcoin_maxEnergy')) || 1000;
+        let energyRegenRate = Number(localStorage.getItem('tabcoin_energyRegenRate')) || 3;
         
         let savedEnergy = localStorage.getItem('tabcoin_energy');
         let energy = savedEnergy !== null ? Number(savedEnergy) : maxEnergy;
@@ -894,6 +902,7 @@
         
         let multiclickLevel = Number(localStorage.getItem('tabcoin_multiLevel')) || 0;
         let maxenergyLevel = Number(localStorage.getItem('tabcoin_energyLevel')) || 0;
+        let energyregenLevel = Number(localStorage.getItem('tabcoin_energyregenLevel')) || 0;
         let passiveLevel = Number(localStorage.getItem('tabcoin_passiveLevel')) || 0;
 
         let biz1Level = Number(localStorage.getItem('tabcoin_biz1Level')) || 0;
@@ -973,7 +982,7 @@
         }
 
         if (elapsedSeconds > 0 && energy < maxEnergy) {
-            let restoredEnergy = elapsedSeconds * 3;
+            let restoredEnergy = elapsedSeconds * energyRegenRate;
             energy = Math.min(maxEnergy, energy + restoredEnergy);
         }
 
@@ -988,6 +997,7 @@
         const characterImg = document.getElementById('characterImg');
         const buyMulticlickBtn = document.getElementById('buyMulticlickBtn');
         const buyMaxenergyBtn = document.getElementById('buyMaxenergyBtn');
+        const buyEnergyRegenBtn = document.getElementById('buyEnergyRegenBtn');
         const buyPassiveBtn = document.getElementById('buyPassiveBtn');
         const passiveInfo = document.getElementById('passiveInfo');
 
@@ -1003,10 +1013,12 @@
             localStorage.setItem('tabcoin_gems', gems);
             localStorage.setItem('tabcoin_energy', energy);
             localStorage.setItem('tabcoin_maxEnergy', maxEnergy);
+            localStorage.setItem('tabcoin_energyRegenRate', energyRegenRate);
             localStorage.setItem('tabcoin_clickPower', clickPower);
             localStorage.setItem('tabcoin_level', level);
             localStorage.setItem('tabcoin_multiLevel', multiclickLevel);
             localStorage.setItem('tabcoin_energyLevel', maxenergyLevel);
+            localStorage.setItem('tabcoin_energyregenLevel', energyregenLevel);
             localStorage.setItem('tabcoin_passiveLevel', passiveLevel);
             localStorage.setItem('tabcoin_biz1Level', biz1Level);
             localStorage.setItem('tabcoin_biz2Level', biz2Level);
@@ -1085,7 +1097,6 @@
         }
 
         function updateTasksUI() {
-            // Завдання 1: Натапати 150000 монет за кліки
             let currentTapsCoins = Math.min(150000, task1Count);
             document.getElementById('task1Progress').textContent = `Прогрес: ${currentTapsCoins.toLocaleString()} / 150,000`;
             const btn1 = document.getElementById('claimTask1Btn');
@@ -1100,7 +1111,6 @@
                 btn1.disabled = true;
             }
 
-            // Завдання 2: Прокрутити рулетку 5 разів
             let currentSpins = Math.min(5, task2Count);
             document.getElementById('task2Progress').textContent = `Прогрес: ${currentSpins} / 5`;
             const btn2 = document.getElementById('claimTask2Btn');
@@ -1115,7 +1125,6 @@
                 btn2.disabled = true;
             }
 
-            // Завдання 3: Прокачати бізнес 1 раз
             let currentBizUp = Math.min(1, task3Count);
             document.getElementById('task3Progress').textContent = `Прогрес: ${currentBizUp} / 1`;
             const btn3 = document.getElementById('claimTask3Btn');
@@ -1173,11 +1182,12 @@
             incomeSub.textContent = `+${totalHourly.toLocaleString()}/год`;
 
             energyText.textContent = `${Math.floor(energy)} / ${maxEnergy}`;
-            energyRateText.textContent = `+3/сек`;
+            energyRateText.textContent = `+${energyRegenRate}/сек`;
             energyFill.style.width = `${(energy / maxEnergy) * 100}%`;
             
             buyMulticlickBtn.textContent = `Купити (${getBoostPrice(multiclickLevel)} 🪙)`;
             buyMaxenergyBtn.textContent = `Купити (${getBoostPrice(maxenergyLevel)} 🪙)`;
+            buyEnergyRegenBtn.textContent = `Купити (${getBoostPrice(energyregenLevel)} 🪙)`;
 
             if (passiveLevel === 0) {
                 passiveInfo.textContent = `Дохід: 0/год`;
@@ -1260,7 +1270,6 @@
                 }
             }
 
-            // Оновлюємо завдання прокачки бізнесу
             if (!task3Claimed) {
                 task3Count++;
             }
@@ -1290,7 +1299,7 @@
                     score += clickPower;
                     energy -= energyCostPerClick;
                     if (!task1Claimed && task1Count < 150000) {
-                        task1Count += clickPower; // Зараховуємо зароблені за клік монети
+                        task1Count += clickPower;
                     }
                     let touch = e.changedTouches[i];
                     showFloatingTextAt(touch.clientX, touch.clientY);
@@ -1305,7 +1314,7 @@
                 score += clickPower;
                 energy -= energyCostPerClick;
                 if (!task1Claimed && task1Count < 150000) {
-                    task1Count += clickPower; // Зараховуємо зароблені за клік монети
+                    task1Count += clickPower;
                 }
                 showFloatingTextAt(e.clientX, e.clientY);
             }
@@ -1317,7 +1326,7 @@
             checkDailyReset();
 
             if (energy < maxEnergy) {
-                energy = Math.min(maxEnergy, energy + 3);
+                energy = Math.min(maxEnergy, energy + energyRegenRate);
             }
             
             let totalHourly = getTotalHourlyIncome();
@@ -1383,6 +1392,18 @@
                     maxEnergy += 500;
                     energy = maxEnergy;
                     alert('Максимум енергії збільшено!');
+                    checkLevelProgression();
+                    saveGame();
+                } else {
+                    alert('Недостатньо монет!');
+                }
+            } else if (type === 'energyregen') {
+                let cost = getBoostPrice(energyregenLevel);
+                if (score >= cost) {
+                    score -= cost;
+                    energyregenLevel++;
+                    energyRegenRate += 1;
+                    alert('Швидкість відновлення енергії збільшено!');
                     checkLevelProgression();
                     saveGame();
                 } else {
