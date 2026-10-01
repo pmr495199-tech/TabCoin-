@@ -603,8 +603,8 @@
         nav {
             display: flex;
             justify-content: space-around;
-            background: rgba(18, 22, 34, 0.95);
-            border-top: 1px solid var(--panel-border);
+            background: rgba(58, 90, 64, 0.95); /* Болотно-зелений фон нижньої панелі */
+            border-top: 1px solid rgba(255, 255, 255, 0.15);
             padding: 8px 2px 10px 2px;
             backdrop-filter: blur(15px);
         }
@@ -616,7 +616,7 @@
             gap: 2px;
             background: none;
             border: none;
-            color: var(--text-secondary);
+            color: #d8f3dc; /* Світло-салатовий відтенок для неактивних іконок */
             font-size: 9px;
             font-weight: 500;
             cursor: pointer;
@@ -625,7 +625,8 @@
         }
 
         .nav-item.active {
-            color: var(--accent-gold);
+            color: #ffffff; /* Білий для активної вкладки на болотному фоні */
+            font-weight: 700;
         }
 
         .nav-icon {
