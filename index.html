@@ -214,7 +214,6 @@
             display: flex;
         }
 
-        /* Турбо-режим шкала */
         .fever-container {
             width: 100%;
             max-width: 340px;
@@ -1134,6 +1133,7 @@
 
         let lastResetDate = localStorage.getItem('tabcoin_lastResetDate') || '';
         let lastDailyDate = localStorage.getItem('tabcoin_lastDailyDate') || '';
+        let mgCooldownUntil = Number(localStorage.getItem('tabcoin_mgCooldownUntil')) || 0;
 
         let feverVal = 0;
         let isFeverActive = false;
@@ -1239,6 +1239,7 @@
             localStorage.setItem('tabcoin_task3Claimed', task3Claimed);
             localStorage.setItem('tabcoin_lastResetDate', lastResetDate);
             localStorage.setItem('tabcoin_feverCooldownUntil', feverCooldownUntil);
+            localStorage.setItem('tabcoin_mgCooldownUntil', mgCooldownUntil);
             localStorage.setItem('tabcoin_lastTime', Date.now());
         }
 
@@ -1345,6 +1346,22 @@
             document.getElementById('mgCrocodileImg').src = currentCrocodileImg;
 
             updateTasksUI();
+            updateMiniGameCooldownUI();
+        }
+
+        function updateMiniGameCooldownUI() {
+            const now = Date.now();
+            if (!mgActive && now < mgCooldownUntil) {
+                let diff = mgCooldownUntil - now;
+                let hrs = Math.floor(diff / (1000 * 60 * 60));
+                let mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                let secs = Math.floor((diff % (1000 * 60)) / 1000);
+                mgStartBtn.textContent = `${String(hrs).padStart(2,'0')}:${String(mins).padStart(2,'0')}:${String(secs).padStart(2,'0')}`;
+                mgStartBtn.disabled = true;
+            } else if (!mgActive) {
+                mgStartBtn.textContent = 'Старт';
+                mgStartBtn.disabled = false;
+            }
         }
 
         function buyBusiness(id) {
@@ -1457,6 +1474,7 @@
                 document.getElementById('feverPercentText').textContent = '0%';
             }
 
+            updateMiniGameCooldownUI();
             checkLevelProgression();
             saveGame();
         }, 1000);
@@ -1505,7 +1523,7 @@
         let mgInterval = null;
         let mgGameLoop = null;
         let fallingObjects = [];
-        let basketX = 150; // середина крокодила
+        let basketX = 150;
 
         const minigameArea = document.getElementById('minigameArea');
         const catchBasket = document.getElementById('catchBasket');
@@ -1530,7 +1548,7 @@
         });
 
         function startMiniGame() {
-            if (mgActive) return;
+            if (mgActive || Date.now() < mgCooldownUntil) return;
             mgActive = true;
             mgScoreCount = 0;
             mgScoreDisplay.textContent = mgScoreCount;
@@ -1538,7 +1556,6 @@
             mgStartBtn.disabled = true;
             fallingObjects = [];
 
-            // Спавн предметів (Кристали випадають набагато рідше)
             mgInterval = setInterval(() => {
                 if (!mgActive) return;
                 const types = ['coin', 'coin', 'coin', 'gem', 'bomb', 'coin'];
@@ -1563,7 +1580,6 @@
                 fallingObjects.push(obj);
             }, 700);
 
-            // Анімаційний цикл падіння
             mgGameLoop = setInterval(() => {
                 if (!mgActive) return;
                 const areaHeight = minigameArea.clientHeight;
@@ -1573,13 +1589,11 @@
                     obj.y += obj.speed;
                     obj.element.style.top = obj.y + 'px';
 
-                    // Перевірка зіткнення з крокодилом (внизу)
                     if (obj.y >= areaHeight - 75) {
                         let basketLeft = basketX - 35;
                         let basketRight = basketX + 35;
 
                         if (obj.x >= basketLeft && obj.x <= basketRight) {
-                            // Зловили!
                             if (obj.type === 'coin') {
                                 mgScoreCount += 500;
                                 score += 500;
@@ -1596,7 +1610,6 @@
                             obj.element.remove();
                             fallingObjects.splice(i, 1);
                         } else if (obj.y > areaHeight - 20) {
-                            // Пропустили
                             obj.element.remove();
                             fallingObjects.splice(i, 1);
                         }
@@ -1604,7 +1617,7 @@
                 }
             }, 30);
 
-            // Тривалість міні-гри: 30 секунд
+            // Гра триває 30 секунд
             setTimeout(() => {
                 stopMiniGame();
             }, 30000);
@@ -1616,11 +1629,13 @@
             clearInterval(mgGameLoop);
             fallingObjects.forEach(o => o.element.remove());
             fallingObjects = [];
-            mgStartBtn.textContent = 'Старт';
-            mgStartBtn.disabled = false;
+            
+            // Встановлюємо кулдаун 12 годин
+            mgCooldownUntil = Date.now() + 12 * 60 * 60 * 1000;
+            saveGame();
+
             alert(`Гра закінчена! Ви заробили +${mgScoreCount.toLocaleString()} очок для балансу!`);
             updateVisuals();
-            saveGame();
         }
 
         const coinRoulettePrizes = [
