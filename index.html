@@ -850,6 +850,13 @@
                 </div>
                 <button class="item-btn" id="buyEnergyRegenBtn" onclick="buyBoost('energyregen')">Купити</button>
             </div>
+            <div class="item-card">
+                <div class="item-info">
+                    <h4>Кришталевий бур</h4>
+                    <p>Шанс кристала +0.3%</p>
+                </div>
+                <button class="item-btn gem-btn" id="buyGemDrillBtn" onclick="buyBoost('gemdrill')">Купити</button>
+            </div>
         </div>
     </div>
 
@@ -879,6 +886,14 @@
                     <p id="biz3Info">Рівень: 0 | Дохід: +50 000/год</p>
                 </div>
                 <button class="item-btn" id="buyBiz3Btn" onclick="buyBusiness(3)">Купити</button>
+            </div>
+            <div class="item-card">
+                <img src="depositphotos_9136118-stock-illustration-car-wash.png" alt="Завод" class="business-img">
+                <div class="item-info">
+                    <h4>Болотний Завод</h4>
+                    <p id="biz4Info">Рівень: 0 | Дохід: +150 000/год</p>
+                </div>
+                <button class="item-btn" id="buyBiz4Btn" onclick="buyBusiness(4)">Купити</button>
             </div>
         </div>
     </div>
@@ -1040,10 +1055,12 @@
         let multiclickLevel = Number(localStorage.getItem('tabcoin_multiLevel')) || 0;
         let maxenergyLevel = Number(localStorage.getItem('tabcoin_energyLevel')) || 0;
         let energyregenLevel = Number(localStorage.getItem('tabcoin_energyregenLevel')) || 0;
+        let gemdrillLevel = Number(localStorage.getItem('tabcoin_gemdrillLevel')) || 0;
 
         let biz1Level = Number(localStorage.getItem('tabcoin_biz1Level')) || 0;
         let biz2Level = Number(localStorage.getItem('tabcoin_biz2Level')) || 0;
         let biz3Level = Number(localStorage.getItem('tabcoin_biz3Level')) || 0;
+        let biz4Level = Number(localStorage.getItem('tabcoin_biz4Level')) || 0;
 
         let task1Count = Number(localStorage.getItem('tabcoin_task1Count')) || 0;
         let task1Claimed = localStorage.getItem('tabcoin_task1Claimed') === 'true';
@@ -1096,6 +1113,7 @@
         setTimeout(checkDailyBonusPopup, 800);
 
         const boostPrices = [500, 700, 1000, 2000, 3000, 5000, 7500, 10000];
+        const gemdrillPrices = [10, 25, 50, 100, 200];
         function getBusinessPrice(basePrice, lvl) { return Math.floor(basePrice * Math.pow(1.5, lvl)); }
         const energyCostPerClick = 5;
 
@@ -1103,7 +1121,7 @@
         let elapsedSeconds = Math.floor((Date.now() - lastTime) / 1000);
 
         function getTotalHourlyIncome() {
-            return (biz1Level * 5000) + (biz2Level * 15000) + (biz3Level * 50000);
+            return (biz1Level * 5000) + (biz2Level * 15000) + (biz3Level * 50000) + (biz4Level * 150000);
         }
 
         if (elapsedSeconds > 3) {
@@ -1133,9 +1151,14 @@
         const buyMulticlickBtn = document.getElementById('buyMulticlickBtn');
         const buyMaxenergyBtn = document.getElementById('buyMaxenergyBtn');
         const buyEnergyRegenBtn = document.getElementById('buyEnergyRegenBtn');
+        const buyGemDrillBtn = document.getElementById('buyGemDrillBtn');
 
         function getBoostPrice(boostLevel) {
             return boostLevel < boostPrices.length ? boostPrices[boostLevel] : boostPrices[boostPrices.length - 1] + (boostLevel - boostPrices.length + 1) * 5000;
+        }
+
+        function getGemDrillPrice(lvl) {
+            return lvl < gemdrillPrices.length ? gemdrillPrices[lvl] : gemdrillPrices[gemdrillPrices.length - 1] + (lvl - gemdrillPrices.length + 1) * 150;
         }
 
         function saveGame() {
@@ -1149,9 +1172,11 @@
             localStorage.setItem('tabcoin_multiLevel', multiclickLevel);
             localStorage.setItem('tabcoin_energyLevel', maxenergyLevel);
             localStorage.setItem('tabcoin_energyregenLevel', energyregenLevel);
+            localStorage.setItem('tabcoin_gemdrillLevel', gemdrillLevel);
             localStorage.setItem('tabcoin_biz1Level', biz1Level);
             localStorage.setItem('tabcoin_biz2Level', biz2Level);
             localStorage.setItem('tabcoin_biz3Level', biz3Level);
+            localStorage.setItem('tabcoin_biz4Level', biz4Level);
             localStorage.setItem('tabcoin_task1Count', task1Count);
             localStorage.setItem('tabcoin_task1Claimed', task1Claimed);
             localStorage.setItem('tabcoin_task2Count', task2Count);
@@ -1247,6 +1272,7 @@
             buyMulticlickBtn.textContent = `Купити (${getBoostPrice(multiclickLevel)} 🪙)`;
             buyMaxenergyBtn.textContent = `Купити (${getBoostPrice(maxenergyLevel)} 🪙)`;
             buyEnergyRegenBtn.textContent = `Купити (${getBoostPrice(energyregenLevel)} 🪙)`;
+            buyGemDrillBtn.textContent = `Купити (${getGemDrillPrice(gemdrillLevel)} 💎)`;
 
             document.getElementById('biz1Info').textContent = `Рівень: ${biz1Level} | Дохід: +${(biz1Level * 5000).toLocaleString()}/год`;
             document.getElementById('buyBiz1Btn').textContent = `Купити (${getBusinessPrice(10000, biz1Level).toLocaleString()} 🪙)`;
@@ -1254,6 +1280,8 @@
             document.getElementById('buyBiz2Btn').textContent = `Купити (${getBusinessPrice(40000, biz2Level).toLocaleString()} 🪙)`;
             document.getElementById('biz3Info').textContent = `Рівень: ${biz3Level} | Дохід: +${(biz3Level * 50000).toLocaleString()}/год`;
             document.getElementById('buyBiz3Btn').textContent = `Купити (${getBusinessPrice(150000, biz3Level).toLocaleString()} 🪙)`;
+            document.getElementById('biz4Info').textContent = `Рівень: ${biz4Level} | Дохід: +${(biz4Level * 150000).toLocaleString()}/год`;
+            document.getElementById('buyBiz4Btn').textContent = `Купити (${getBusinessPrice(500000, biz4Level).toLocaleString()} 🪙)`;
 
             if (level >= 5) { levelBadge.textContent = 'Stage 5'; characterImg.src = '1790244183576.png'; }
             else if (level === 4) { levelBadge.textContent = 'Stage 4'; characterImg.src = '1790165750453.png'; }
@@ -1269,6 +1297,7 @@
             if (id === 1) { cost = getBusinessPrice(10000, biz1Level); if (score >= cost) { score -= cost; biz1Level++; } else { alert('Недостатньо монет!'); return; } }
             else if (id === 2) { cost = getBusinessPrice(40000, biz2Level); if (score >= cost) { score -= cost; biz2Level++; } else { alert('Недостатньо монет!'); return; } }
             else if (id === 3) { cost = getBusinessPrice(150000, biz3Level); if (score >= cost) { score -= cost; biz3Level++; } else { alert('Недостатньо монет!'); return; } }
+            else if (id === 4) { cost = getBusinessPrice(500000, biz4Level); if (score >= cost) { score -= cost; biz4Level++; } else { alert('Недостатньо монет!'); return; } }
 
             if (!task3Claimed) task3Count++;
             checkLevelProgression(); saveGame(); triggerHaptic('medium');
@@ -1283,7 +1312,7 @@
 
         updateVisuals();
 
-        // Логіка кліку з урахуванням Турбо-режиму та 30-хвилинного кулдауну (шанс кристала 0.9%)
+        // Логіка кліку з урахуванням Турбо-режиму та кристалового бура (шанс кристала 0.9% + бонус)
         function handleTapAction(clientX, clientY) {
             if (energy >= energyCostPerClick) {
                 let currentMultiplier = isFeverActive ? 3 : 1;
@@ -1294,7 +1323,8 @@
                 if (!task1Claimed && task1Count < 150000) task1Count += earned;
 
                 let gemDropped = false;
-                if (Math.random() < 0.009) {
+                let gemChance = 0.009 + (gemdrillLevel * 0.003);
+                if (Math.random() < gemChance) {
                     gems += 1;
                     gemDropped = true;
                 }
@@ -1416,6 +1446,9 @@
             } else if (type === 'energyregen') {
                 let cost = getBoostPrice(energyregenLevel);
                 if (score >= cost) { score -= cost; energyregenLevel++; energyRegenRate += 1; alert('Регенерацію прискорено!'); } else { alert('Недостатньо монет!'); return; }
+            } else if (type === 'gemdrill') {
+                let cost = getGemDrillPrice(gemdrillLevel);
+                if (gems >= cost) { gems -= cost; gemdrillLevel++; alert('Кришталевий бур покращено!'); } else { alert('Недостатньо кристалів!'); return; }
             }
             checkLevelProgression(); saveGame(); triggerHaptic('medium');
         }
