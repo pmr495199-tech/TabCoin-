@@ -870,13 +870,6 @@
                 </div>
                 <button class="item-btn" id="buyEnergyRegenBtn" onclick="buyBoost('energyregen')">Купити</button>
             </div>
-            <div class="item-card">
-                <div class="item-info">
-                    <h4>Пасивний дохід</h4>
-                    <p id="passiveInfo">Дохід: 0/год</p>
-                </div>
-                <button class="item-btn" id="buyPassiveBtn" onclick="buyBoost('passive')">Купити</button>
-            </div>
         </div>
     </div>
 
@@ -1077,7 +1070,6 @@
         let multiclickLevel = Number(localStorage.getItem('tabcoin_multiLevel')) || 0;
         let maxenergyLevel = Number(localStorage.getItem('tabcoin_energyLevel')) || 0;
         let energyregenLevel = Number(localStorage.getItem('tabcoin_energyregenLevel')) || 0;
-        let passiveLevel = Number(localStorage.getItem('tabcoin_passiveLevel')) || 0;
 
         let biz1Level = Number(localStorage.getItem('tabcoin_biz1Level')) || 0;
         let biz2Level = Number(localStorage.getItem('tabcoin_biz2Level')) || 0;
@@ -1119,8 +1111,6 @@
         }
         checkDailyReset();
 
-        const passiveIncomeRates = [0, 10000, 30000];
-        const passivePrices = [20000, 50000];
         const boostPrices = [500, 700, 1000, 2000, 3000, 5000, 7500, 10000];
 
         function getBusinessPrice(basePrice, level) {
@@ -1134,11 +1124,10 @@
         let elapsedSeconds = Math.floor((currentTime - lastTime) / 1000);
 
         function getTotalHourlyIncome() {
-            let basePassive = passiveIncomeRates[Math.min(passiveLevel, passiveIncomeRates.length - 1)];
             let biz1Income = biz1Level * 5000;
             let biz2Income = biz2Level * 15000;
             let biz3Income = biz3Level * 50000;
-            return basePassive + biz1Income + biz2Income + biz3Income;
+            return biz1Income + biz2Income + biz3Income;
         }
 
         if (elapsedSeconds > 3) {
@@ -1171,8 +1160,6 @@
         const buyMulticlickBtn = document.getElementById('buyMulticlickBtn');
         const buyMaxenergyBtn = document.getElementById('buyMaxenergyBtn');
         const buyEnergyRegenBtn = document.getElementById('buyEnergyRegenBtn');
-        const buyPassiveBtn = document.getElementById('buyPassiveBtn');
-        const passiveInfo = document.getElementById('passiveInfo');
 
         function getBoostPrice(boostLevel) {
             if (boostLevel < boostPrices.length) {
@@ -1192,7 +1179,6 @@
             localStorage.setItem('tabcoin_multiLevel', multiclickLevel);
             localStorage.setItem('tabcoin_energyLevel', maxenergyLevel);
             localStorage.setItem('tabcoin_energyregenLevel', energyregenLevel);
-            localStorage.setItem('tabcoin_passiveLevel', passiveLevel);
             localStorage.setItem('tabcoin_biz1Level', biz1Level);
             localStorage.setItem('tabcoin_biz2Level', biz2Level);
             localStorage.setItem('tabcoin_biz3Level', biz3Level);
@@ -1361,20 +1347,6 @@
             buyMulticlickBtn.textContent = `Купити (${getBoostPrice(multiclickLevel)} 🪙)`;
             buyMaxenergyBtn.textContent = `Купити (${getBoostPrice(maxenergyLevel)} 🪙)`;
             buyEnergyRegenBtn.textContent = `Купити (${getBoostPrice(energyregenLevel)} 🪙)`;
-
-            if (passiveLevel === 0) {
-                passiveInfo.textContent = `Дохід: 0/год`;
-                buyPassiveBtn.textContent = `Купити (${passivePrices[0].toLocaleString()} 🪙)`;
-                buyPassiveBtn.disabled = false;
-            } else if (passiveLevel === 1) {
-                passiveInfo.textContent = `Дохід: 10 000/год`;
-                buyPassiveBtn.textContent = `Купити (${passivePrices[1].toLocaleString()} 🪙)`;
-                buyPassiveBtn.disabled = false;
-            } else {
-                passiveInfo.textContent = `Дохід: 30 000/год (Максимум)`;
-                buyPassiveBtn.textContent = 'Максимум';
-                buyPassiveBtn.disabled = true;
-            }
 
             let priceBiz1 = getBusinessPrice(10000, biz1Level);
             let priceBiz2 = getBusinessPrice(40000, biz2Level);
@@ -1583,30 +1555,6 @@
                 } else {
                     alert('Недостатньо монет!');
                 }
-            } else if (type === 'passive') {
-                if (passiveLevel === 0) {
-                    let cost = passivePrices[0];
-                    if (score >= cost) {
-                        score -= cost;
-                        passiveLevel = 1;
-                        alert('Пасивний дохід успішно покращено до 10 000 на годину!');
-                        checkLevelProgression();
-                        saveGame();
-                    } else {
-                        alert('Недостатньо монет! Потрібно 20 000 🪙');
-                    }
-                } else if (passiveLevel === 1) {
-                    let cost = passivePrices[1];
-                    if (score >= cost) {
-                        score -= cost;
-                        passiveLevel = 2;
-                        alert('Пасивний дохід успішно покращено до 30 000 на годину!');
-                        checkLevelProgression();
-                        saveGame();
-                    } else {
-                        alert('Недостатньо монет! Потрібно 50 000 🪙');
-                    }
-                }
             }
         }
 
@@ -1629,7 +1577,6 @@
             { text: "5💎",  gems: 5,  coins: 0, chance: 0.60 }
         ];
 
-        // Рулетка Ведмедя за новими параметрами (шанси приховані, в секторі ведмедя лише емодзі 🐻)
         const bearRoulettePrizes = [
             { text: "🐻", gems: 0, coins: 0, bear: true, chance: 0.02 },
             { text: "50💎", gems: 50, coins: 0, chance: 0.03 },
@@ -1653,7 +1600,7 @@
                 
                 let fillColor = '';
                 if (isBear && prize.bear) {
-                    fillColor = '#fbbf24'; // Золотий сектор для ведмедя
+                    fillColor = '#fbbf24';
                 } else {
                     const colors = isBear ? ['#78350f', '#92400e', '#b45309', '#9a3412', '#7c2d12', '#451a03'] : ['#2d4a3e', '#3d5a45', '#4a6b5d', '#31493c', '#3c584b', '#253d32', '#1b2d24'];
                     fillColor = colors[index % colors.length];
@@ -1687,8 +1634,8 @@
                 }
 
                 let textColor = (isBear && prize.bear) ? "#000000" : "#ffffff";
-                let textWeight = (isBear && prize.bear) ? "900" : "900";
-                let textSize = (isBear && prize.bear) ? "8" : "7"; // Робимо емодзі ведмедя гарним та помітним
+                let textWeight = "900";
+                let textSize = (isBear && prize.bear) ? "8" : "7";
 
                 svgHTML += `<text x="${textX}" y="${textY}" fill="${textColor}" font-family="system-ui, -apple-system, sans-serif" font-weight="${textWeight}" font-size="${textSize}" text-anchor="middle" dominant-baseline="middle" transform="rotate(${textAngle}, ${textX}, ${textY})" filter="drop-shadow(0px 1px 2px rgba(0,0,0,0.9))">${prize.text}</text>`;
             });
