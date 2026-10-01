@@ -35,7 +35,7 @@
         }
 
         body {
-            background-image: url('Untitled26_20260930154208.png');
+            background-image: url('1790866626501.png');
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
@@ -46,6 +46,7 @@
             flex-direction: column;
             justify-content: space-between;
             overflow-y: hidden;
+            transition: background-image 0.5s ease;
         }
 
         body::before {
@@ -1238,10 +1239,11 @@
         }
 
         const levelData = {
-            2: { title: "Stage 2: Новий хижак!", text: "Ти набрав 70 000 очок! Твій крокодил підріс і готовий до нових пригод!", img: "1790159498394.png" },
-            3: { title: "Stage 3: Гроза водойми!", text: "Вже 170 000 очок! Зуби стали гострішими, авторитет у болоті максимальний!", img: "1790163627383.png" },
-            4: { title: "Stage 4: Болотний барон!", text: "Цілих 340 000 очок! Ніхто більше не посміє сперечатися з твоїм впливом!", img: "1790165750453.png" },
-            5: { title: "Stage 5: Легенда болота!", text: "500 000 очок! Ти досяг вершини еволюції! Абсолютна легенда!", img: "1790244183576.png" }
+            1: { title: "Stage 1", text: "Початок шляху!", img: "1790090929041.png", bg: "1790866626501.png" },
+            2: { title: "Stage 2: Новий хижак!", text: "Ти набрав 70 000 очок! Твій крокодил підріс і готовий до нових пригод!", img: "1790159498394.png", bg: "1790244794913.png" },
+            3: { title: "Stage 3: Гроза водойми!", text: "Вже 170 000 очок! Зуби стали гострішими, авторитет у болоті максимальний!", img: "1790163627383.png", bg: "1790866197777.jpg" },
+            4: { title: "Stage 4: Болотний барон!", text: "Цілих 340 000 очок! Ніхто більше не посміє сперечатися з твоїм впливом!", img: "1790165750453.png", bg: "1790866381393.jpg" },
+            5: { title: "Stage 5: Легенда болота!", text: "500 000 очок! Ти досяг вершини еволюції! Абсолютна легенда!", img: "1790244183576.png", bg: "1790866404981.jpg" }
         };
 
         function showLevelModal(lvl) {
@@ -1329,11 +1331,10 @@
             document.getElementById('biz3Info').textContent = `Рівень: ${biz3Level} | Дохід: +${(biz3Level * 50000).toLocaleString()}/год`;
             document.getElementById('buyBiz3Btn').textContent = `Купити (${getBusinessPrice(150000, biz3Level).toLocaleString()} 🪙)`;
 
-            if (level >= 5) { levelBadge.textContent = 'Stage 5'; characterImg.src = '1790244183576.png'; }
-            else if (level === 4) { levelBadge.textContent = 'Stage 4'; characterImg.src = '1790165750453.png'; }
-            else if (level === 3) { levelBadge.textContent = 'Stage 3'; characterImg.src = '1790163627383.png'; }
-            else if (level === 2) { levelBadge.textContent = 'Stage 2'; characterImg.src = '1790159498394.png'; }
-            else { levelBadge.textContent = 'Stage 1'; characterImg.src = '1790090929041.png'; }
+            const currentLevelData = levelData[level] || levelData[1];
+            levelBadge.textContent = `Stage ${level}`;
+            characterImg.src = currentLevelData.img;
+            document.body.style.backgroundImage = `url('${currentLevelData.bg}')`;
 
             updateTasksUI();
         }
