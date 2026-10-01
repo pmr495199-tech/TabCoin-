@@ -1055,10 +1055,11 @@
         let lastResetDate = localStorage.getItem('tabcoin_lastResetDate') || '';
         let lastDailyDate = localStorage.getItem('tabcoin_lastDailyDate') || '';
 
-        // Турбо-режим змінні
+        // Турбо-режим змінні з урахуванням 30-хвилинного кулдауну
         let feverVal = 0;
         let isFeverActive = false;
         let feverTimer = null;
+        let feverCooldownUntil = Number(localStorage.getItem('tabcoin_feverCooldownUntil')) || 0;
 
         function checkDailyBonusPopup() {
             const todayStr = new Date().toDateString();
@@ -1069,7 +1070,7 @@
 
         function claimDailyBonus() {
             score += 10000;
-            gems += 10; // Змінено на 10 кристалів
+            gems += 10;
             lastDailyDate = new Date().toDateString();
             localStorage.setItem('tabcoin_lastDailyDate', lastDailyDate);
             document.getElementById('dailyModalOverlay').classList.remove('show');
@@ -1158,6 +1159,7 @@
             localStorage.setItem('tabcoin_task3Count', task3Count);
             localStorage.setItem('tabcoin_task3Claimed', task3Claimed);
             localStorage.setItem('tabcoin_lastResetDate', lastResetDate);
+            localStorage.setItem('tabcoin_feverCooldownUntil', feverCooldownUntil);
             localStorage.setItem('tabcoin_lastTime', Date.now());
         }
 
@@ -1281,7 +1283,7 @@
 
         updateVisuals();
 
-        // Логіка кліку з урахуванням Турбо-режиму та шансу випадіння кристала
+        // Логіка кліку з урахуванням Турбо-режиму та 30-хвилинного кулдауну
         function handleTapAction(clientX, clientY) {
             if (energy >= energyCostPerClick) {
                 let currentMultiplier = isFeverActive ? 3 : 1;
@@ -1291,15 +1293,15 @@
 
                 if (!task1Claimed && task1Count < 150000) task1Count += earned;
 
-                // Шанс випадіння 1 кристала (3%)
                 let gemDropped = false;
                 if (Math.random() < 0.03) {
                     gems += 1;
                     gemDropped = true;
                 }
 
-                // Заповнення шкали турбо-режиму
-                if (!isFeverActive) {
+                // Заповнення шкали турбо-режиму (якщо немає активного кулдауну)
+                const now = Date.now();
+                if (!isFeverActive && now >= feverCooldownUntil) {
                     feverVal = Math.min(100, feverVal + 3.5);
                     document.getElementById('feverFill').style.width = feverVal + '%';
                     document.getElementById('feverPercentText').textContent = Math.floor(feverVal) + '%';
@@ -1336,10 +1338,11 @@
                     clearInterval(feverTimer);
                     isFeverActive = false;
                     feverVal = 0;
+                    // Встановлюємо кулдаун на 30 хвилин (30 * 60 * 1000 мс)
+                    feverCooldownUntil = Date.now() + 30 * 60 * 1000;
                     document.getElementById('clickArea').classList.remove('fever-active');
-                    document.getElementById('feverStatusText').textContent = '🔥 Турбо-режим';
-                    percentText.textContent = '0%';
-                    fillBar.style.width = '0%';
+                    document.getElementById('feverStatusText').textContent = '⏳ Кулдаун турбо';
+                    saveGame();
                 }
             }, 1000);
         }
@@ -1355,11 +1358,26 @@
             handleTapAction(e.clientX, e.clientY);
         });
 
+        // Щоб щосекунди оновлювати статус кулдауну турбо-режиму, якщо він триває
         setInterval(() => {
             checkDailyReset();
             if (energy < maxEnergy) energy = Math.min(maxEnergy, energy + energyRegenRate);
             let totalHourly = getTotalHourlyIncome();
             if (totalHourly > 0) score += totalHourly / 3600;
+
+            const now = Date.now();
+            if (!isFeverActive && now < feverCooldownUntil) {
+                let remainingMs = feverCooldownUntil - now;
+                let remMins = Math.floor(remainingMs / 60000);
+                let remSecs = Math.floor((remainingMs % 60000) / 1000);
+                document.getElementById('feverStatusText').textContent = '⏳ Кулдаун турбо';
+                document.getElementById('feverPercentText').textContent = `${String(remMins).padStart(2,'0')}:${String(remSecs).padStart(2,'0')}`;
+                document.getElementById('feverFill').style.width = '0%';
+            } else if (!isFeverActive && now >= feverCooldownUntil && feverVal === 0) {
+                document.getElementById('feverStatusText').textContent = '🔥 Турбо-режим';
+                document.getElementById('feverPercentText').textContent = '0%';
+            }
+
             checkLevelProgression();
             saveGame();
         }, 1000);
