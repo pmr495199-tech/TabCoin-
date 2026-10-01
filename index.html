@@ -551,69 +551,6 @@
             margin-top: auto;
         }
 
-        /* --- СТИЛІ МІНІ-ГРИ "ЛОВИСЬКА" --- */
-        .minigame-container {
-            width: 100%;
-            max-width: 340px;
-            height: 60vh;
-            background: var(--panel-bg);
-            border: 1px solid var(--accent-gold);
-            border-radius: 20px;
-            position: relative;
-            overflow: hidden;
-            backdrop-filter: blur(12px);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
-            touch-action: none;
-        }
-
-        .minigame-header {
-            position: absolute;
-            top: 10px;
-            left: 15px;
-            right: 15px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            z-index: 10;
-            font-size: 13px;
-            font-weight: 700;
-        }
-
-        .catch-basket {
-            position: absolute;
-            bottom: 10px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 65px;
-            height: 40px;
-            background: var(--accent-gold-gradient);
-            border: 2px solid #ffffff;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
-            z-index: 5;
-        }
-
-        .falling-item {
-            position: absolute;
-            width: 32px;
-            height: 32px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 22px;
-            z-index: 4;
-            animation: spinItem 2s linear infinite;
-        }
-
-        @keyframes spinItem {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
         .roulette-modal-overlay, .level-modal-overlay, .daily-modal-overlay {
             position: fixed;
             top: 0;
@@ -946,18 +883,6 @@
         </div>
     </div>
 
-    <!-- ВКЛАДКА МІНІ-ГРИ -->
-    <div class="tab-content" id="tab-minigame">
-        <div class="section-title" style="margin-bottom: 2px;">Лови скарби! 🎮</div>
-        <div class="minigame-container" id="minigameArea">
-            <div class="minigame-header">
-                <span>Спіймано: <b id="mgScore">0</b></span>
-                <button class="item-btn" id="mgStartBtn" onclick="startMiniGame()" style="padding: 4px 10px; font-size: 10px;">Старт</button>
-            </div>
-            <div class="catch-basket" id="catchBasket">🐊</div>
-        </div>
-    </div>
-
     <div class="tab-content" id="tab-shop">
         <div class="section-title">Магазин Зірок ⭐</div>
         <div class="items-list">
@@ -1069,8 +994,8 @@
         <button class="nav-item" onclick="switchTab('business', this)">
             <span class="nav-icon">🏢</span><span>Бізнес</span>
         </button>
-        <button class="nav-item" onclick="switchTab('minigame', this)">
-            <span class="nav-icon">🎮</span><span>Гра</span>
+        <button class="nav-item" onclick="switchTab('tasks', this)">
+            <span class="nav-icon">📋</span><span>Завдання</span>
         </button>
         <button class="nav-item" onclick="switchTab('roulette', this)">
             <span class="nav-icon">🎡</span><span>Рулетки</span>
@@ -1130,6 +1055,7 @@
         let lastResetDate = localStorage.getItem('tabcoin_lastResetDate') || '';
         let lastDailyDate = localStorage.getItem('tabcoin_lastDailyDate') || '';
 
+        // Турбо-режим змінні з урахуванням 30-хвилинного кулдауну
         let feverVal = 0;
         let isFeverActive = false;
         let feverTimer = null;
@@ -1357,6 +1283,7 @@
 
         updateVisuals();
 
+        // Логіка кліку з урахуванням Турбо-режиму та 30-хвилинного кулдауну (шанс кристала 0.9%)
         function handleTapAction(clientX, clientY) {
             if (energy >= energyCostPerClick) {
                 let currentMultiplier = isFeverActive ? 3 : 1;
@@ -1372,6 +1299,7 @@
                     gemDropped = true;
                 }
 
+                // Заповнення шкали турбо-режиму (якщо немає активного кулдауну)
                 const now = Date.now();
                 if (!isFeverActive && now >= feverCooldownUntil) {
                     feverVal = Math.min(100, feverVal + 3.5);
@@ -1410,6 +1338,7 @@
                     clearInterval(feverTimer);
                     isFeverActive = false;
                     feverVal = 0;
+                    // Встановлюємо кулдаун на 30 хвилин (30 * 60 * 1000 мс)
                     feverCooldownUntil = Date.now() + 30 * 60 * 1000;
                     document.getElementById('clickArea').classList.remove('fever-active');
                     document.getElementById('feverStatusText').textContent = '⏳ Кулдаун турбо';
@@ -1429,6 +1358,7 @@
             handleTapAction(e.clientX, e.clientY);
         });
 
+        // Щоб щосекунди оновлювати статус кулдауну турбо-режиму, якщо він триває
         setInterval(() => {
             checkDailyReset();
             if (energy < maxEnergy) energy = Math.min(maxEnergy, energy + energyRegenRate);
@@ -1488,130 +1418,6 @@
                 if (score >= cost) { score -= cost; energyregenLevel++; energyRegenRate += 1; alert('Регенерацію прискорено!'); } else { alert('Недостатньо монет!'); return; }
             }
             checkLevelProgression(); saveGame(); triggerHaptic('medium');
-        }
-
-        // --- ЛОГІКА МІНІ-ГРИ "ПАДАЮЧІ ПРЕДМЕТИ" ---
-        let mgActive = false;
-        let mgScoreCount = 0;
-        let mgInterval = null;
-        let mgGameLoop = null;
-        let fallingObjects = [];
-        let basketX = 150; // середина кошика
-
-        const minigameArea = document.getElementById('minigameArea');
-        const catchBasket = document.getElementById('catchBasket');
-        const mgScoreDisplay = document.getElementById('mgScore');
-        const mgStartBtn = document.getElementById('mgStartBtn');
-
-        minigameArea.addEventListener('touchmove', (e) => {
-            if (!mgActive) return;
-            const rect = minigameArea.getBoundingClientRect();
-            let touchX = e.touches[0].clientX - rect.left;
-            basketX = Math.max(30, Math.min(rect.width - 30, touchX));
-            catchBasket.style.left = basketX + 'px';
-            e.preventDefault();
-        }, { passive: false });
-
-        minigameArea.addEventListener('mousemove', (e) => {
-            if (!mgActive) return;
-            const rect = minigameArea.getBoundingClientRect();
-            let mouseX = e.clientX - rect.left;
-            basketX = Math.max(30, Math.min(rect.width - 30, mouseX));
-            catchBasket.style.left = basketX + 'px';
-        });
-
-        function startMiniGame() {
-            if (mgActive) return;
-            mgActive = true;
-            mgScoreCount = 0;
-            mgScoreDisplay.textContent = mgScoreCount;
-            mgStartBtn.textContent = 'Гра йде...';
-            mgStartBtn.disabled = true;
-            fallingObjects = [];
-
-            // Спавн предметів
-            mgInterval = setInterval(() => {
-                if (!mgActive) return;
-                const types = ['coin', 'coin', 'gem', 'bomb'];
-                const chosenType = types[Math.floor(Math.random() * types.length)];
-                let symbol = '🪙';
-                if (chosenType === 'gem') symbol = '💎';
-                if (chosenType === 'bomb') symbol = '💣';
-
-                const obj = {
-                    x: Math.random() * (minigameArea.clientWidth - 40),
-                    y: 35,
-                    speed: 2 + Math.random() * 2.5,
-                    type: chosenType,
-                    element: document.createElement('div')
-                };
-
-                obj.element.className = 'falling-item';
-                obj.element.textContent = symbol;
-                obj.element.style.left = obj.x + 'px';
-                obj.element.style.top = obj.y + 'px';
-                minigameArea.appendChild(obj.element);
-                fallingObjects.push(obj);
-            }, 700);
-
-            // Анімаційний цикл падіння
-            mgGameLoop = setInterval(() => {
-                if (!mgActive) return;
-                const areaHeight = minigameArea.clientHeight;
-
-                for (let i = fallingObjects.length - 1; i >= 0; i--) {
-                    let obj = fallingObjects[i];
-                    obj.y += obj.speed;
-                    obj.element.style.top = obj.y + 'px';
-
-                    // Перевірка зіткнення з кошиком (внизу)
-                    if (obj.y >= areaHeight - 60) {
-                        let basketLeft = basketX - 32;
-                        let basketRight = basketX + 32;
-
-                        if (obj.x >= basketLeft && obj.x <= basketRight) {
-                            // Зловили!
-                            if (obj.type === 'coin') {
-                                mgScoreCount += 500;
-                                score += 500;
-                                triggerHaptic('light');
-                            } else if (obj.type === 'gem') {
-                                mgScoreCount += 2;
-                                gems += 2;
-                                triggerHaptic('medium');
-                            } else if (obj.type === 'bomb') {
-                                mgScoreCount = Math.max(0, mgScoreCount - 1000);
-                                triggerHaptic('heavy');
-                            }
-                            mgScoreDisplay.textContent = mgScoreCount;
-                            obj.element.remove();
-                            fallingObjects.splice(i, 1);
-                        } else if (obj.y > areaHeight - 20) {
-                            // Пропустили
-                            obj.element.remove();
-                            fallingObjects.splice(i, 1);
-                        }
-                    }
-                }
-            }, 30);
-
-            // Тривалість міні-гри: 30 секунд
-            setTimeout(() => {
-                stopMiniGame();
-            }, 30000);
-        }
-
-        function stopMiniGame() {
-            mgActive = false;
-            clearInterval(mgInterval);
-            clearInterval(mgGameLoop);
-            fallingObjects.forEach(o => o.element.remove());
-            fallingObjects = [];
-            mgStartBtn.textContent = 'Старт';
-            mgStartBtn.disabled = false;
-            alert(`Гра закінчена! Ви заробили +${mgScoreCount.toLocaleString()} очок для балансу!`);
-            updateVisuals();
-            saveGame();
         }
 
         const coinRoulettePrizes = [
