@@ -11,8 +11,8 @@
             --bg-dark: #121622;
             --panel-bg: rgba(22, 27, 39, 0.88);
             --panel-border: rgba(255, 255, 255, 0.08);
-            --accent-gold: #52796f; /* Болотно-зелений акцент */
-            --accent-gold-gradient: linear-gradient(135deg, #688f82, #3a5a40); /* Болотно-зелений градієнт */
+            --accent-gold: #52796f; 
+            --accent-gold-gradient: linear-gradient(135deg, #688f82, #3a5a40); 
             --accent-gem: #38bdf8;
             --text-white: #ffffff;
             --text-secondary: #94a3b8;
@@ -71,7 +71,6 @@
             gap: 8px;
         }
 
-        /* Верхня панель профілю */
         .top-profile-row {
             display: flex;
             align-items: center;
@@ -166,13 +165,8 @@
             font-size: 12px;
         }
 
-        .coin-icon {
-            background: var(--accent-gold);
-        }
-
-        .gem-icon {
-            background: var(--accent-gem);
-        }
+        .coin-icon { background: var(--accent-gold); }
+        .gem-icon { background: var(--accent-gem); }
 
         .gem-plus {
             font-size: 12px;
@@ -211,13 +205,53 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            gap: 15px;
+            gap: 12px;
             padding: 0 20px;
             overflow-y: auto;
         }
 
         .tab-content.active {
             display: flex;
+        }
+
+        /* Турбо-режим шкала */
+        .fever-container {
+            width: 100%;
+            max-width: 340px;
+            background: var(--panel-bg);
+            border: 1px solid var(--panel-border);
+            padding: 8px 12px;
+            border-radius: 12px;
+            backdrop-filter: blur(12px);
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .fever-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            font-weight: 700;
+            color: #f59e0b;
+        }
+
+        .fever-bar-container {
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .fever-bar-fill {
+            height: 100%;
+            background: linear-gradient(135deg, #f59e0b, #ef4444);
+            border-radius: 4px;
+            width: 0%;
+            transition: width 0.1s ease;
+            box-shadow: 0 0 10px rgba(245, 158, 11, 0.6);
         }
 
         .character-wrapper {
@@ -235,11 +269,22 @@
         }
 
         .character-img {
-            width: 390px;
-            height: 390px;
+            width: 340px;
+            height: 340px;
             object-fit: contain;
             filter: drop-shadow(0 20px 30px rgba(0,0,0,0.8));
             pointer-events: none;
+            transition: filter 0.3s ease;
+        }
+
+        .character-wrapper.fever-active .character-img {
+            filter: drop-shadow(0 0 25px #f59e0b) brightness(1.15);
+            animation: pulseFever 0.4s infinite alternate;
+        }
+
+        @keyframes pulseFever {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.04); }
         }
 
         .energy-section {
@@ -247,7 +292,7 @@
             max-width: 340px;
             background: var(--panel-bg);
             border: 1px solid var(--panel-border);
-            padding: 12px 16px;
+            padding: 10px 16px;
             border-radius: 16px;
             backdrop-filter: blur(12px);
             box-shadow: 0 8px 20px rgba(0,0,0,0.3);
@@ -259,7 +304,7 @@
             align-items: center;
             font-size: 13px;
             font-weight: 700;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
         }
 
         .energy-title {
@@ -276,19 +321,18 @@
 
         .energy-bar-container {
             width: 100%;
-            height: 12px;
+            height: 10px;
             background: rgba(255, 255, 255, 0.08);
-            border-radius: 6px;
+            border-radius: 5px;
             overflow: hidden;
         }
 
         .energy-bar-fill {
             height: 100%;
             background: var(--accent-gold-gradient);
-            border-radius: 6px;
+            border-radius: 5px;
             width: 100%;
             transition: width 0.2s ease;
-            box-shadow: 0 0 10px rgba(82, 121, 111, 0.5);
         }
 
         .section-header-box {
@@ -351,9 +395,7 @@
             padding: 3px;
         }
 
-        .item-info {
-            flex: 1;
-        }
+        .item-info { flex: 1; }
 
         .item-info h4 {
             font-size: 13px;
@@ -399,15 +441,8 @@
             box-shadow: 0 4px 12px rgba(245, 158, 11, 0.4);
         }
 
-        .item-btn:hover {
-            transform: translateY(-1px);
-        }
-
-        .item-btn:active {
-            transform: scale(0.95);
-            opacity: 0.9;
-        }
-
+        .item-btn:hover { transform: translateY(-1px); }
+        .item-btn:active { transform: scale(0.95); opacity: 0.9; }
         .item-btn:disabled {
             background: #334155;
             color: #94a3b8;
@@ -416,7 +451,6 @@
             transform: none;
         }
 
-        /* Стилі для сітки рулеток у стилі івентів */
         .roulettes-grid {
             width: 100%;
             max-width: 340px;
@@ -442,14 +476,8 @@
             gap: 10px;
         }
 
-        .roulette-event-card.gem-card {
-            border-color: rgba(56, 189, 248, 0.3);
-        }
-
-        .roulette-event-card.coin-card {
-            border-color: rgba(82, 121, 111, 0.4);
-        }
-
+        .roulette-event-card.gem-card { border-color: rgba(56, 189, 248, 0.3); }
+        .roulette-event-card.coin-card { border-color: rgba(82, 121, 111, 0.4); }
         .roulette-event-card.bear-card {
             border-color: rgba(245, 158, 11, 0.4);
             grid-column: span 2;
@@ -463,9 +491,7 @@
             transition: transform 0.2s;
         }
 
-        .event-wheel-preview:active {
-            transform: scale(0.95);
-        }
+        .event-wheel-preview:active { transform: scale(0.95); }
 
         .event-wheel-inner {
             width: 100%;
@@ -525,8 +551,7 @@
             margin-top: auto;
         }
 
-        /* Модальне вікно рулетки */
-        .roulette-modal-overlay {
+        .roulette-modal-overlay, .level-modal-overlay, .daily-modal-overlay {
             position: fixed;
             top: 0;
             left: 0;
@@ -543,15 +568,15 @@
             transition: opacity 0.3s ease;
         }
 
-        .roulette-modal-overlay.show {
+        .roulette-modal-overlay.show, .level-modal-overlay.show, .daily-modal-overlay.show {
             opacity: 1;
             pointer-events: auto;
         }
 
-        .roulette-modal {
+        .roulette-modal, .level-modal, .daily-modal {
             background: var(--panel-bg);
             border: 1px solid var(--accent-gold);
-            width: 90%;
+            width: 85%;
             max-width: 320px;
             border-radius: 24px;
             padding: 20px;
@@ -565,7 +590,9 @@
             gap: 15px;
         }
 
-        .roulette-modal-overlay.show .roulette-modal {
+        .roulette-modal-overlay.show .roulette-modal,
+        .level-modal-overlay.show .level-modal,
+        .daily-modal-overlay.show .daily-modal {
             transform: scale(1);
         }
 
@@ -620,79 +647,6 @@
             box-shadow: 0 0 10px rgba(0,0,0,0.5);
         }
 
-        .level-modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.75);
-            backdrop-filter: blur(8px);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.3s ease;
-        }
-
-        .level-modal-overlay.show {
-            opacity: 1;
-            pointer-events: auto;
-        }
-
-        .level-modal {
-            background: var(--panel-bg);
-            border: 1px solid var(--accent-gold);
-            width: 85%;
-            max-width: 320px;
-            border-radius: 24px;
-            padding: 24px 20px;
-            text-align: center;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.6);
-            transform: scale(0.8);
-            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-
-        .level-modal-overlay.show .level-modal {
-            transform: scale(1);
-        }
-
-        .level-modal img {
-            width: 110px;
-            height: 110px;
-            object-fit: contain;
-            margin-bottom: 15px;
-            filter: drop-shadow(0 10px 15px rgba(0,0,0,0.5));
-        }
-
-        .level-modal h3 {
-            font-size: 20px;
-            color: var(--text-white);
-            margin-bottom: 8px;
-        }
-
-        .level-modal p {
-            font-size: 13px;
-            color: var(--text-secondary);
-            margin-bottom: 20px;
-            line-height: 1.4;
-        }
-
-        .level-modal button {
-            width: 100%;
-            padding: 12px;
-            border-radius: 14px;
-            border: none;
-            background: var(--accent-gold-gradient);
-            color: #ffffff;
-            font-weight: 700;
-            font-size: 14px;
-            cursor: pointer;
-            box-shadow: 0 4px 15px rgba(82, 121, 111, 0.4);
-        }
-
         nav {
             display: flex;
             justify-content: space-around;
@@ -722,9 +676,7 @@
             font-weight: 700;
         }
 
-        .nav-icon {
-            font-size: 16px;
-        }
+        .nav-icon { font-size: 16px; }
 
         .click-pop {
             position: absolute;
@@ -736,6 +688,12 @@
             text-shadow: 0 2px 4px rgba(0,0,0,0.6);
         }
 
+        .click-pop.gem-drop {
+            color: #38bdf8;
+            font-size: 26px;
+            text-shadow: 0 0 10px rgba(56, 189, 248, 0.8);
+        }
+
         @keyframes floatUp {
             0% { opacity: 1; transform: translateY(0) scale(1); }
             100% { opacity: 0; transform: translateY(-70px) scale(1.2); }
@@ -744,9 +702,20 @@
 </head>
 <body>
 
+    <!-- Щоденний бонус Модалка -->
+    <div class="daily-modal-overlay" id="dailyModalOverlay">
+        <div class="daily-modal">
+            <div style="font-size: 40px;">🎁</div>
+            <h3>Щоденний бонус!</h3>
+            <p>Ти завітав у болото сьогодні! Отримай свою нагороду: **+10 000 🪙** та **+10 💎**!</p>
+            <button onclick="claimDailyBonus()">Забрати нагороду! 🐊</button>
+        </div>
+    </div>
+
+    <!-- Модалка Рівня -->
     <div class="level-modal-overlay" id="levelModalOverlay">
         <div class="level-modal">
-            <img id="modalImg" src="" alt="Рівень">
+            <img id="modalImg" src="" alt="Рівень" style="width: 100px; height: 100px; object-fit: contain;">
             <h3 id="modalTitle">Вітаємо!</h3>
             <p id="modalText">Ти досяг нового рівня!</p>
             <button onclick="closeLevelModal()">Круто! 🐊</button>
@@ -831,6 +800,17 @@
     </header>
 
     <div class="tab-content active" id="tab-tap">
+        <!-- Турбо-режим шкала -->
+        <div class="fever-container" id="feverContainer">
+            <div class="fever-info">
+                <span id="feverStatusText">🔥 Турбо-режим</span>
+                <span id="feverPercentText">0%</span>
+            </div>
+            <div class="fever-bar-container">
+                <div class="fever-bar-fill" id="feverFill"></div>
+            </div>
+        </div>
+
         <div class="character-wrapper" id="clickArea">
             <img src="1790090929041.png" alt="Крокодил" class="character-img" id="characterImg">
         </div>
@@ -963,12 +943,9 @@
         </div>
     </div>
 
-    <!-- Вкладка Рулеток у вигляді сітки івентів -->
     <div class="tab-content" id="tab-roulette">
         <div class="section-title">Івент рулеток</div>
         <div class="roulettes-grid">
-            
-            <!-- Картка Монетної рулетки -->
             <div class="roulette-event-card coin-card">
                 <div class="event-wheel-preview" onclick="openRouletteModal('coin')">
                     <div class="event-wheel-pointer"></div>
@@ -981,7 +958,6 @@
                 <button class="event-card-btn item-btn" onclick="openRouletteModal('coin')">7 000 🪙</button>
             </div>
 
-            <!-- Картка Кристалевої рулетки -->
             <div class="roulette-event-card gem-card">
                 <div class="event-wheel-preview" onclick="openRouletteModal('gem')">
                     <div class="event-wheel-pointer"></div>
@@ -994,7 +970,6 @@
                 <button class="event-card-btn item-btn gem-btn" onclick="openRouletteModal('gem')">15 💎</button>
             </div>
 
-            <!-- Картка Рулетки Ведмедя -->
             <div class="roulette-event-card bear-card">
                 <div class="event-wheel-preview" onclick="openRouletteModal('bear')">
                     <div class="event-wheel-pointer"></div>
@@ -1006,54 +981,49 @@
                 </div>
                 <button class="event-card-btn item-btn bear-btn" onclick="openRouletteModal('bear')">25 💎</button>
             </div>
-
         </div>
     </div>
 
     <nav>
         <button class="nav-item active" onclick="switchTab('tap', this)">
-            <span class="nav-icon">🏠</span>
-            <span>Дім</span>
+            <span class="nav-icon">🏠</span><span>Дім</span>
         </button>
         <button class="nav-item" onclick="switchTab('boosts', this)">
-            <span class="nav-icon">🚀</span>
-            <span>Бусти</span>
+            <span class="nav-icon">🚀</span><span>Бусти</span>
         </button>
         <button class="nav-item" onclick="switchTab('business', this)">
-            <span class="nav-icon">🏢</span>
-            <span>Бізнес</span>
+            <span class="nav-icon">🏢</span><span>Бізнес</span>
         </button>
         <button class="nav-item" onclick="switchTab('tasks', this)">
-            <span class="nav-icon">📋</span>
-            <span>Завдання</span>
+            <span class="nav-icon">📋</span><span>Завдання</span>
         </button>
         <button class="nav-item" onclick="switchTab('roulette', this)">
-            <span class="nav-icon">🎡</span>
-            <span>Рулетки</span>
+            <span class="nav-icon">🎡</span><span>Рулетки</span>
         </button>
     </nav>
 
     <script>
         let tg = null;
-
         try {
             if (window.Telegram && window.Telegram.WebApp) {
                 tg = window.Telegram.WebApp;
                 tg.expand();
-                
                 const user = tg.initDataUnsafe && tg.initDataUnsafe.user;
                 if (user) {
-                    if (user.first_name) {
-                        document.getElementById('profileName').textContent = user.first_name;
-                    }
+                    if (user.first_name) document.getElementById('profileName').textContent = user.first_name;
                     if (user.photo_url) {
-                        const avatarContainer = document.getElementById('profileAvatarContainer');
-                        avatarContainer.innerHTML = `<img src="${user.photo_url}" alt="Аватарка">`;
+                        document.getElementById('profileAvatarContainer').innerHTML = `<img src="${user.photo_url}" alt="Аватарка">`;
                     }
                 }
             }
-        } catch (e) {
-            console.log("Telegram WebApp не ініціалізовано");
+        } catch (e) { console.log("Telegram WebApp не ініціалізовано"); }
+
+        function triggerHaptic(style = 'light') {
+            try {
+                if (tg && tg.HapticFeedback) {
+                    tg.HapticFeedback.impactOccurred(style);
+                }
+            } catch(e) {}
         }
 
         let score = Number(localStorage.getItem('tabcoin_score')) || 0;
@@ -1077,57 +1047,62 @@
 
         let task1Count = Number(localStorage.getItem('tabcoin_task1Count')) || 0;
         let task1Claimed = localStorage.getItem('tabcoin_task1Claimed') === 'true';
-
         let task2Count = Number(localStorage.getItem('tabcoin_task2Count')) || 0;
         let task2Claimed = localStorage.getItem('tabcoin_task2Claimed') === 'true';
-
         let task3Count = Number(localStorage.getItem('tabcoin_task3Count')) || 0;
         let task3Claimed = localStorage.getItem('tabcoin_task3Claimed') === 'true';
 
         let lastResetDate = localStorage.getItem('tabcoin_lastResetDate') || '';
+        let lastDailyDate = localStorage.getItem('tabcoin_lastDailyDate') || '';
+
+        // Турбо-режим змінні
+        let feverVal = 0;
+        let isFeverActive = false;
+        let feverTimer = null;
+
+        function checkDailyBonusPopup() {
+            const todayStr = new Date().toDateString();
+            if (lastDailyDate !== todayStr) {
+                document.getElementById('dailyModalOverlay').classList.add('show');
+            }
+        }
+
+        function claimDailyBonus() {
+            score += 10000;
+            gems += 10; // Змінено на 10 кристалів
+            lastDailyDate = new Date().toDateString();
+            localStorage.setItem('tabcoin_lastDailyDate', lastDailyDate);
+            document.getElementById('dailyModalOverlay').classList.remove('show');
+            updateVisuals();
+            saveGame();
+            triggerHaptic('heavy');
+        }
 
         function checkDailyReset() {
             const now = new Date();
             let resetTargetToday = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 22, 0, 0);
-            let activeDayKey = '';
-
-            if (now >= resetTargetToday) {
-                activeDayKey = `${now.getFullYear()}-${now.getMonth()}-${now.getDate()}-22`;
-            } else {
-                let yesterday = new Date(now.getTime() - 24 * 60 * 60 * 1000);
-                activeDayKey = `${yesterday.getFullYear()}-${yesterday.getMonth()}-${yesterday.getDate()}-22`;
-            }
+            let activeDayKey = now >= resetTargetToday ? `${now.getFullYear()}-${now.getMonth()}-${now.getDate()}-22` : `${new Date(now.getTime() - 24*60*60*1000).toDateString()}-22`;
 
             if (lastResetDate !== activeDayKey) {
-                task1Count = 0;
-                task1Claimed = false;
-                task2Count = 0;
-                task2Claimed = false;
-                task3Count = 0;
-                task3Claimed = false;
+                task1Count = 0; task1Claimed = false;
+                task2Count = 0; task2Claimed = false;
+                task3Count = 0; task3Claimed = false;
                 lastResetDate = activeDayKey;
                 saveGame();
             }
         }
         checkDailyReset();
+        setTimeout(checkDailyBonusPopup, 800);
 
         const boostPrices = [500, 700, 1000, 2000, 3000, 5000, 7500, 10000];
-
-        function getBusinessPrice(basePrice, level) {
-            return Math.floor(basePrice * Math.pow(1.5, level));
-        }
-
+        function getBusinessPrice(basePrice, lvl) { return Math.floor(basePrice * Math.pow(1.5, lvl)); }
         const energyCostPerClick = 5;
 
         let lastTime = Number(localStorage.getItem('tabcoin_lastTime')) || Date.now();
-        let currentTime = Date.now();
-        let elapsedSeconds = Math.floor((currentTime - lastTime) / 1000);
+        let elapsedSeconds = Math.floor((Date.now() - lastTime) / 1000);
 
         function getTotalHourlyIncome() {
-            let biz1Income = biz1Level * 5000;
-            let biz2Income = biz2Level * 15000;
-            let biz3Income = biz3Level * 50000;
-            return biz1Income + biz2Income + biz3Income;
+            return (biz1Level * 5000) + (biz2Level * 15000) + (biz3Level * 50000);
         }
 
         if (elapsedSeconds > 3) {
@@ -1136,16 +1111,13 @@
                 let earnedOffline = Math.floor((elapsedSeconds / 3600) * totalHourly);
                 if (earnedOffline > 0) {
                     score += earnedOffline;
-                    setTimeout(() => {
-                        alert(`Поки ви були офлайн, ваш дохід приніс вам +${earnedOffline.toLocaleString()} 🪙!`);
-                    }, 500);
+                    setTimeout(() => alert(`Поки ви були офлайн, ваш дохід приніс вам +${earnedOffline.toLocaleString()} 🪙!`), 500);
                 }
             }
         }
 
         if (elapsedSeconds > 0 && energy < maxEnergy) {
-            let restoredEnergy = elapsedSeconds * energyRegenRate;
-            energy = Math.min(maxEnergy, energy + restoredEnergy);
+            energy = Math.min(maxEnergy, energy + (elapsedSeconds * energyRegenRate));
         }
 
         const scoreElement = document.getElementById('score');
@@ -1162,10 +1134,7 @@
         const buyEnergyRegenBtn = document.getElementById('buyEnergyRegenBtn');
 
         function getBoostPrice(boostLevel) {
-            if (boostLevel < boostPrices.length) {
-                return boostPrices[boostLevel];
-            }
-            return boostPrices[boostPrices.length - 1] + (boostLevel - boostPrices.length + 1) * 5000;
+            return boostLevel < boostPrices.length ? boostPrices[boostLevel] : boostPrices[boostPrices.length - 1] + (boostLevel - boostPrices.length + 1) * 5000;
         }
 
         function saveGame() {
@@ -1182,7 +1151,6 @@
             localStorage.setItem('tabcoin_biz1Level', biz1Level);
             localStorage.setItem('tabcoin_biz2Level', biz2Level);
             localStorage.setItem('tabcoin_biz3Level', biz3Level);
-            
             localStorage.setItem('tabcoin_task1Count', task1Count);
             localStorage.setItem('tabcoin_task1Claimed', task1Claimed);
             localStorage.setItem('tabcoin_task2Count', task2Count);
@@ -1190,59 +1158,34 @@
             localStorage.setItem('tabcoin_task3Count', task3Count);
             localStorage.setItem('tabcoin_task3Claimed', task3Claimed);
             localStorage.setItem('tabcoin_lastResetDate', lastResetDate);
-
             localStorage.setItem('tabcoin_lastTime', Date.now());
         }
 
         const levelData = {
-            2: {
-                title: "Stage 2: Новий хижак!",
-                text: "Ти набрав 70 000 очок! Твій крокодил підріс, став спритнішим і готовий до нових пригод у болоті!",
-                img: "1790159498394.png"
-            },
-            3: {
-                title: "Stage 3: Гроза водойми!",
-                text: "Вже 170 000 очок! Тепер ти справжній авторитет серед місцевої фауни. Твої зуби стали гострішими!",
-                img: "1790163627383.png"
-            },
-            4: {
-                title: "Stage 4: Болотний барон!",
-                text: "Цілих 340 000 очок! Твій вплив росте разом із тобою. Ніхто в цьому болоті більше не наважиться сперечатися з тобою!",
-                img: "1790165750453.png"
-            },
-            5: {
-                title: "Stage 5: Легенда болота!",
-                text: "Неосяжні 500 000 очок! Ти досяг вершини еволюції! Ти — абсолютна легенда, якій підкорився весь світ!",
-                img: "1790244183576.png"
-            }
+            2: { title: "Stage 2: Новий хижак!", text: "Ти набрав 70 000 очок! Твій крокодил підріс і готовий до нових пригод!", img: "1790159498394.png" },
+            3: { title: "Stage 3: Гроза водойми!", text: "Вже 170 000 очок! Зуби стали гострішими, авторитет у болоті максимальний!", img: "1790163627383.png" },
+            4: { title: "Stage 4: Болотний барон!", text: "Цілих 340 000 очок! Ніхто більше не посміє сперечатися з твоїм впливом!", img: "1790165750453.png" },
+            5: { title: "Stage 5: Легенда болота!", text: "500 000 очок! Ти досяг вершини еволюції! Абсолютна легенда!", img: "1790244183576.png" }
         };
 
         function showLevelModal(lvl) {
             const data = levelData[lvl];
             if (!data) return;
-
             document.getElementById('modalTitle').textContent = data.title;
             document.getElementById('modalText').textContent = data.text;
             document.getElementById('modalImg').src = data.img;
             document.getElementById('levelModalOverlay').classList.add('show');
+            triggerHaptic('heavy');
         }
 
-        function closeLevelModal() {
-            document.getElementById('levelModalOverlay').classList.remove('show');
-        }
+        function closeLevelModal() { document.getElementById('levelModalOverlay').classList.remove('show'); }
 
         function checkLevelProgression() {
             let newLevel = level;
-
-            if (score >= 500000 && level < 5) {
-                newLevel = 5;
-            } else if (score >= 340000 && score < 500000 && level < 4) {
-                newLevel = 4;
-            } else if (score >= 170000 && score < 340000 && level < 3) {
-                newLevel = 3;
-            } else if (score >= 70000 && score < 170000 && level < 2) {
-                newLevel = 2;
-            }
+            if (score >= 500000 && level < 5) newLevel = 5;
+            else if (score >= 340000 && level < 4) newLevel = 4;
+            else if (score >= 170000 && level < 3) newLevel = 3;
+            else if (score >= 70000 && level < 2) newLevel = 2;
 
             if (newLevel > level) {
                 level = newLevel;
@@ -1251,52 +1194,24 @@
                 showLevelModal(level);
                 return;
             }
-
             updateVisuals();
         }
 
         function updateTasksUI() {
-            let currentTapsCoins = Math.min(150000, task1Count);
-            document.getElementById('task1Progress').textContent = `Прогрес: ${currentTapsCoins.toLocaleString()} / 150,000`;
+            document.getElementById('task1Progress').textContent = `Прогрес: ${Math.min(150000, task1Count).toLocaleString()} / 150,000`;
             const btn1 = document.getElementById('claimTask1Btn');
-            if (task1Claimed) {
-                btn1.textContent = 'Виконано';
-                btn1.disabled = true;
-            } else if (task1Count >= 150000) {
-                btn1.textContent = 'Забрати';
-                btn1.disabled = false;
-            } else {
-                btn1.textContent = 'Забрати';
-                btn1.disabled = true;
-            }
+            btn1.textContent = task1Claimed ? 'Виконано' : 'Забрати';
+            btn1.disabled = task1Claimed || task1Count < 150000;
 
-            let currentSpins = Math.min(5, task2Count);
-            document.getElementById('task2Progress').textContent = `Прогрес: ${currentSpins} / 5`;
+            document.getElementById('task2Progress').textContent = `Прогрес: ${Math.min(5, task2Count)} / 5`;
             const btn2 = document.getElementById('claimTask2Btn');
-            if (task2Claimed) {
-                btn2.textContent = 'Виконано';
-                btn2.disabled = true;
-            } else if (task2Count >= 5) {
-                btn2.textContent = 'Забрати';
-                btn2.disabled = false;
-            } else {
-                btn2.textContent = 'Забрати';
-                btn2.disabled = true;
-            }
+            btn2.textContent = task2Claimed ? 'Виконано' : 'Забрати';
+            btn2.disabled = task2Claimed || task2Count < 5;
 
-            let currentBizUp = Math.min(1, task3Count);
-            document.getElementById('task3Progress').textContent = `Прогрес: ${currentBizUp} / 1`;
+            document.getElementById('task3Progress').textContent = `Прогрес: ${Math.min(1, task3Count)} / 1`;
             const btn3 = document.getElementById('claimTask3Btn');
-            if (task3Claimed) {
-                btn3.textContent = 'Виконано';
-                btn3.disabled = true;
-            } else if (task3Count >= 1) {
-                btn3.textContent = 'Забрати';
-                btn3.disabled = false;
-            } else {
-                btn3.textContent = 'Забрати';
-                btn3.disabled = true;
-            }
+            btn3.textContent = task3Claimed ? 'Виконано' : 'Забрати';
+            btn3.disabled = task3Claimed || task3Count < 1;
 
             updateTimerDisplay();
         }
@@ -1304,42 +1219,25 @@
         function updateTimerDisplay() {
             const now = new Date();
             let target = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 22, 0, 0);
-            if (now >= target) {
-                target.setDate(target.getDate() + 1);
-            }
+            if (now >= target) target.setDate(target.getDate() + 1);
             let diff = target - now;
             let hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
             let minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
             let seconds = Math.floor((diff % (1000 * 60)) / 1000);
-
-            document.getElementById('tasksTimer').textContent = `Скидання через: ${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+            document.getElementById('tasksTimer').textContent = `Скидання через: ${String(hours).padStart(2,'0')}:${String(minutes).padStart(2,'0')}:${String(seconds).padStart(2,'0')}`;
         }
 
         function claimTask(id) {
-            if (id === 1 && !task1Claimed && task1Count >= 150000) {
-                task1Claimed = true;
-                gems += 20;
-                alert('Вітаємо! Отримано +20 💎 за завдання з тапання!');
-            } else if (id === 2 && !task2Claimed && task2Count >= 5) {
-                task2Claimed = true;
-                gems += 15;
-                alert('Вітаємо! Отримано +15 💎 за прокрутку рулеток!');
-            } else if (id === 3 && !task3Claimed && task3Count >= 1) {
-                task3Claimed = true;
-                score += 250000;
-                alert('Вітаємо! Отримано +250 000 🪙 за прокачку бізнесу!');
-            }
-            updateVisuals();
-            saveGame();
+            if (id === 1 && !task1Claimed && task1Count >= 150000) { task1Claimed = true; gems += 20; alert('Отримано +20 💎!'); }
+            else if (id === 2 && !task2Claimed && task2Count >= 5) { task2Claimed = true; gems += 15; alert('Отримано +15 💎!'); }
+            else if (id === 3 && !task3Claimed && task3Count >= 1) { task3Claimed = true; score += 250000; alert('Отримано +250 000 🪙!'); }
+            updateVisuals(); saveGame(); triggerHaptic('medium');
         }
 
         function updateVisuals() {
             scoreElement.textContent = Math.floor(score);
             gemsElement.textContent = gems;
-            
-            let totalHourly = getTotalHourlyIncome();
-            incomeSub.textContent = `+${totalHourly.toLocaleString()}/год`;
-
+            incomeSub.textContent = `+${getTotalHourlyIncome().toLocaleString()}/год`;
             energyText.textContent = `${Math.floor(energy)} / ${maxEnergy}`;
             energyRateText.textContent = `+${energyRegenRate}/сек`;
             energyFill.style.width = `${(energy / maxEnergy) * 100}%`;
@@ -1348,151 +1246,131 @@
             buyMaxenergyBtn.textContent = `Купити (${getBoostPrice(maxenergyLevel)} 🪙)`;
             buyEnergyRegenBtn.textContent = `Купити (${getBoostPrice(energyregenLevel)} 🪙)`;
 
-            let priceBiz1 = getBusinessPrice(10000, biz1Level);
-            let priceBiz2 = getBusinessPrice(40000, biz2Level);
-            let priceBiz3 = getBusinessPrice(150000, biz3Level);
-
             document.getElementById('biz1Info').textContent = `Рівень: ${biz1Level} | Дохід: +${(biz1Level * 5000).toLocaleString()}/год`;
-            document.getElementById('buyBiz1Btn').textContent = `Купити (${priceBiz1.toLocaleString()} 🪙)`;
-
+            document.getElementById('buyBiz1Btn').textContent = `Купити (${getBusinessPrice(10000, biz1Level).toLocaleString()} 🪙)`;
             document.getElementById('biz2Info').textContent = `Рівень: ${biz2Level} | Дохід: +${(biz2Level * 15000).toLocaleString()}/год`;
-            document.getElementById('buyBiz2Btn').textContent = `Купити (${priceBiz2.toLocaleString()} 🪙)`;
-
+            document.getElementById('buyBiz2Btn').textContent = `Купити (${getBusinessPrice(40000, biz2Level).toLocaleString()} 🪙)`;
             document.getElementById('biz3Info').textContent = `Рівень: ${biz3Level} | Дохід: +${(biz3Level * 50000).toLocaleString()}/год`;
-            document.getElementById('buyBiz3Btn').textContent = `Купити (${priceBiz3.toLocaleString()} 🪙)`;
+            document.getElementById('buyBiz3Btn').textContent = `Купити (${getBusinessPrice(150000, biz3Level).toLocaleString()} 🪙)`;
 
-            if (level >= 5) {
-                levelBadge.textContent = 'Stage 5';
-                characterImg.src = '1790244183576.png';
-            } else if (level === 4) {
-                levelBadge.textContent = 'Stage 4';
-                characterImg.src = '1790165750453.png';
-            } else if (level === 3) {
-                levelBadge.textContent = 'Stage 3';
-                characterImg.src = '1790163627383.png';
-            } else if (level === 2) {
-                levelBadge.textContent = 'Stage 2';
-                characterImg.src = '1790159498394.png';
-            } else {
-                levelBadge.textContent = 'Stage 1';
-                characterImg.src = '1790090929041.png';
-            }
+            if (level >= 5) { levelBadge.textContent = 'Stage 5'; characterImg.src = '1790244183576.png'; }
+            else if (level === 4) { levelBadge.textContent = 'Stage 4'; characterImg.src = '1790165750453.png'; }
+            else if (level === 3) { levelBadge.textContent = 'Stage 3'; characterImg.src = '1790163627383.png'; }
+            else if (level === 2) { levelBadge.textContent = 'Stage 2'; characterImg.src = '1790159498394.png'; }
+            else { levelBadge.textContent = 'Stage 1'; characterImg.src = '1790090929041.png'; }
 
             updateTasksUI();
         }
 
         function buyBusiness(id) {
             let cost = 0;
-            if (id === 1) {
-                cost = getBusinessPrice(10000, biz1Level);
-                if (score >= cost) {
-                    score -= cost;
-                    biz1Level++;
-                    alert('Автомийку успішно покращено!');
-                } else {
-                    alert('Недостатньо монет!');
-                    return;
-                }
-            } else if (id === 2) {
-                cost = getBusinessPrice(40000, biz2Level);
-                if (score >= cost) {
-                    score -= cost;
-                    biz2Level++;
-                    alert('Супермаркет успішно покращено!');
-                } else {
-                    alert('Недостатньо монет!');
-                    return;
-                }
-            } else if (id === 3) {
-                cost = getBusinessPrice(150000, biz3Level);
-                if (score >= cost) {
-                    score -= cost;
-                    biz3Level++;
-                    alert('Велику Ферму успішно покращено!');
-                } else {
-                    alert('Недостатньо монет!');
-                    return;
-                }
-            }
+            if (id === 1) { cost = getBusinessPrice(10000, biz1Level); if (score >= cost) { score -= cost; biz1Level++; } else { alert('Недостатньо монет!'); return; } }
+            else if (id === 2) { cost = getBusinessPrice(40000, biz2Level); if (score >= cost) { score -= cost; biz2Level++; } else { alert('Недостатньо монет!'); return; } }
+            else if (id === 3) { cost = getBusinessPrice(150000, biz3Level); if (score >= cost) { score -= cost; biz3Level++; } else { alert('Недостатньо монет!'); return; } }
 
-            if (!task3Claimed) {
-                task3Count++;
-            }
-
-            checkLevelProgression();
-            saveGame();
+            if (!task3Claimed) task3Count++;
+            checkLevelProgression(); saveGame(); triggerHaptic('medium');
         }
 
         function buyGemsInvoice(gemAmount, starsPrice) {
-            const botUsername = "tabcoin1_bot"; 
-            const payload = `buy_${gemAmount}_gems_${starsPrice}_stars`;
-            const invoiceUrl = `https://t.me/${botUsername}?start=${payload}`;
-
-            if (tg && tg.openTelegramLink) {
-                tg.openTelegramLink(invoiceUrl);
-            } else {
-                window.open(invoiceUrl, '_blank');
-            }
+            const botUsername = "tabcoin1_bot";
+            const invoiceUrl = `https://t.me/${botUsername}?start=buy_${gemAmount}_gems_${starsPrice}_stars`;
+            if (tg && tg.openTelegramLink) tg.openTelegramLink(invoiceUrl);
+            else window.open(invoiceUrl, '_blank');
         }
 
         updateVisuals();
 
+        // Логіка кліку з урахуванням Турбо-режиму та шансу випадіння кристала
+        function handleTapAction(clientX, clientY) {
+            if (energy >= energyCostPerClick) {
+                let currentMultiplier = isFeverActive ? 3 : 1;
+                let earned = clickPower * currentMultiplier;
+                score += earned;
+                energy -= energyCostPerClick;
+
+                if (!task1Claimed && task1Count < 150000) task1Count += earned;
+
+                // Шанс випадіння 1 кристала (3%)
+                let gemDropped = false;
+                if (Math.random() < 0.03) {
+                    gems += 1;
+                    gemDropped = true;
+                }
+
+                // Заповнення шкали турбо-режиму
+                if (!isFeverActive) {
+                    feverVal = Math.min(100, feverVal + 3.5);
+                    document.getElementById('feverFill').style.width = feverVal + '%';
+                    document.getElementById('feverPercentText').textContent = Math.floor(feverVal) + '%';
+                    
+                    if (feverVal >= 100) {
+                        activateFeverMode();
+                    }
+                }
+
+                showFloatingTextAt(clientX, clientY, earned, gemDropped);
+                triggerHaptic(gemDropped ? 'heavy' : 'light');
+            }
+            checkLevelProgression();
+            saveGame();
+        }
+
+        function activateFeverMode() {
+            isFeverActive = true;
+            document.getElementById('clickArea').classList.add('fever-active');
+            document.getElementById('feverStatusText').textContent = '⚡ ТУРБО-РЕЖИМ (x3)!';
+            triggerHaptic('heavy');
+
+            let timeLeft = 7;
+            const percentText = document.getElementById('feverPercentText');
+            const fillBar = document.getElementById('feverFill');
+            
+            clearInterval(feverTimer);
+            feverTimer = setInterval(() => {
+                timeLeft -= 1;
+                percentText.textContent = timeLeft + 'с';
+                fillBar.style.width = (timeLeft / 7) * 100 + '%';
+
+                if (timeLeft <= 0) {
+                    clearInterval(feverTimer);
+                    isFeverActive = false;
+                    feverVal = 0;
+                    document.getElementById('clickArea').classList.remove('fever-active');
+                    document.getElementById('feverStatusText').textContent = '🔥 Турбо-режим';
+                    percentText.textContent = '0%';
+                    fillBar.style.width = '0%';
+                }
+            }, 1000);
+        }
+
         clickArea.addEventListener('touchstart', (e) => {
             e.preventDefault();
             for (let i = 0; i < e.changedTouches.length; i++) {
-                if (energy >= energyCostPerClick) {
-                    score += clickPower;
-                    energy -= energyCostPerClick;
-                    if (!task1Claimed && task1Count < 150000) {
-                        task1Count += clickPower;
-                    }
-                    let touch = e.changedTouches[i];
-                    showFloatingTextAt(touch.clientX, touch.clientY);
-                }
+                handleTapAction(e.changedTouches[i].clientX, e.changedTouches[i].clientY);
             }
-            checkLevelProgression();
-            saveGame();
         }, { passive: false });
 
         clickArea.addEventListener('click', (e) => {
-            if (energy >= energyCostPerClick) {
-                score += clickPower;
-                energy -= energyCostPerClick;
-                if (!task1Claimed && task1Count < 150000) {
-                    task1Count += clickPower;
-                }
-                showFloatingTextAt(e.clientX, e.clientY);
-            }
-            checkLevelProgression();
-            saveGame();
+            handleTapAction(e.clientX, e.clientY);
         });
 
         setInterval(() => {
             checkDailyReset();
-
-            if (energy < maxEnergy) {
-                energy = Math.min(maxEnergy, energy + energyRegenRate);
-            }
-            
+            if (energy < maxEnergy) energy = Math.min(maxEnergy, energy + energyRegenRate);
             let totalHourly = getTotalHourlyIncome();
-            if (totalHourly > 0) {
-                let incomePerSec = totalHourly / 3600;
-                score += incomePerSec;
-            }
-
+            if (totalHourly > 0) score += totalHourly / 3600;
             checkLevelProgression();
             saveGame();
         }, 1000);
 
-        window.addEventListener('beforeunload', () => {
-            saveGame();
-        });
+        window.addEventListener('beforeunload', () => saveGame());
 
-        function showFloatingTextAt(clientX, clientY) {
+        function showFloatingTextAt(clientX, clientY, amount, gemDropped) {
             const rect = clickArea.getBoundingClientRect();
             const popup = document.createElement('div');
-            popup.className = 'click-pop';
-            popup.textContent = `+${clickPower}`;
+            popup.className = gemDropped ? 'click-pop gem-drop' : 'click-pop';
+            popup.textContent = gemDropped ? `+${amount}🪙 & +1💎!` : `+${amount}`;
             popup.style.left = `${clientX - rect.left}px`;
             popup.style.top = `${clientY - rect.top}px`;
             clickArea.appendChild(popup);
@@ -1503,59 +1381,25 @@
             document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
             document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
             document.getElementById(`tab-${tabId}`).classList.add('active');
-            
-            if (element && element.classList.contains('nav-item')) {
-                element.classList.add('active');
-            }
+            if (element && element.classList.contains('nav-item')) element.classList.add('active');
+            triggerHaptic('light');
         }
 
-        function openRouletteModal(type) {
-            document.getElementById(`${type}ModalOverlay`).classList.add('show');
-        }
-
-        function closeRouletteModal(type) {
-            document.getElementById(`${type}ModalOverlay`).classList.remove('show');
-        }
+        function openRouletteModal(type) { document.getElementById(`${type}ModalOverlay`).classList.add('show'); triggerHaptic('light'); }
+        function closeRouletteModal(type) { document.getElementById(`${type}ModalOverlay`).classList.remove('show'); }
 
         function buyBoost(type) {
             if (type === 'multiclick') {
                 let cost = getBoostPrice(multiclickLevel);
-                if (score >= cost) {
-                    score -= cost;
-                    multiclickLevel++;
-                    clickPower += 1;
-                    alert('Буст кліка успішно куплено!');
-                    checkLevelProgression();
-                    saveGame();
-                } else {
-                    alert('Недостатньо монет!');
-                }
+                if (score >= cost) { score -= cost; multiclickLevel++; clickPower += 1; alert('Буст успішно куплено!'); } else { alert('Недостатньо монет!'); return; }
             } else if (type === 'maxenergy') {
                 let cost = getBoostPrice(maxenergyLevel);
-                if (score >= cost) {
-                    score -= cost;
-                    maxenergyLevel++;
-                    maxEnergy += 500;
-                    energy = maxEnergy;
-                    alert('Максимум енергії збільшено!');
-                    checkLevelProgression();
-                    saveGame();
-                } else {
-                    alert('Недостатньо монет!');
-                }
+                if (score >= cost) { score -= cost; maxenergyLevel++; maxEnergy += 500; energy = maxEnergy; alert('Енергію збільшено!'); } else { alert('Недостатньо монет!'); return; }
             } else if (type === 'energyregen') {
                 let cost = getBoostPrice(energyregenLevel);
-                if (score >= cost) {
-                    score -= cost;
-                    energyregenLevel++;
-                    energyRegenRate += 1;
-                    alert('Швидкість відновлення енергії збільшено!');
-                    checkLevelProgression();
-                    saveGame();
-                } else {
-                    alert('Недостатньо монет!');
-                }
+                if (score >= cost) { score -= cost; energyregenLevel++; energyRegenRate += 1; alert('Регенерацію прискорено!'); } else { alert('Недостатньо монет!'); return; }
             }
+            checkLevelProgression(); saveGame(); triggerHaptic('medium');
         }
 
         const coinRoulettePrizes = [
@@ -1567,7 +1411,6 @@
             { text: "5k 🪙",  gems: 0, coins: 5000,  chance: 0.25 },
             { text: "2k 🪙",  gems: 0, coins: 2000,  chance: 0.28 }
         ];
-
         const gemRoulettePrizes = [
             { text: "30💎", gems: 30, coins: 0, chance: 0.10 },
             { text: "25💎", gems: 25, coins: 0, chance: 0.15 },
@@ -1576,7 +1419,6 @@
             { text: "10💎", gems: 10, coins: 0, chance: 0.60 },
             { text: "5💎",  gems: 5,  coins: 0, chance: 0.60 }
         ];
-
         const bearRoulettePrizes = [
             { text: "🐻", gems: 0, coins: 0, bear: true, chance: 0.02 },
             { text: "50💎", gems: 50, coins: 0, chance: 0.03 },
@@ -1591,61 +1433,30 @@
             const wheelContainer = document.getElementById(wheelId);
             const total = prizes.length;
             const angleStep = 360 / total;
-
             let svgHTML = `<svg viewBox="0 0 100 100" style="width: 100%; height: 100%;">`;
             
             prizes.forEach((prize, index) => {
                 const startAngle = index * angleStep;
                 const endAngle = (index + 1) * angleStep;
-                
-                let fillColor = '';
-                if (isBear && prize.bear) {
-                    fillColor = '#fbbf24';
-                } else {
-                    const colors = isBear ? ['#78350f', '#92400e', '#b45309', '#9a3412', '#7c2d12', '#451a03'] : ['#2d4a3e', '#3d5a45', '#4a6b5d', '#31493c', '#3c584b', '#253d32', '#1b2d24'];
-                    fillColor = colors[index % colors.length];
-                }
+                let fillColor = (isBear && prize.bear) ? '#fbbf24' : (isBear ? ['#78350f', '#92400e', '#b45309', '#9a3412', '#7c2d12', '#451a03'][index % 6] : ['#2d4a3e', '#3d5a45', '#4a6b5d', '#31493c', '#3c584b', '#253d32', '#1b2d24'][index % 7]);
                 
                 const radStart = Math.PI * (startAngle - 90) / 180;
                 const radEnd = Math.PI * (endAngle - 90) / 180;
+                const x1 = 50 + 50 * Math.cos(radStart), y1 = 50 + 50 * Math.sin(radStart);
+                const x2 = 50 + 50 * Math.cos(radEnd), y2 = 50 + 50 * Math.sin(radEnd);
+                const pathData = `M 50 50 L ${x1} ${y1} A 50 50 0 ${angleStep > 180 ? 1 : 0} 1 ${x2} ${y2} Z`;
 
-                const x1 = 50 + 50 * Math.cos(radStart);
-                const y1 = 50 + 50 * Math.sin(radStart);
-                const x2 = 50 + 50 * Math.cos(radEnd);
-                const y2 = 50 + 50 * Math.sin(radEnd);
-                const largeArcFlag = angleStep > 180 ? 1 : 0;
-
-                const pathData = `M 50 50 L ${x1} ${y1} A 50 50 0 ${largeArcFlag} 1 ${x2} ${y2} Z`;
-
-                const strokeWidth = (isBear && prize.bear) ? "2.5" : "1.2";
-                const strokeColor = (isBear && prize.bear) ? "#ffffff" : "rgba(255, 255, 255, 0.25)";
-
-                svgHTML += `<path d="${pathData}" fill="${fillColor}" stroke="${strokeColor}" stroke-width="${strokeWidth}"/>`;
+                svgHTML += `<path d="${pathData}" fill="${fillColor}" stroke="${isBear && prize.bear ? '#fff' : 'rgba(255,255,255,0.25)'}" stroke-width="${isBear && prize.bear ? 2.5 : 1.2}"/>`;
 
                 const midAngle = startAngle + angleStep / 2;
                 const radMid = Math.PI * (midAngle - 90) / 180;
-                const textRadius = 30;
-                const textX = 50 + textRadius * Math.cos(radMid);
-                const textY = 50 + textRadius * Math.sin(radMid);
+                const textX = 50 + 30 * Math.cos(radMid), textY = 50 + 30 * Math.sin(radMid);
+                let textAngle = midAngle > 90 && midAngle < 270 ? midAngle + 180 : midAngle;
 
-                let textAngle = midAngle;
-                if (textAngle > 90 && textAngle < 270) {
-                    textAngle += 180;
-                }
-
-                let textColor = (isBear && prize.bear) ? "#000000" : "#ffffff";
-                let textWeight = "900";
-                let textSize = (isBear && prize.bear) ? "8" : "7";
-
-                svgHTML += `<text x="${textX}" y="${textY}" fill="${textColor}" font-family="system-ui, -apple-system, sans-serif" font-weight="${textWeight}" font-size="${textSize}" text-anchor="middle" dominant-baseline="middle" transform="rotate(${textAngle}, ${textX}, ${textY})" filter="drop-shadow(0px 1px 2px rgba(0,0,0,0.9))">${prize.text}</text>`;
+                svgHTML += `<text x="${textX}" y="${textY}" fill="${isBear && prize.bear ? '#000' : '#fff'}" font-weight="900" font-size="${isBear && prize.bear ? 8 : 7}" text-anchor="middle" dominant-baseline="middle" transform="rotate(${textAngle}, ${textX}, ${textY})" filter="drop-shadow(0px 1px 2px rgba(0,0,0,0.9))">${prize.text}</text>`;
             });
-
             svgHTML += `</svg>`;
-            let centerIcon = '🪙';
-            if (wheelId === 'wheelGem') centerIcon = '💎';
-            if (wheelId === 'wheelBear') centerIcon = '🐻';
-
-            wheelContainer.innerHTML = `<div class="wheel-center" style="${isBear ? 'background: linear-gradient(135deg, #f59e0b, #b45309);' : ''}">${centerIcon}</div>` + svgHTML;
+            wheelContainer.innerHTML = `<div class="wheel-center" style="${isBear ? 'background: linear-gradient(135deg, #f59e0b, #b45309);' : ''}">${wheelId === 'wheelGem' ? '💎' : (wheelId === 'wheelBear' ? '🐻' : '🪙')}</div>` + svgHTML;
         }
 
         window.addEventListener('DOMContentLoaded', () => {
@@ -1657,7 +1468,6 @@
         function getWeightedRandomIndex(prizes) {
             const totalWeight = prizes.reduce((sum, item) => sum + item.chance, 0);
             let randomNum = Math.random() * totalWeight;
-            
             for (let i = 0; i < prizes.length; i++) {
                 if (randomNum < prizes[i].chance) return i;
                 randomNum -= prizes[i].chance;
@@ -1665,136 +1475,57 @@
             return 0;
         }
 
-        function registerRouletteSpin() {
-            if (!task2Claimed && task2Count < 5) {
-                task2Count++;
-            }
-        }
+        let coinRotation = 0, gemRotation = 0, bearRotation = 0;
 
-        let coinRotation = 0;
         function spinCoinWheel() {
-            const cost = 7000;
-            if (score < cost) {
-                alert('Недостатньо монет! Потрібно 7 000 🪙');
-                return;
-            }
-
-            score -= cost;
-            checkLevelProgression();
-            saveGame();
-
-            const spinBtn = document.getElementById('spinCoinBtn');
-            spinBtn.disabled = true;
-
+            if (score < 7000) { alert('Недостатньо монет! Потрібно 7 000 🪙'); return; }
+            score -= 7000; saveGame();
+            const btn = document.getElementById('spinCoinBtn'); btn.disabled = true;
             const prizeIndex = getWeightedRandomIndex(coinRoulettePrizes);
-            const totalItems = coinRoulettePrizes.length;
-            const angleStep = 360 / totalItems;
-            
-            const targetSectorCenter = prizeIndex * angleStep + angleStep / 2;
-            const extraSpins = 360 * 7;
-            const currentMod = coinRotation % 360;
-            const targetRotation = coinRotation + extraSpins + (360 - currentMod) + (360 - targetSectorCenter);
-            
-            coinRotation = targetRotation;
+            coinRotation += 360 * 7 + (360 - (coinRotation % 360)) + (360 - (prizeIndex * (360 / coinRoulettePrizes.length) + (360 / coinRoulettePrizes.length) / 2));
             document.getElementById('wheelCoin').style.transform = `rotate(${coinRotation}deg)`;
+            triggerHaptic('medium');
 
             setTimeout(() => {
-                const wonCoins = coinRoulettePrizes[prizeIndex].coins;
-                const wonGems = coinRoulettePrizes[prizeIndex].gems;
-                score += wonCoins;
-                gems += wonGems;
-                registerRouletteSpin();
-                alert(`Вітаємо! Ви виграли ${wonCoins} 🪙!`);
-                checkLevelProgression();
-                updateVisuals();
-                saveGame();
-                spinBtn.disabled = false;
+                score += coinRoulettePrizes[prizeIndex].coins;
+                if (!task2Claimed && task2Count < 5) task2Count++;
+                alert(`Ви виграли ${coinRoulettePrizes[prizeIndex].coins} 🪙!`);
+                updateVisuals(); saveGame(); btn.disabled = false;
             }, 4000);
         }
 
-        let gemRotation = 0;
         function spinGemWheel() {
-            const cost = 15;
-            if (gems < cost) {
-                alert('Недостатня кількість кристалів! Потрібно 15 💎');
-                return;
-            }
-
-            gems -= cost;
-            updateVisuals();
-            saveGame();
-
-            const spinBtn = document.getElementById('spinGemBtn');
-            spinBtn.disabled = true;
-
+            if (gems < 15) { alert('Потрібно 15 💎'); return; }
+            gems -= 15; updateVisuals(); saveGame();
+            const btn = document.getElementById('spinGemBtn'); btn.disabled = true;
             const prizeIndex = getWeightedRandomIndex(gemRoulettePrizes);
-            const totalItems = gemRoulettePrizes.length;
-            const angleStep = 360 / totalItems;
-            
-            const targetSectorCenter = prizeIndex * angleStep + angleStep / 2;
-            const extraSpins = 360 * 7;
-            const currentMod = gemRotation % 360;
-            const targetRotation = gemRotation + extraSpins + (360 - currentMod) + (360 - targetSectorCenter);
-            
-            gemRotation = targetRotation;
+            gemRotation += 360 * 7 + (360 - (gemRotation % 360)) + (360 - (prizeIndex * (360 / gemRoulettePrizes.length) + (360 / gemRoulettePrizes.length) / 2));
             document.getElementById('wheelGem').style.transform = `rotate(${gemRotation}deg)`;
+            triggerHaptic('medium');
 
             setTimeout(() => {
-                const wonCoins = gemRoulettePrizes[prizeIndex].coins;
-                const wonGems = gemRoulettePrizes[prizeIndex].gems;
-                score += wonCoins;
-                gems += wonGems;
-                registerRouletteSpin();
-                alert(`Вітаємо! Ви виграли ${wonGems} 💎!`);
-                checkLevelProgression();
-                updateVisuals();
-                saveGame();
-                spinBtn.disabled = false;
+                gems += gemRoulettePrizes[prizeIndex].gems;
+                if (!task2Claimed && task2Count < 5) task2Count++;
+                alert(`Ви виграли ${gemRoulettePrizes[prizeIndex].gems} 💎!`);
+                updateVisuals(); saveGame(); btn.disabled = false;
             }, 4000);
         }
 
-        let bearRotation = 0;
         function spinBearWheel() {
-            const cost = 25;
-            if (gems < cost) {
-                alert('Недостатня кількість кристалів! Потрібно 25 💎');
-                return;
-            }
-
-            gems -= cost;
-            updateVisuals();
-            saveGame();
-
-            const spinBtn = document.getElementById('spinBearBtn');
-            spinBtn.disabled = true;
-
+            if (gems < 25) { alert('Потрібно 25 💎'); return; }
+            gems -= 25; updateVisuals(); saveGame();
+            const btn = document.getElementById('spinBearBtn'); btn.disabled = true;
             const prizeIndex = getWeightedRandomIndex(bearRoulettePrizes);
-            const totalItems = bearRoulettePrizes.length;
-            const angleStep = 360 / totalItems;
-            
-            const targetSectorCenter = prizeIndex * angleStep + angleStep / 2;
-            const extraSpins = 360 * 7;
-            const currentMod = bearRotation % 360;
-            const targetRotation = bearRotation + extraSpins + (360 - currentMod) + (360 - targetSectorCenter);
-            
-            bearRotation = targetRotation;
+            bearRotation += 360 * 7 + (360 - (bearRotation % 360)) + (360 - (prizeIndex * (360 / bearRoulettePrizes.length) + (360 / bearRoulettePrizes.length) / 2));
             document.getElementById('wheelBear').style.transform = `rotate(${bearRotation}deg)`;
+            triggerHaptic('heavy');
 
             setTimeout(() => {
                 const prize = bearRoulettePrizes[prizeIndex];
-                registerRouletteSpin();
-
-                if (prize.bear) {
-                    alert('🎉 НЕЙМОВІРНО! Ви виграли головний приз — ВЕДМЕДЯ 🐻 у золотому секторі!');
-                } else {
-                    gems += prize.gems;
-                    alert(`Вітаємо! Ви виграли ${prize.text}!`);
-                }
-
-                checkLevelProgression();
-                updateVisuals();
-                saveGame();
-                spinBtn.disabled = false;
+                if (!task2Claimed && task2Count < 5) task2Count++;
+                if (prize.bear) alert('🎉 НЕЙМОВІРНО! Ви виграли головний приз — ВЕДМЕДЯ 🐻!');
+                else { gems += prize.gems; alert(`Ви виграли ${prize.text}!`); }
+                updateVisuals(); saveGame(); btn.disabled = false;
             }, 4000);
         }
     </script>
