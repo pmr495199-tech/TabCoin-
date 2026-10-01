@@ -551,6 +551,69 @@
             margin-top: auto;
         }
 
+        /* --- СТИЛІ МІНІ-ГРИ "ЛОВИСЬКА" --- */
+        .minigame-container {
+            width: 100%;
+            max-width: 340px;
+            height: 60vh;
+            background: var(--panel-bg);
+            border: 1px solid var(--accent-gold);
+            border-radius: 20px;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(12px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            touch-action: none;
+        }
+
+        .minigame-header {
+            position: absolute;
+            top: 10px;
+            left: 15px;
+            right: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 10;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .catch-basket {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 65px;
+            height: 40px;
+            background: var(--accent-gold-gradient);
+            border: 2px solid #ffffff;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+            z-index: 5;
+        }
+
+        .falling-item {
+            position: absolute;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            z-index: 4;
+            animation: spinItem 2s linear infinite;
+        }
+
+        @keyframes spinItem {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
         .roulette-modal-overlay, .level-modal-overlay, .daily-modal-overlay {
             position: fixed;
             top: 0;
@@ -850,13 +913,6 @@
                 </div>
                 <button class="item-btn" id="buyEnergyRegenBtn" onclick="buyBoost('energyregen')">Купити</button>
             </div>
-            <div class="item-card">
-                <div class="item-info">
-                    <h4>Кришталевий бур</h4>
-                    <p>Шанс кристала +0.3%</p>
-                </div>
-                <button class="item-btn gem-btn" id="buyGemDrillBtn" onclick="buyBoost('gemdrill')">Купити</button>
-            </div>
         </div>
     </div>
 
@@ -887,14 +943,18 @@
                 </div>
                 <button class="item-btn" id="buyBiz3Btn" onclick="buyBusiness(3)">Купити</button>
             </div>
-            <div class="item-card">
-                <img src="depositphotos_9136118-stock-illustration-car-wash.png" alt="Завод" class="business-img">
-                <div class="item-info">
-                    <h4>Болотний Завод</h4>
-                    <p id="biz4Info">Рівень: 0 | Дохід: +150 000/год</p>
-                </div>
-                <button class="item-btn" id="buyBiz4Btn" onclick="buyBusiness(4)">Купити</button>
+        </div>
+    </div>
+
+    <!-- ВКЛАДКА МІНІ-ГРИ -->
+    <div class="tab-content" id="tab-minigame">
+        <div class="section-title" style="margin-bottom: 2px;">Лови скарби! 🎮</div>
+        <div class="minigame-container" id="minigameArea">
+            <div class="minigame-header">
+                <span>Спіймано: <b id="mgScore">0</b></span>
+                <button class="item-btn" id="mgStartBtn" onclick="startMiniGame()" style="padding: 4px 10px; font-size: 10px;">Старт</button>
             </div>
+            <div class="catch-basket" id="catchBasket">🐊</div>
         </div>
     </div>
 
@@ -1009,8 +1069,8 @@
         <button class="nav-item" onclick="switchTab('business', this)">
             <span class="nav-icon">🏢</span><span>Бізнес</span>
         </button>
-        <button class="nav-item" onclick="switchTab('tasks', this)">
-            <span class="nav-icon">📋</span><span>Завдання</span>
+        <button class="nav-item" onclick="switchTab('minigame', this)">
+            <span class="nav-icon">🎮</span><span>Гра</span>
         </button>
         <button class="nav-item" onclick="switchTab('roulette', this)">
             <span class="nav-icon">🎡</span><span>Рулетки</span>
@@ -1055,12 +1115,10 @@
         let multiclickLevel = Number(localStorage.getItem('tabcoin_multiLevel')) || 0;
         let maxenergyLevel = Number(localStorage.getItem('tabcoin_energyLevel')) || 0;
         let energyregenLevel = Number(localStorage.getItem('tabcoin_energyregenLevel')) || 0;
-        let gemdrillLevel = Number(localStorage.getItem('tabcoin_gemdrillLevel')) || 0;
 
         let biz1Level = Number(localStorage.getItem('tabcoin_biz1Level')) || 0;
         let biz2Level = Number(localStorage.getItem('tabcoin_biz2Level')) || 0;
         let biz3Level = Number(localStorage.getItem('tabcoin_biz3Level')) || 0;
-        let biz4Level = Number(localStorage.getItem('tabcoin_biz4Level')) || 0;
 
         let task1Count = Number(localStorage.getItem('tabcoin_task1Count')) || 0;
         let task1Claimed = localStorage.getItem('tabcoin_task1Claimed') === 'true';
@@ -1072,7 +1130,6 @@
         let lastResetDate = localStorage.getItem('tabcoin_lastResetDate') || '';
         let lastDailyDate = localStorage.getItem('tabcoin_lastDailyDate') || '';
 
-        // Турбо-режим змінні з урахуванням 30-хвилинного кулдауну
         let feverVal = 0;
         let isFeverActive = false;
         let feverTimer = null;
@@ -1113,7 +1170,6 @@
         setTimeout(checkDailyBonusPopup, 800);
 
         const boostPrices = [500, 700, 1000, 2000, 3000, 5000, 7500, 10000];
-        const gemdrillPrices = [10, 25, 50, 100, 200];
         function getBusinessPrice(basePrice, lvl) { return Math.floor(basePrice * Math.pow(1.5, lvl)); }
         const energyCostPerClick = 5;
 
@@ -1121,7 +1177,7 @@
         let elapsedSeconds = Math.floor((Date.now() - lastTime) / 1000);
 
         function getTotalHourlyIncome() {
-            return (biz1Level * 5000) + (biz2Level * 15000) + (biz3Level * 50000) + (biz4Level * 150000);
+            return (biz1Level * 5000) + (biz2Level * 15000) + (biz3Level * 50000);
         }
 
         if (elapsedSeconds > 3) {
@@ -1151,14 +1207,9 @@
         const buyMulticlickBtn = document.getElementById('buyMulticlickBtn');
         const buyMaxenergyBtn = document.getElementById('buyMaxenergyBtn');
         const buyEnergyRegenBtn = document.getElementById('buyEnergyRegenBtn');
-        const buyGemDrillBtn = document.getElementById('buyGemDrillBtn');
 
         function getBoostPrice(boostLevel) {
             return boostLevel < boostPrices.length ? boostPrices[boostLevel] : boostPrices[boostPrices.length - 1] + (boostLevel - boostPrices.length + 1) * 5000;
-        }
-
-        function getGemDrillPrice(lvl) {
-            return lvl < gemdrillPrices.length ? gemdrillPrices[lvl] : gemdrillPrices[gemdrillPrices.length - 1] + (lvl - gemdrillPrices.length + 1) * 150;
         }
 
         function saveGame() {
@@ -1172,11 +1223,9 @@
             localStorage.setItem('tabcoin_multiLevel', multiclickLevel);
             localStorage.setItem('tabcoin_energyLevel', maxenergyLevel);
             localStorage.setItem('tabcoin_energyregenLevel', energyregenLevel);
-            localStorage.setItem('tabcoin_gemdrillLevel', gemdrillLevel);
             localStorage.setItem('tabcoin_biz1Level', biz1Level);
             localStorage.setItem('tabcoin_biz2Level', biz2Level);
             localStorage.setItem('tabcoin_biz3Level', biz3Level);
-            localStorage.setItem('tabcoin_biz4Level', biz4Level);
             localStorage.setItem('tabcoin_task1Count', task1Count);
             localStorage.setItem('tabcoin_task1Claimed', task1Claimed);
             localStorage.setItem('tabcoin_task2Count', task2Count);
@@ -1272,7 +1321,6 @@
             buyMulticlickBtn.textContent = `Купити (${getBoostPrice(multiclickLevel)} 🪙)`;
             buyMaxenergyBtn.textContent = `Купити (${getBoostPrice(maxenergyLevel)} 🪙)`;
             buyEnergyRegenBtn.textContent = `Купити (${getBoostPrice(energyregenLevel)} 🪙)`;
-            buyGemDrillBtn.textContent = `Купити (${getGemDrillPrice(gemdrillLevel)} 💎)`;
 
             document.getElementById('biz1Info').textContent = `Рівень: ${biz1Level} | Дохід: +${(biz1Level * 5000).toLocaleString()}/год`;
             document.getElementById('buyBiz1Btn').textContent = `Купити (${getBusinessPrice(10000, biz1Level).toLocaleString()} 🪙)`;
@@ -1280,8 +1328,6 @@
             document.getElementById('buyBiz2Btn').textContent = `Купити (${getBusinessPrice(40000, biz2Level).toLocaleString()} 🪙)`;
             document.getElementById('biz3Info').textContent = `Рівень: ${biz3Level} | Дохід: +${(biz3Level * 50000).toLocaleString()}/год`;
             document.getElementById('buyBiz3Btn').textContent = `Купити (${getBusinessPrice(150000, biz3Level).toLocaleString()} 🪙)`;
-            document.getElementById('biz4Info').textContent = `Рівень: ${biz4Level} | Дохід: +${(biz4Level * 150000).toLocaleString()}/год`;
-            document.getElementById('buyBiz4Btn').textContent = `Купити (${getBusinessPrice(500000, biz4Level).toLocaleString()} 🪙)`;
 
             if (level >= 5) { levelBadge.textContent = 'Stage 5'; characterImg.src = '1790244183576.png'; }
             else if (level === 4) { levelBadge.textContent = 'Stage 4'; characterImg.src = '1790165750453.png'; }
@@ -1297,7 +1343,6 @@
             if (id === 1) { cost = getBusinessPrice(10000, biz1Level); if (score >= cost) { score -= cost; biz1Level++; } else { alert('Недостатньо монет!'); return; } }
             else if (id === 2) { cost = getBusinessPrice(40000, biz2Level); if (score >= cost) { score -= cost; biz2Level++; } else { alert('Недостатньо монет!'); return; } }
             else if (id === 3) { cost = getBusinessPrice(150000, biz3Level); if (score >= cost) { score -= cost; biz3Level++; } else { alert('Недостатньо монет!'); return; } }
-            else if (id === 4) { cost = getBusinessPrice(500000, biz4Level); if (score >= cost) { score -= cost; biz4Level++; } else { alert('Недостатньо монет!'); return; } }
 
             if (!task3Claimed) task3Count++;
             checkLevelProgression(); saveGame(); triggerHaptic('medium');
@@ -1312,7 +1357,6 @@
 
         updateVisuals();
 
-        // Логіка кліку з урахуванням Турбо-режиму та кристалового бура (шанс кристала 0.9% + бонус)
         function handleTapAction(clientX, clientY) {
             if (energy >= energyCostPerClick) {
                 let currentMultiplier = isFeverActive ? 3 : 1;
@@ -1323,13 +1367,11 @@
                 if (!task1Claimed && task1Count < 150000) task1Count += earned;
 
                 let gemDropped = false;
-                let gemChance = 0.009 + (gemdrillLevel * 0.003);
-                if (Math.random() < gemChance) {
+                if (Math.random() < 0.009) {
                     gems += 1;
                     gemDropped = true;
                 }
 
-                // Заповнення шкали турбо-режиму (якщо немає активного кулдауну)
                 const now = Date.now();
                 if (!isFeverActive && now >= feverCooldownUntil) {
                     feverVal = Math.min(100, feverVal + 3.5);
@@ -1368,7 +1410,6 @@
                     clearInterval(feverTimer);
                     isFeverActive = false;
                     feverVal = 0;
-                    // Встановлюємо кулдаун на 30 хвилин (30 * 60 * 1000 мс)
                     feverCooldownUntil = Date.now() + 30 * 60 * 1000;
                     document.getElementById('clickArea').classList.remove('fever-active');
                     document.getElementById('feverStatusText').textContent = '⏳ Кулдаун турбо';
@@ -1388,7 +1429,6 @@
             handleTapAction(e.clientX, e.clientY);
         });
 
-        // Щоб щосекунди оновлювати статус кулдауну турбо-режиму, якщо він триває
         setInterval(() => {
             checkDailyReset();
             if (energy < maxEnergy) energy = Math.min(maxEnergy, energy + energyRegenRate);
@@ -1446,11 +1486,132 @@
             } else if (type === 'energyregen') {
                 let cost = getBoostPrice(energyregenLevel);
                 if (score >= cost) { score -= cost; energyregenLevel++; energyRegenRate += 1; alert('Регенерацію прискорено!'); } else { alert('Недостатньо монет!'); return; }
-            } else if (type === 'gemdrill') {
-                let cost = getGemDrillPrice(gemdrillLevel);
-                if (gems >= cost) { gems -= cost; gemdrillLevel++; alert('Кришталевий бур покращено!'); } else { alert('Недостатньо кристалів!'); return; }
             }
             checkLevelProgression(); saveGame(); triggerHaptic('medium');
+        }
+
+        // --- ЛОГІКА МІНІ-ГРИ "ПАДАЮЧІ ПРЕДМЕТИ" ---
+        let mgActive = false;
+        let mgScoreCount = 0;
+        let mgInterval = null;
+        let mgGameLoop = null;
+        let fallingObjects = [];
+        let basketX = 150; // середина кошика
+
+        const minigameArea = document.getElementById('minigameArea');
+        const catchBasket = document.getElementById('catchBasket');
+        const mgScoreDisplay = document.getElementById('mgScore');
+        const mgStartBtn = document.getElementById('mgStartBtn');
+
+        minigameArea.addEventListener('touchmove', (e) => {
+            if (!mgActive) return;
+            const rect = minigameArea.getBoundingClientRect();
+            let touchX = e.touches[0].clientX - rect.left;
+            basketX = Math.max(30, Math.min(rect.width - 30, touchX));
+            catchBasket.style.left = basketX + 'px';
+            e.preventDefault();
+        }, { passive: false });
+
+        minigameArea.addEventListener('mousemove', (e) => {
+            if (!mgActive) return;
+            const rect = minigameArea.getBoundingClientRect();
+            let mouseX = e.clientX - rect.left;
+            basketX = Math.max(30, Math.min(rect.width - 30, mouseX));
+            catchBasket.style.left = basketX + 'px';
+        });
+
+        function startMiniGame() {
+            if (mgActive) return;
+            mgActive = true;
+            mgScoreCount = 0;
+            mgScoreDisplay.textContent = mgScoreCount;
+            mgStartBtn.textContent = 'Гра йде...';
+            mgStartBtn.disabled = true;
+            fallingObjects = [];
+
+            // Спавн предметів
+            mgInterval = setInterval(() => {
+                if (!mgActive) return;
+                const types = ['coin', 'coin', 'gem', 'bomb'];
+                const chosenType = types[Math.floor(Math.random() * types.length)];
+                let symbol = '🪙';
+                if (chosenType === 'gem') symbol = '💎';
+                if (chosenType === 'bomb') symbol = '💣';
+
+                const obj = {
+                    x: Math.random() * (minigameArea.clientWidth - 40),
+                    y: 35,
+                    speed: 2 + Math.random() * 2.5,
+                    type: chosenType,
+                    element: document.createElement('div')
+                };
+
+                obj.element.className = 'falling-item';
+                obj.element.textContent = symbol;
+                obj.element.style.left = obj.x + 'px';
+                obj.element.style.top = obj.y + 'px';
+                minigameArea.appendChild(obj.element);
+                fallingObjects.push(obj);
+            }, 700);
+
+            // Анімаційний цикл падіння
+            mgGameLoop = setInterval(() => {
+                if (!mgActive) return;
+                const areaHeight = minigameArea.clientHeight;
+
+                for (let i = fallingObjects.length - 1; i >= 0; i--) {
+                    let obj = fallingObjects[i];
+                    obj.y += obj.speed;
+                    obj.element.style.top = obj.y + 'px';
+
+                    // Перевірка зіткнення з кошиком (внизу)
+                    if (obj.y >= areaHeight - 60) {
+                        let basketLeft = basketX - 32;
+                        let basketRight = basketX + 32;
+
+                        if (obj.x >= basketLeft && obj.x <= basketRight) {
+                            // Зловили!
+                            if (obj.type === 'coin') {
+                                mgScoreCount += 500;
+                                score += 500;
+                                triggerHaptic('light');
+                            } else if (obj.type === 'gem') {
+                                mgScoreCount += 2;
+                                gems += 2;
+                                triggerHaptic('medium');
+                            } else if (obj.type === 'bomb') {
+                                mgScoreCount = Math.max(0, mgScoreCount - 1000);
+                                triggerHaptic('heavy');
+                            }
+                            mgScoreDisplay.textContent = mgScoreCount;
+                            obj.element.remove();
+                            fallingObjects.splice(i, 1);
+                        } else if (obj.y > areaHeight - 20) {
+                            // Пропустили
+                            obj.element.remove();
+                            fallingObjects.splice(i, 1);
+                        }
+                    }
+                }
+            }, 30);
+
+            // Тривалість міні-гри: 30 секунд
+            setTimeout(() => {
+                stopMiniGame();
+            }, 30000);
+        }
+
+        function stopMiniGame() {
+            mgActive = false;
+            clearInterval(mgInterval);
+            clearInterval(mgGameLoop);
+            fallingObjects.forEach(o => o.element.remove());
+            fallingObjects = [];
+            mgStartBtn.textContent = 'Старт';
+            mgStartBtn.disabled = false;
+            alert(`Гра закінчена! Ви заробили +${mgScoreCount.toLocaleString()} очок для балансу!`);
+            updateVisuals();
+            saveGame();
         }
 
         const coinRoulettePrizes = [
