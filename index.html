@@ -130,26 +130,6 @@
             letter-spacing: 0.5px;
         }
 
-        /* Кнопка музики */
-        .music-toggle-btn {
-            background: var(--panel-bg);
-            border: 1px solid var(--panel-border);
-            border-radius: 50%;
-            width: 36px;
-            height: 36px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            font-size: 15px;
-            transition: transform 0.1s ease;
-            backdrop-filter: blur(12px);
-            flex-shrink: 0;
-        }
-        .music-toggle-btn:active {
-            transform: scale(0.9);
-        }
-
         .balances-wrapper {
             display: flex;
             align-items: center;
@@ -672,11 +652,6 @@
                 </div>
             </div>
 
-            <!-- Кнопка управління музикою -->
-            <button class="music-toggle-btn" id="musicToggleBtn" onclick="toggleMusic()" title="Музика">
-                🔇
-            </button>
-
             <div class="balances-wrapper">
                 <div class="balance-container">
                     <div class="coin-icon">🪙</div>
@@ -906,83 +881,6 @@
         } catch (e) {
             console.log("Telegram WebApp не ініціалізовано");
         }
-
-        // --- ІГРОВИЙ СИНТЕЗАТОР МУЗИКИ (Web Audio API) ---
-        let audioCtx = null;
-        let isMusicPlaying = false;
-        let musicTimer = null;
-        const musicToggleBtn = document.getElementById('musicToggleBtn');
-
-        // Послідовність нот для приємної аркадної мелодії
-        const melodyNotes = [
-            261.63, 329.63, 392.00, 523.25, // C4, E4, G4, C5
-            392.00, 329.63, 293.66, 349.23, // G4, E4, D4, F4
-            220.00, 261.63, 329.63, 440.00, // A3, C4, E4, A4
-            329.63, 293.66, 246.94, 261.63  // E4, D4, B3, C4
-        ];
-        let currentNoteIndex = 0;
-
-        function startMusicSynth() {
-            if (!audioCtx) {
-                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            }
-            if (audioCtx.state === 'suspended') {
-                audioCtx.resume();
-            }
-
-            if (musicTimer) clearInterval(musicTimer);
-
-            musicTimer = setInterval(() => {
-                if (!isMusicPlaying || !audioCtx) return;
-
-                const osc = audioCtx.createOscillator();
-                const gainNode = audioCtx.createGain();
-
-                osc.type = 'sine'; // М'який приємний звук
-                osc.frequency.setValueAtTime(melodyNotes[currentNoteIndex], audioCtx.currentTime);
-
-                // Гучність (тиха фонова)
-                gainNode.gain.setValueAtTime(0.03, audioCtx.currentTime);
-                gainNode.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.45);
-
-                osc.connect(gainNode);
-                gainNode.connect(audioCtx.destination);
-
-                osc.start();
-                osc.stop(audioCtx.currentTime + 0.5);
-
-                currentNoteIndex = (currentNoteIndex + 1) % melodyNotes.length;
-            }, 450); // Швидкість нот
-        }
-
-        function stopMusicSynth() {
-            isMusicPlaying = false;
-            if (musicTimer) {
-                clearInterval(musicTimer);
-                musicTimer = null;
-            }
-            musicToggleBtn.textContent = '🔇';
-        }
-
-        function toggleMusic() {
-            if (isMusicPlaying) {
-                stopMusicSynth();
-            } else {
-                isMusicPlaying = true;
-                musicToggleBtn.textContent = '🎵';
-                startMusicSynth();
-            }
-        }
-
-        // Автоматичний старт при першому кліку на екран (щоб обійти блокування браузерів)
-        document.body.addEventListener('click', function initAudioOnFirstClick() {
-            if (!isMusicPlaying) {
-                isMusicPlaying = true;
-                musicToggleBtn.textContent = '🎵';
-                startMusicSynth();
-                document.body.removeEventListener('click', initAudioOnFirstClick);
-            }
-        }, { once: false });
 
         let score = Number(localStorage.getItem('tabcoin_score')) || 0;
         let gems = Number(localStorage.getItem('tabcoin_gems')) || 0;
@@ -1530,7 +1428,6 @@
             }
         }
 
-        // Оновлені нагороди та шанси для монетної рулетки (додано 2k та 5k з меншими шансами для великих виграшів)
         const coinRoulettePrizes = [
             { text: "30k 🪙", gems: 0, coins: 30000, chance: 0.02 },
             { text: "25k 🪙", gems: 0, coins: 25000, chance: 0.05 },
