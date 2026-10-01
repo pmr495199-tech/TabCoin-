@@ -826,6 +826,53 @@
         </div>
     </div>
 
+    <!-- Вкладка Карта Болота -->
+    <div class="tab-content" id="tab-map">
+        <div class="section-title">Карта Болота 🗺️</div>
+        <div class="items-list">
+            <div class="item-card" id="mapCard1">
+                <img src="1790090929041.png" alt="Stage 1" class="business-img">
+                <div class="item-info">
+                    <h4>Stage 1: Початкове болото</h4>
+                    <p>Вимога: Старт гри</p>
+                </div>
+                <button class="item-btn" id="mapBtn1" onclick="switchTab('tap', document.querySelector('[onclick*=\'tap\']'))">Тут</button>
+            </div>
+            <div class="item-card" id="mapCard2">
+                <img src="1790159498394.png" alt="Stage 2" class="business-img">
+                <div class="item-info">
+                    <h4>Stage 2: Новий хижак</h4>
+                    <p>Вимога: 70 000 очок</p>
+                </div>
+                <button class="item-btn" id="mapBtn2" onclick="selectWorld(2)" disabled>Закрито</button>
+            </div>
+            <div class="item-card" id="mapCard3">
+                <img src="1790163627383.png" alt="Stage 3" class="business-img">
+                <div class="item-info">
+                    <h4>Stage 3: Гроза водойми</h4>
+                    <p>Вимога: 170 000 очок</p>
+                </div>
+                <button class="item-btn" id="mapBtn3" onclick="selectWorld(3)" disabled>Закрито</button>
+            </div>
+            <div class="item-card" id="mapCard4">
+                <img src="1790165750453.png" alt="Stage 4" class="business-img">
+                <div class="item-info">
+                    <h4>Stage 4: Болотний барон</h4>
+                    <p>Вимога: 340 000 очок</p>
+                </div>
+                <button class="item-btn" id="mapBtn4" onclick="selectWorld(4)" disabled>Закрито</button>
+            </div>
+            <div class="item-card" id="mapCard5">
+                <img src="1790244183576.png" alt="Stage 5" class="business-img">
+                <div class="item-info">
+                    <h4>Stage 5: Легенда болота</h4>
+                    <p>Вимога: 500 000 очок</p>
+                </div>
+                <button class="item-btn" id="mapBtn5" onclick="selectWorld(5)" disabled>Закрито</button>
+            </div>
+        </div>
+    </div>
+
     <div class="tab-content" id="tab-boosts">
         <div class="section-title">Покращення</div>
         <div class="items-list">
@@ -988,6 +1035,9 @@
         <button class="nav-item active" onclick="switchTab('tap', this)">
             <span class="nav-icon">🏠</span><span>Дім</span>
         </button>
+        <button class="nav-item" onclick="switchTab('map', this)">
+            <span class="nav-icon">🗺️</span><span>Карта</span>
+        </button>
         <button class="nav-item" onclick="switchTab('boosts', this)">
             <span class="nav-icon">🚀</span><span>Бусти</span>
         </button>
@@ -1036,6 +1086,7 @@
         
         let clickPower = Number(localStorage.getItem('tabcoin_clickPower')) || 1;
         let level = Number(localStorage.getItem('tabcoin_level')) || 1;
+        let activeWorld = Number(localStorage.getItem('tabcoin_activeWorld')) || 1;
         
         let multiclickLevel = Number(localStorage.getItem('tabcoin_multiLevel')) || 0;
         let maxenergyLevel = Number(localStorage.getItem('tabcoin_energyLevel')) || 0;
@@ -1055,7 +1106,6 @@
         let lastResetDate = localStorage.getItem('tabcoin_lastResetDate') || '';
         let lastDailyDate = localStorage.getItem('tabcoin_lastDailyDate') || '';
 
-        // Турбо-режим змінні з урахуванням 30-хвилинного кулдауну
         let feverVal = 0;
         let isFeverActive = false;
         let feverTimer = null;
@@ -1146,6 +1196,7 @@
             localStorage.setItem('tabcoin_energyRegenRate', energyRegenRate);
             localStorage.setItem('tabcoin_clickPower', clickPower);
             localStorage.setItem('tabcoin_level', level);
+            localStorage.setItem('tabcoin_activeWorld', activeWorld);
             localStorage.setItem('tabcoin_multiLevel', multiclickLevel);
             localStorage.setItem('tabcoin_energyLevel', maxenergyLevel);
             localStorage.setItem('tabcoin_energyregenLevel', energyregenLevel);
@@ -1170,6 +1221,14 @@
             5: { title: "Stage 5: Легенда болота!", text: "500 000 очок! Ти досяг вершини еволюції! Абсолютна легенда!", img: "1790244183576.png" }
         };
 
+        const worldImages = {
+            1: "1790090929041.png",
+            2: "1790159498394.png",
+            3: "1790163627383.png",
+            4: "1790165750453.png",
+            5: "1790244183576.png"
+        };
+
         function showLevelModal(lvl) {
             const data = levelData[lvl];
             if (!data) return;
@@ -1182,6 +1241,29 @@
 
         function closeLevelModal() { document.getElementById('levelModalOverlay').classList.remove('show'); }
 
+        function selectWorld(worldId) {
+            if (level >= worldId) {
+                activeWorld = worldId;
+                updateVisuals();
+                saveGame();
+                switchTab('tap', document.querySelector('[onclick*=\'tap\']'));
+                triggerHaptic('medium');
+            }
+        }
+
+        function updateMapUI() {
+            for (let i = 1; i <= 5; i++) {
+                const btn = document.getElementById(`mapBtn${i}`);
+                if (level >= i) {
+                    btn.disabled = false;
+                    btn.textContent = activeWorld === i ? 'Тут' : 'Вибрати';
+                } else {
+                    btn.disabled = true;
+                    btn.textContent = 'Закрито';
+                }
+            }
+        }
+
         function checkLevelProgression() {
             let newLevel = level;
             if (score >= 500000 && level < 5) newLevel = 5;
@@ -1191,6 +1273,7 @@
 
             if (newLevel > level) {
                 level = newLevel;
+                activeWorld = newLevel; // Автоматично відкриваємо та перемикаємо на новий світ
                 updateVisuals();
                 saveGame();
                 showLevelModal(level);
@@ -1255,13 +1338,11 @@
             document.getElementById('biz3Info').textContent = `Рівень: ${biz3Level} | Дохід: +${(biz3Level * 50000).toLocaleString()}/год`;
             document.getElementById('buyBiz3Btn').textContent = `Купити (${getBusinessPrice(150000, biz3Level).toLocaleString()} 🪙)`;
 
-            if (level >= 5) { levelBadge.textContent = 'Stage 5'; characterImg.src = '1790244183576.png'; }
-            else if (level === 4) { levelBadge.textContent = 'Stage 4'; characterImg.src = '1790165750453.png'; }
-            else if (level === 3) { levelBadge.textContent = 'Stage 3'; characterImg.src = '1790163627383.png'; }
-            else if (level === 2) { levelBadge.textContent = 'Stage 2'; characterImg.src = '1790159498394.png'; }
-            else { levelBadge.textContent = 'Stage 1'; characterImg.src = '1790090929041.png'; }
+            levelBadge.textContent = `Stage ${activeWorld}`;
+            characterImg.src = worldImages[activeWorld] || worldImages[1];
 
             updateTasksUI();
+            updateMapUI();
         }
 
         function buyBusiness(id) {
@@ -1283,7 +1364,6 @@
 
         updateVisuals();
 
-        // Логіка кліку з урахуванням Турбо-режиму та 30-хвилинного кулдауну (шанс кристала 0.9%)
         function handleTapAction(clientX, clientY) {
             if (energy >= energyCostPerClick) {
                 let currentMultiplier = isFeverActive ? 3 : 1;
@@ -1299,7 +1379,6 @@
                     gemDropped = true;
                 }
 
-                // Заповнення шкали турбо-режиму (якщо немає активного кулдауну)
                 const now = Date.now();
                 if (!isFeverActive && now >= feverCooldownUntil) {
                     feverVal = Math.min(100, feverVal + 3.5);
@@ -1338,7 +1417,6 @@
                     clearInterval(feverTimer);
                     isFeverActive = false;
                     feverVal = 0;
-                    // Встановлюємо кулдаун на 30 хвилин (30 * 60 * 1000 мс)
                     feverCooldownUntil = Date.now() + 30 * 60 * 1000;
                     document.getElementById('clickArea').classList.remove('fever-active');
                     document.getElementById('feverStatusText').textContent = '⏳ Кулдаун турбо';
@@ -1358,7 +1436,6 @@
             handleTapAction(e.clientX, e.clientY);
         });
 
-        // Щоб щосекунди оновлювати статус кулдауну турбо-режиму, якщо він триває
         setInterval(() => {
             checkDailyReset();
             if (energy < maxEnergy) energy = Math.min(maxEnergy, energy + energyRegenRate);
@@ -1548,4 +1625,4 @@
         }
     </script>
 </body>
-    </html>
+</html>
