@@ -1530,13 +1530,15 @@
             }
         }
 
+        // Оновлені нагороди та шанси для монетної рулетки (додано 2k та 5k з меншими шансами для великих виграшів)
         const coinRoulettePrizes = [
-            { text: "30k 🪙", gems: 0, coins: 30000, chance: 0.10 },
-            { text: "25k 🪙", gems: 0, coins: 25000, chance: 0.15 },
-            { text: "20k 🪙", gems: 0, coins: 20000, chance: 0.30 },
-            { text: "15k 🪙", gems: 0, coins: 15000, chance: 0.50 },
-            { text: "10k 🪙", gems: 0, coins: 10000, chance: 0.60 },
-            { text: "7k 🪙",  gems: 0, coins: 7000,  chance: 0.60 }
+            { text: "30k 🪙", gems: 0, coins: 30000, chance: 0.02 },
+            { text: "25k 🪙", gems: 0, coins: 25000, chance: 0.05 },
+            { text: "20k 🪙", gems: 0, coins: 20000, chance: 0.08 },
+            { text: "15k 🪙", gems: 0, coins: 15000, chance: 0.12 },
+            { text: "10k 🪙", gems: 0, coins: 10000, chance: 0.20 },
+            { text: "5k 🪙",  gems: 0, coins: 5000,  chance: 0.25 },
+            { text: "2k 🪙",  gems: 0, coins: 2000,  chance: 0.28 }
         ];
 
         const gemRoulettePrizes = [
@@ -1559,7 +1561,7 @@
                 const startAngle = index * angleStep;
                 const endAngle = (index + 1) * angleStep;
                 
-                const colors = ['#2d4a3e', '#3d5a45', '#4a6b5d', '#31493c', '#3c584b', '#253d32'];
+                const colors = ['#2d4a3e', '#3d5a45', '#4a6b5d', '#31493c', '#3c584b', '#253d32', '#1b2d24'];
                 const fillColor = colors[index % colors.length];
                 
                 const radStart = Math.PI * (startAngle - 90) / 180;
