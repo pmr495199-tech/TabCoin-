@@ -215,6 +215,89 @@
             display: flex;
         }
 
+        /* Стилі для інтерактивної карти у стилі фентезі */
+        .map-container-game {
+            width: 100%;
+            max-width: 360px;
+            height: 65vh;
+            background-image: url('10438.jpg'); /* Використовуємо твою стильну карту як фон */
+            background-size: cover;
+            background-position: center;
+            border-radius: 20px;
+            border: 1px solid var(--panel-border);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 15px;
+        }
+
+        .map-top-title {
+            background: rgba(22, 27, 39, 0.85);
+            padding: 6px 14px;
+            border-radius: 12px;
+            align-self: flex-start;
+            font-size: 15px;
+            font-weight: 700;
+            border: 1px solid var(--panel-border);
+            backdrop-filter: blur(8px);
+        }
+
+        .map-node-card {
+            background: rgba(22, 27, 39, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            padding: 8px 12px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            backdrop-filter: blur(10px);
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+            width: fit-content;
+        }
+
+        .map-node-card:active {
+            transform: scale(0.95);
+        }
+
+        .map-node-card.locked {
+            opacity: 0.75;
+            border-color: rgba(245, 158, 11, 0.4);
+        }
+
+        .map-node-icon {
+            width: 32px;
+            height: 32px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+
+        .map-node-info h5 {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--text-white);
+        }
+
+        .map-node-info p {
+            font-size: 10px;
+            color: var(--accent-gold);
+            font-weight: 600;
+        }
+
+        /* Позиціонування вузлів на карті */
+        .map-node-home { align-self: flex-start; margin-top: auto; }
+        .map-node-forest { align-self: flex-start; margin-left: 10px; }
+        .map-node-mine { align-self: flex-end; margin-right: 10px; }
+        .map-node-farm { align-self: flex-end; margin-top: 5px; }
+
         /* Турбо-режим шкала */
         .fever-container {
             width: 100%;
@@ -827,75 +910,75 @@
         </div>
     </div>
 
-    <!-- Вкладка Карта (4 світи) -->
+    <!-- Оновлена вкладка Карта у стилі фентезі-світу -->
     <div class="tab-content" id="tab-map">
-        <div class="section-title">Карта Світів 🗺️</div>
-        <div class="items-list">
-            <div class="item-card">
-                <div style="font-size: 32px;">🏠</div>
-                <div class="item-info">
-                    <h4>Дім</h4>
-                    <p>Ваша затишна базовиця</p>
+        <div class="map-container-game">
+            <div class="map-top-title">Карта Світів 🗺️</div>
+            
+            <div class="map-node-card map-node-home" onclick="switchTab('world-home', null)">
+                <div class="map-node-icon">🏠</div>
+                <div class="map-node-info">
+                    <h5>Табір додому</h5>
+                    <p>База · Рівень 1</p>
                 </div>
-                <button class="item-btn" onclick="switchTab('world-home', null)">Увійти</button>
             </div>
-            <div class="item-card">
-                <div style="font-size: 32px;">⛏️</div>
-                <div class="item-info">
-                    <h4>Шахта</h4>
-                    <p>Місце видобутку ресурсів</p>
+
+            <div class="map-node-card map-node-forest" onclick="switchTab('world-forest', null)">
+                <div class="map-node-icon">🌲</div>
+                <div class="map-node-info">
+                    <h5>Ліс</h5>
+                    <p>Сокира · Рів. 1</p>
                 </div>
-                <button class="item-btn" onclick="switchTab('world-mine', null)">Увійти</button>
             </div>
-            <div class="item-card">
-                <div style="font-size: 32px;">🌊</div>
-                <div class="item-info">
-                    <h4>Річка</h4>
-                    <p>Водні простори болота</p>
+
+            <div class="map-node-card map-node-mine" onclick="switchTab('world-mine', null)">
+                <div class="map-node-icon">⛏️️</div>
+                <div class="map-node-info">
+                    <h5>Кар'єр</h5>
+                    <p>Кирка · Рів. 1</p>
                 </div>
-                <button class="item-btn" onclick="switchTab('world-river', null)">Увійти</button>
             </div>
-            <div class="item-card">
-                <div style="font-size: 32px;">🌲</div>
-                <div class="item-info">
-                    <h4>Ліс</h4>
-                    <p>Густі хащі та таємниці</p>
+
+            <div class="map-node-card map-node-farm locked" onclick="switchTab('world-farm', null)">
+                <div class="map-node-icon">🔒</div>
+                <div class="map-node-info">
+                    <h5>Ферма</h5>
+                    <p>3 Level 3</p>
                 </div>
-                <button class="item-btn" onclick="switchTab('world-forest', null)">Увійти</button>
             </div>
         </div>
     </div>
 
     <!-- Індивідуальні вкладки для кожного світу -->
     <div class="tab-content" id="tab-world-home">
-        <div class="section-title">🏠 Світ: Дім</div>
+        <div class="section-title">🏠 Табір додому</div>
         <div class="items-list" style="text-align: center; padding: 20px;">
-            <p style="color: var(--text-secondary);">Тут поки що порожньо. Скоро тут з'являться унікальні можливості дому!</p>
-            <button class="item-btn" onclick="switchTab('map', document.querySelector('[onclick*=\'map\']'))" style="margin-top: 15px;">⬅ Назад до карти</button>
-        </div>
-    </div>
-
-    <div class="tab-content" id="tab-world-mine">
-        <div class="section-title">⛏️ Світ: Шахта</div>
-        <div class="items-list" style="text-align: center; padding: 20px;">
-            <p style="color: var(--text-secondary);">Тут поки що порожньо. Скоро тут з'явиться видобуток руди та скарбів!</p>
-            <button class="item-btn" onclick="switchTab('map', document.querySelector('[onclick*=\'map\']'))" style="margin-top: 15px;">⬅ Назад до карти</button>
-        </div>
-    </div>
-
-    <div class="tab-content" id="tab-world-river">
-        <div class="section-title">🌊 Світ: Річка</div>
-        <div class="items-list" style="text-align: center; padding: 20px;">
-            <p style="color: var(--text-secondary);">Тут поки що порожньо. Скоро тут можна буде рибалити та плавати!</p>
-            <button class="item-btn" onclick="switchTab('map', document.querySelector('[onclick*=\'map\']'))" style="margin-top: 15px;">⬅ Назад до карти</button>
+            <p style="color: var(--text-secondary);">Ваша затишна базовиця у болоті. Тут починається шлях до слави!</p>
+            <button class="item-btn" onclick="switchTab('map', null)" style="margin-top: 15px;">⬅ Назад до карти</button>
         </div>
     </div>
 
     <div class="tab-content" id="tab-world-forest">
-        <div class="section-title">🌲 Світ: Ліс</div>
+        <div class="section-title">🌲 Ліс</div>
         <div class="items-list" style="text-align: center; padding: 20px;">
-            <p style="color: var(--text-secondary);">Тут поки що порожньо. Скоро на вас чекають лісові пригоди!</p>
-            <button class="item-btn" onclick="switchTab('map', document.querySelector('[onclick*=\'map\']'))" style="margin-top: 15px;">⬅ Назад до карти</button>
+            <p style="color: var(--text-secondary);">Густі хащі та деревина. Скоро тут можна буде рубити дрова й отримувати ресурси!</p>
+            <button class="item-btn" onclick="switchTab('map', null)" style="margin-top: 15px;">⬅ Назад до карти</button>
+        </div>
+    </div>
+
+    <div class="tab-content" id="tab-world-mine">
+        <div class="section-title">⛏️ Кар'єр</div>
+        <div class="items-list" style="text-align: center; padding: 20px;">
+            <p style="color: var(--text-secondary);">Скелі та каміння. Місце видобутку найцінніших гірських скарбів!</p>
+            <button class="item-btn" onclick="switchTab('map', null)" style="margin-top: 15px;">⬅ Назад до карти</button>
+        </div>
+    </div>
+
+    <div class="tab-content" id="tab-world-farm">
+        <div class="section-title">🌾 Ферма</div>
+        <div class="items-list" style="text-align: center; padding: 20px;">
+            <p style="color: var(--text-secondary);">Розблокується на 3 рівні або за досягнення у світі гри!</p>
+            <button class="item-btn" onclick="switchTab('map', null)" style="margin-top: 15px;">⬅ Назад до карти</button>
         </div>
     </div>
 
@@ -1605,7 +1688,7 @@
             gems -= 25; updateVisuals(); saveGame();
             const btn = document.getElementById('spinBearBtn'); btn.disabled = true;
             const prizeIndex = getWeightedRandomIndex(bearRoulettePrizes);
-            bearRotation += 360 * 7 + (360 - (bearRotation % 360)) + (360 - (prizeIndex * (360 / bearRoulettePrizes.length) + (360 / bearRoulettePrizes.length) / 2));
+            bearRotation += 360 * 7 + (360 - (bearRotation % 360)) + (360 - (prizeIndex * (360 / bearRoulettePrizes.Link) + (360 / bearRoulettePrizes.length) / 2));
             document.getElementById('wheelBear').style.transform = `rotate(${bearRotation}deg)`;
             triggerHaptic('heavy');
 
